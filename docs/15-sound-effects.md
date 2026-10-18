@@ -47,3 +47,17 @@
 - 検証画像：Git対象外 `plugin/artifacts/sound-controls-browser.png`。ローカルデモであり、公開部屋・実AIの採点記録へ混ぜない。
 
 音色の試聴・iPhone/Android・ネイティブPlugin Extensionsパネルでの再生確認は未実施。ブラウザの「音 ON」はAudioContextの起動確認であり、音質を聴いて評価した記録ではない。公開Sites再配備・インストール済みPluginの更新は今回行っていない。
+
+
+## 後続の公開配備（2026-10-18 16:35 JST）
+
+ユーザーの「コミットしてプッシュして、デプロイして」という追加指示により、公開Sitesへv5を配備した。上の「今回未実施」は効果音実装時点の記録として残す。
+
+- 公開URL： https://karimono-one-lease.ahwenu.chatgpt.site
+- 元リポジトリの実装：`29e6728ecf10c752e050368642717c0bdab4efd2`。GitHub mainへpush済み。
+- Sitesの配備ソース：`fdb36b65b0926458a50aa5aea04df76a513ef866`。コミット済み元ソース659ファイルを秘密除外・旧project_id除去のうえsnapshotへ保存した。
+- version：`appgprj_6ad4611142408191ae99be09e3b27efb~appgver_ce8d7bcbbf9481919911837bc14c27b7`（v5）。
+- deployment：`appgdep_6ad476b311848191a33fd9380179a648`、`succeeded`。publicと実行環境revision 1を維持。
+- 配備用の `scripts/sync-game-assets.mjs` に音声3モジュールと11 MP3を追加。Workerのバイナリ復元も反映。配備専用TypeScript・Cloud9件・公式ビルド/ソースpush/アーカイブ保存が成功。
+- 公開URLで匿名トップ200、全11 MP3の200・audio/mpeg・SHA-256一致、app/camera/音声3モジュールの完全一致を確認。AI呼出・新規部屋作成・採点は実施していない。
+- 実機試聴とインストール済みPluginの更新はこのSites配備に含めない。並行作業中のPlugin 0.4.0や未コミットの画面変更は、今回の配備snapshotへ含めていない。
