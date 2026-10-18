@@ -43,6 +43,19 @@ KARIMONO_MODE=demo npm start
 
 ## 実AI APIを接続する
 
+### 公開Sitesのゲームへ接続する（0.2.0）
+
+登録済みpluginの `.env.local` に次を設定し、プラグインを再読み込みします。公開Sitesのためサービスアクセス資格情報やローカルOpenAIキーは不要です。
+
+```dotenv
+KARIMONO_MODE=sites
+SITES_API_BASE_URL=https://karimono-one-lease.ahwenu.chatgpt.site
+```
+
+v1配備とpublic変更、インストール済み0.2.0の実MCP/HTTPでの部屋作成・匿名参加・実AI生成・開始・JPEG提出/実判定・勝利数順位・ラウンド終了を1例確認しました。ネイティブ拡張UIをCodexが直接クリックした記録とは区別します。部屋のホストCookieはMCP内部だけで保持し、MCP再起動後の復帰は未対応。30秒自動開始の既存動作があり、終了操作は現在のラウンド受付終了です。0.2.0のMCP登録キーは `karimono-host-sites`、推奨表示はfullscreenです。旧版の起動結果と区別し、更新後に新しい接続を読み込んでください。
+
+### ローカル独立AI APIを使う
+
 Node.js 22.13以上を使い、独立した `api/` のサーバーを別プロセスで起動します。Sites側のソース・配備設定は変更しません。OpenAIキーはAPIサーバーだけに設定します。
 
 pluginのGit対象外 `.env.local` には次の変数を設定します。
@@ -94,13 +107,13 @@ npm run package
 npm run test:portable
 ```
 
-`artifacts/karimono-host-0.1.0.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
+`artifacts/karimono-host-0.2.0.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
 
 `test:portable` はアーカイブを空白を含む一時パスに展開し、`node_modules` のない配布物を別の作業ディレクトリから起動して確認します。パッケージ作成後に実行してください。
 
 ## ローカルPlugin Extensionsへ登録する
 
-他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.1.0.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
+他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.2.0.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
 
 この `plugin/` フォルダを作業ルートにし、チェック・テスト・ビルドを済ませてから、ローカルmarketplaceを準備して公式CLIへ登録します。
 

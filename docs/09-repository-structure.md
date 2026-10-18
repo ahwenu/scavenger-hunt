@@ -1,5 +1,7 @@
 # フォルダ構成・デプロイ・競合を減らす作業境界
 
+> 新Sites配備作業では、別作業ルートへCloud実行ソースと `repository/` の全ソーススナップショットを配置する。元リポジトリのフォルダは維持する。Node/stdioのソース保存とWorkers実行を分け、`repository/` は型チェック/ビルドから除外する。v1・v2本番配備、public変更、インストール済みpluginの実MCP/HTTPゲーム結合1例を確認。v2は秘密除外済み598ファイルを保持し、GitHubへの今回のpushは未実施。[12 新Sitesの配置と接続](12-sites-deployment.md)、[ADR-0011](adr/0011-new-sites-deployment.md)を参照。
+
 > 2026-10-18追記：デモ実装を元の配置で取り込んだため、現状のSitesルートは `apps/cloud/`。以下の直下配置は将来の構成案であり未実現。取り込み範囲と方針との差分は[10 デモアプリ取り込み](10-demo-import.md)を参照。
 
 > API担当の現在の作業先は独立した `api/`、拡張は `plugin/`。Sites担当の `apps/cloud/` や配備設定をAPI作業で変更しない。両パッケージはルートのデモ用ワークスペースから分離する。接続契約は[11 API連携](11-api-integration.md)を参照。

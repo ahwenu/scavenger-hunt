@@ -10,7 +10,7 @@ ONE LEASE / **借り物王に俺はなる！**
 
 - Node.js 22.13以上。ターミナルで `node --version` を確認します。
 - `codex plugin` に対応したCodex CLIと、ローカルプラグインを利用できるデスクトップ環境。
-- `karimono-host-share-0.1.0.tar.gz` と `karimono-host-share-0.1.0.tar.gz.sha256`。配布者から受け取ってください。
+- `karimono-host-share-0.2.0.tar.gz` と `karimono-host-share-0.2.0.tar.gz.sha256`。配布者から受け取ってください。
 
 Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確認しています。利用できるUIやメニュー名はアプリのバージョンによって異なります。
 
@@ -19,15 +19,15 @@ Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確�
 共有ファイルを置いたフォルダでターミナルを開き、次を実行します。ファイル名を変更した場合は読み替えてください。
 
 ```sh
-shasum -a 256 -c karimono-host-share-0.1.0.tar.gz.sha256
-tar -xzf karimono-host-share-0.1.0.tar.gz
+shasum -a 256 -c karimono-host-share-0.2.0.tar.gz.sha256
+tar -xzf karimono-host-share-0.2.0.tar.gz
 cd karimono-local
 codex plugin marketplace add . --json
 codex plugin add karimono-host@karimono-local --json
 codex plugin list --marketplace karimono-local --json
 ```
 
-最後の結果に `installed: true`、`enabled: true`、`version: 0.1.0` があれば登録できています。`plugin add --json` が返す `installedPath` は、後でAIを設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
+最後の結果に `installed: true`、`enabled: true`、`version: 0.2.0` があれば登録できています。`plugin add --json` が返す `installedPath` は、後で接続を設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
 
 展開したフォルダはmarketplaceの参照元になるため、更新するときまで残してください。公開ディレクトリへの申請、サイトの公開、スマホでの参加は、このローカル登録に必要ありません。
 
@@ -41,7 +41,22 @@ CLIに `plugin` コマンドがない場合は、アプリ側のプラグイン�
 
 ## 4. 自分のPCで実AIも使う場合
 
-この共有ファイルにはOpenAIキー、サービス用トークン、AI APIサーバーのソースを含めません。現在のAPIは `127.0.0.1` 専用なので、他の人のPCからAhwenuのPCへ自動接続することもありません。各自のPCでAPIを起動し、自分が利用できるOpenAIキーを設定します。将来、共用の公開APIを用意した場合は、その接続先と認証方式を別途案内します。
+### 公開Sitesへ接続する場合
+
+0.2.0では、公開されたSitesのゲームへ接続する設定を追加しています。手順2の `installedPath` にある `.env.local` へ次を保存し、プラグインを再読み込みします。
+
+```dotenv
+KARIMONO_MODE=sites
+SITES_API_BASE_URL=https://karimono-one-lease.ahwenu.chatgpt.site
+```
+
+この方式はローカルAPIのインストール・OpenAIキー・サービスアクセス資格情報を必要としません。v1配備とログイン不要のpublic設定、インストール済み0.2.0の実MCP/HTTPによる部屋→匿名参加→実生成→開始→JPEG提出/実判定→勝利数順位→ラウンド終了を1例確認済みです。ネイティブ拡張UIの直接操作・スマホ実機・複数人評価は別途確認します。管理権限はMCP内部のCookieで保持し、再起動後の部屋復帰は未対応。既存の30秒自動開始があり、終了操作は現在のラウンド受付終了を意味します。
+
+MCPの登録キーは0.2.0で `karimono-host-sites` へ変わり、推奨表示はfullscreenです。旧版が動き続ける場合は、プラグインを再読み込みするかアプリを再起動して新しい接続を読み込んでください。
+
+### 自分のローカルAPIを使う場合
+
+この共有ファイルにはOpenAIキー、サービス用トークン、AI APIサーバーのソースを含めません。ローカル独立APIは `127.0.0.1` 専用なので、他の人のPCからAhwenuのPCへ自動接続することもありません。この方式を選ぶ場合は各自のPCでAPIを起動し、自分が利用できるOpenAIキーを設定します。上記の公開Sites方式とは別の開発用接続です。
 
 ### APIのソースを用意する
 

@@ -1,5 +1,9 @@
 # AhwenuのAPI処理とPlugin Extensionsの接続
 
+本書はローカル独立APIの契約・検証記録。新Sitesの配備ではCloudへResponses生成を移植し、pluginはsitesモードでゲームAPIへ接続する。独立Node APIをWorkersで起動する方式は採らない。新しい配備・認証・実ゲーム結合の状態は[12](12-sites-deployment.md)に記録する。既存のローカルAPI成功を新Sitesの成功とは扱わない。
+
+新Sitesではv1配備・public変更と、インストール済みplugin 0.2.0の実MCP/HTTPによる部屋→匿名参加→生成→開始→JPEG提出/判定→勝利数順位→ラウンド終了を1例確認した。これは下記のローカルAPI検証とは別の記録であり、最新ソースの同期とv2配備は12に追記する。
+
 ## 担当と配置
 
 Ahwenuは `api/` の独立AI APIと `plugin/src/server/` のMCP接続を担当する。Sitesの参加者画面・部屋・提出受付・締切・加点・順位・DBは他担当が実装する。今回の接続作業では `apps/cloud/` とSitesの配備設定を変更しない。

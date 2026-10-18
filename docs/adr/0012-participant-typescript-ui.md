@@ -1,4 +1,4 @@
-# ADR-0011: 参加者の画像準拠UIを現行SitesのTypeScript画面に置く
+# ADR-0012: 参加者の画像準拠UIを現行SitesのTypeScript画面に置く
 
 - 状態：Accepted
 - 作成日：2026-10-18

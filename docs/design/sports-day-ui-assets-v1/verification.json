@@ -1,0 +1,831 @@
+{
+  "assetCount": 136,
+  "transparentAssetCount": 56,
+  "alignedSpriteCount": 15,
+  "pngCount": 289,
+  "sourceSHA256": "F101F0EB5E280A343B0940712BD60E79376D5930A8FF4BAA37724CDE4206433A",
+  "sourceCopyIdentical": true,
+  "originalCropRGBMatches": true,
+  "visibleOutputRGBMatches": true,
+  "alignedPixelsMatch": true,
+  "galleryMetadataMatches": true,
+  "browserVisualCheck": "Not run: local file protocol is blocked by the browser tool policy. Contact sheets were inspected visually.",
+  "assets": [
+    {
+      "id": "girl-flag",
+      "rgbMatchesSource": true,
+      "visiblePixels": 49527,
+      "transparentPixels": 26361
+    },
+    {
+      "id": "girl-camera",
+      "rgbMatchesSource": true,
+      "visiblePixels": 45485,
+      "transparentPixels": 19555
+    },
+    {
+      "id": "robot-flag",
+      "rgbMatchesSource": true,
+      "visiblePixels": 27298,
+      "transparentPixels": 31922
+    },
+    {
+      "id": "robot-guide",
+      "rgbMatchesSource": true,
+      "visiblePixels": 10670,
+      "transparentPixels": 0
+    },
+    {
+      "id": "robot-judging",
+      "rgbMatchesSource": true,
+      "visiblePixels": 6197,
+      "transparentPixels": 4485
+    },
+    {
+      "id": "robot-success",
+      "rgbMatchesSource": true,
+      "visiblePixels": 8701,
+      "transparentPixels": 7682
+    },
+    {
+      "id": "robot-failure",
+      "rgbMatchesSource": true,
+      "visiblePixels": 7769,
+      "transparentPixels": 5356
+    },
+    {
+      "id": "girl-smile",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9370,
+      "transparentPixels": 3158
+    },
+    {
+      "id": "girl-wink",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9107,
+      "transparentPixels": 2393
+    },
+    {
+      "id": "girl-clear",
+      "rgbMatchesSource": true,
+      "visiblePixels": 10571,
+      "transparentPixels": 2654
+    },
+    {
+      "id": "girl-surprised",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9108,
+      "transparentPixels": 3657
+    },
+    {
+      "id": "girl-thinking",
+      "rgbMatchesSource": true,
+      "visiblePixels": 10437,
+      "transparentPixels": 3236
+    },
+    {
+      "id": "girl-sad",
+      "rgbMatchesSource": true,
+      "visiblePixels": 8636,
+      "transparentPixels": 3244
+    },
+    {
+      "id": "girl-cheer",
+      "rgbMatchesSource": true,
+      "visiblePixels": 10317,
+      "transparentPixels": 3713
+    },
+    {
+      "id": "girl-please",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9269,
+      "transparentPixels": 4283
+    },
+    {
+      "id": "schoolyard",
+      "rgbMatchesSource": true,
+      "visiblePixels": 27880,
+      "transparentPixels": 0
+    },
+    {
+      "id": "sky-bunting",
+      "rgbMatchesSource": true,
+      "visiblePixels": 24616,
+      "transparentPixels": 0
+    },
+    {
+      "id": "entrance-gate",
+      "rgbMatchesSource": true,
+      "visiblePixels": 25568,
+      "transparentPixels": 0
+    },
+    {
+      "id": "scoreboard",
+      "rgbMatchesSource": true,
+      "visiblePixels": 25568,
+      "transparentPixels": 0
+    },
+    {
+      "id": "decoration-strip",
+      "rgbMatchesSource": true,
+      "visiblePixels": 44184,
+      "transparentPixels": 0
+    },
+    {
+      "id": "bunting",
+      "rgbMatchesSource": true,
+      "visiblePixels": 3630,
+      "transparentPixels": 5870
+    },
+    {
+      "id": "star-shine",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1013,
+      "transparentPixels": 907
+    },
+    {
+      "id": "exclamation-blue-1",
+      "rgbMatchesSource": true,
+      "visiblePixels": 283,
+      "transparentPixels": 492
+    },
+    {
+      "id": "star-yellow",
+      "rgbMatchesSource": true,
+      "visiblePixels": 657,
+      "transparentPixels": 749
+    },
+    {
+      "id": "exclamation-blue-2",
+      "rgbMatchesSource": true,
+      "visiblePixels": 287,
+      "transparentPixels": 426
+    },
+    {
+      "id": "confetti-red",
+      "rgbMatchesSource": true,
+      "visiblePixels": 116,
+      "transparentPixels": 173
+    },
+    {
+      "id": "confetti-yellow",
+      "rgbMatchesSource": true,
+      "visiblePixels": 163,
+      "transparentPixels": 366
+    },
+    {
+      "id": "confetti-green",
+      "rgbMatchesSource": true,
+      "visiblePixels": 41,
+      "transparentPixels": 141
+    },
+    {
+      "id": "confetti-pink",
+      "rgbMatchesSource": true,
+      "visiblePixels": 160,
+      "transparentPixels": 368
+    },
+    {
+      "id": "confetti-yellow-small",
+      "rgbMatchesSource": true,
+      "visiblePixels": 64,
+      "transparentPixels": 118
+    },
+    {
+      "id": "crown",
+      "rgbMatchesSource": true,
+      "visiblePixels": 930,
+      "transparentPixels": 1030
+    },
+    {
+      "id": "trophy",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1129,
+      "transparentPixels": 1079
+    },
+    {
+      "id": "flag-blue",
+      "rgbMatchesSource": true,
+      "visiblePixels": 540,
+      "transparentPixels": 1308
+    },
+    {
+      "id": "flag-yellow",
+      "rgbMatchesSource": true,
+      "visiblePixels": 458,
+      "transparentPixels": 813
+    },
+    {
+      "id": "megaphone",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1026,
+      "transparentPixels": 1042
+    },
+    {
+      "id": "cone",
+      "rgbMatchesSource": true,
+      "visiblePixels": 591,
+      "transparentPixels": 735
+    },
+    {
+      "id": "stopwatch",
+      "rgbMatchesSource": true,
+      "visiblePixels": 899,
+      "transparentPixels": 621
+    },
+    {
+      "id": "camera",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1139,
+      "transparentPixels": 541
+    },
+    {
+      "id": "button-start",
+      "rgbMatchesSource": true,
+      "visiblePixels": 14550,
+      "transparentPixels": 1818
+    },
+    {
+      "id": "button-next",
+      "rgbMatchesSource": true,
+      "visiblePixels": 14554,
+      "transparentPixels": 1406
+    },
+    {
+      "id": "button-retry",
+      "rgbMatchesSource": true,
+      "visiblePixels": 7731,
+      "transparentPixels": 809
+    },
+    {
+      "id": "button-hint",
+      "rgbMatchesSource": true,
+      "visiblePixels": 8001,
+      "transparentPixels": 989
+    },
+    {
+      "id": "icon-home",
+      "rgbMatchesSource": true,
+      "visiblePixels": 531,
+      "transparentPixels": 493
+    },
+    {
+      "id": "icon-ranking",
+      "rgbMatchesSource": true,
+      "visiblePixels": 510,
+      "transparentPixels": 546
+    },
+    {
+      "id": "icon-rules",
+      "rgbMatchesSource": true,
+      "visiblePixels": 791,
+      "transparentPixels": 393
+    },
+    {
+      "id": "icon-settings",
+      "rgbMatchesSource": true,
+      "visiblePixels": 540,
+      "transparentPixels": 516
+    },
+    {
+      "id": "nav-home",
+      "rgbMatchesSource": true,
+      "visiblePixels": 661,
+      "transparentPixels": 1339
+    },
+    {
+      "id": "nav-ranking",
+      "rgbMatchesSource": true,
+      "visiblePixels": 741,
+      "transparentPixels": 2409
+    },
+    {
+      "id": "nav-rules",
+      "rgbMatchesSource": true,
+      "visiblePixels": 918,
+      "transparentPixels": 1042
+    },
+    {
+      "id": "nav-settings",
+      "rgbMatchesSource": true,
+      "visiblePixels": 765,
+      "transparentPixels": 935
+    },
+    {
+      "id": "accent-action",
+      "rgbMatchesSource": true,
+      "visiblePixels": 751,
+      "transparentPixels": 1505
+    },
+    {
+      "id": "ribbon-round",
+      "rgbMatchesSource": true,
+      "visiblePixels": 6505,
+      "transparentPixels": 6200
+    },
+    {
+      "id": "flag-round",
+      "rgbMatchesSource": true,
+      "visiblePixels": 477,
+      "transparentPixels": 942
+    },
+    {
+      "id": "timer-topic",
+      "rgbMatchesSource": true,
+      "visiblePixels": 8876,
+      "transparentPixels": 1845
+    },
+    {
+      "id": "badge-rank",
+      "rgbMatchesSource": true,
+      "visiblePixels": 6681,
+      "transparentPixels": 159
+    },
+    {
+      "id": "progress-clear",
+      "rgbMatchesSource": true,
+      "visiblePixels": 14108,
+      "transparentPixels": 412
+    },
+    {
+      "id": "title-logo",
+      "rgbMatchesSource": true,
+      "visiblePixels": 15100,
+      "transparentPixels": 0
+    },
+    {
+      "id": "start-character-duo",
+      "rgbMatchesSource": true,
+      "visiblePixels": 17649,
+      "transparentPixels": 0
+    },
+    {
+      "id": "question-stage-hud",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2848,
+      "transparentPixels": 0
+    },
+    {
+      "id": "question-rank-hud",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2205,
+      "transparentPixels": 0
+    },
+    {
+      "id": "question-prompt-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9664,
+      "transparentPixels": 0
+    },
+    {
+      "id": "question-timer",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2464,
+      "transparentPixels": 0
+    },
+    {
+      "id": "camera-viewfinder",
+      "rgbMatchesSource": true,
+      "visiblePixels": 19479,
+      "transparentPixels": 0
+    },
+    {
+      "id": "camera-gallery-button",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1085,
+      "transparentPixels": 0
+    },
+    {
+      "id": "camera-shutter-button",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4615,
+      "transparentPixels": 0
+    },
+    {
+      "id": "camera-switch-button",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1152,
+      "transparentPixels": 0
+    },
+    {
+      "id": "apple-photo",
+      "rgbMatchesSource": true,
+      "visiblePixels": 8184,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ai-speech",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9044,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ai-robot-large",
+      "rgbMatchesSource": true,
+      "visiblePixels": 17010,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ai-progress",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5112,
+      "transparentPixels": 0
+    },
+    {
+      "id": "success-clear-header",
+      "rgbMatchesSource": true,
+      "visiblePixels": 20566,
+      "transparentPixels": 0
+    },
+    {
+      "id": "success-cheering-character",
+      "rgbMatchesSource": true,
+      "visiblePixels": 12963,
+      "transparentPixels": 0
+    },
+    {
+      "id": "success-points-ribbon",
+      "rgbMatchesSource": true,
+      "visiblePixels": 8352,
+      "transparentPixels": 0
+    },
+    {
+      "id": "success-rank-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 3922,
+      "transparentPixels": 0
+    },
+    {
+      "id": "success-progress-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4028,
+      "transparentPixels": 0
+    },
+    {
+      "id": "success-next-button",
+      "rgbMatchesSource": true,
+      "visiblePixels": 6794,
+      "transparentPixels": 0
+    },
+    {
+      "id": "failure-speech",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9372,
+      "transparentPixels": 0
+    },
+    {
+      "id": "failure-character-duo",
+      "rgbMatchesSource": true,
+      "visiblePixels": 21140,
+      "transparentPixels": 0
+    },
+    {
+      "id": "failure-message-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5733,
+      "transparentPixels": 0
+    },
+    {
+      "id": "failure-hint-button",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4437,
+      "transparentPixels": 0
+    },
+    {
+      "id": "failure-retry-button",
+      "rgbMatchesSource": true,
+      "visiblePixels": 3825,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stages-title-ribbon",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5655,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stages-back-button",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1638,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stages-guidance",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5760,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stages-robot",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2100,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-title-ribbon",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5220,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-tab-all",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1564,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-tab-friends",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1472,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-table-panel",
+      "rgbMatchesSource": true,
+      "visiblePixels": 39825,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-user-row",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5440,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-title-ribbon",
+      "rgbMatchesSource": true,
+      "visiblePixels": 6192,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-01-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5180,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-02-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5950,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-03-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 6525,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-04-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 7308,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-message",
+      "rgbMatchesSource": true,
+      "visiblePixels": 7110,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-robot",
+      "rgbMatchesSource": true,
+      "visiblePixels": 3024,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-camera-1",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1152,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-camera-2",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1152,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-robot-card",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4340,
+      "transparentPixels": 0
+    },
+    {
+      "id": "howto-clear",
+      "rgbMatchesSource": true,
+      "visiblePixels": 3900,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-01",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2805,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-02",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2695,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-03",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2805,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-04",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2652,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-05",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2548,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-06",
+      "rgbMatchesSource": true,
+      "visiblePixels": 2652,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-07-locked",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1554,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-08-locked",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1554,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-09-locked",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1554,
+      "transparentPixels": 0
+    },
+    {
+      "id": "stage-10-locked",
+      "rgbMatchesSource": true,
+      "visiblePixels": 1554,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-row-1",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4316,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-row-2",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4316,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-row-3",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4316,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-row-4",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4316,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-row-5",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4648,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-avatar-1",
+      "rgbMatchesSource": true,
+      "visiblePixels": 529,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-avatar-2",
+      "rgbMatchesSource": true,
+      "visiblePixels": 529,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-avatar-3",
+      "rgbMatchesSource": true,
+      "visiblePixels": 529,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-avatar-4",
+      "rgbMatchesSource": true,
+      "visiblePixels": 529,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-avatar-5",
+      "rgbMatchesSource": true,
+      "visiblePixels": 529,
+      "transparentPixels": 0
+    },
+    {
+      "id": "ranking-avatar-6",
+      "rgbMatchesSource": true,
+      "visiblePixels": 576,
+      "transparentPixels": 0
+    },
+    {
+      "id": "01-start",
+      "rgbMatchesSource": true,
+      "visiblePixels": 54462,
+      "transparentPixels": 0
+    },
+    {
+      "id": "02-question",
+      "rgbMatchesSource": true,
+      "visiblePixels": 53836,
+      "transparentPixels": 0
+    },
+    {
+      "id": "03-judging",
+      "rgbMatchesSource": true,
+      "visiblePixels": 52584,
+      "transparentPixels": 0
+    },
+    {
+      "id": "04-success",
+      "rgbMatchesSource": true,
+      "visiblePixels": 62287,
+      "transparentPixels": 0
+    },
+    {
+      "id": "05-failure",
+      "rgbMatchesSource": true,
+      "visiblePixels": 54149,
+      "transparentPixels": 0
+    },
+    {
+      "id": "06-stage-select",
+      "rgbMatchesSource": true,
+      "visiblePixels": 55401,
+      "transparentPixels": 0
+    },
+    {
+      "id": "07-ranking",
+      "rgbMatchesSource": true,
+      "visiblePixels": 58844,
+      "transparentPixels": 0
+    },
+    {
+      "id": "08-howto",
+      "rgbMatchesSource": true,
+      "visiblePixels": 56966,
+      "transparentPixels": 0
+    },
+    {
+      "id": "section-main",
+      "rgbMatchesSource": true,
+      "visiblePixels": 11070,
+      "transparentPixels": 655
+    },
+    {
+      "id": "section-robot",
+      "rgbMatchesSource": true,
+      "visiblePixels": 9132,
+      "transparentPixels": 283
+    },
+    {
+      "id": "section-expressions",
+      "rgbMatchesSource": true,
+      "visiblePixels": 13191,
+      "transparentPixels": 319
+    },
+    {
+      "id": "section-background",
+      "rgbMatchesSource": true,
+      "visiblePixels": 4860,
+      "transparentPixels": 388
+    },
+    {
+      "id": "section-ui",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5476,
+      "transparentPixels": 576
+    },
+    {
+      "id": "section-screens",
+      "rgbMatchesSource": true,
+      "visiblePixels": 5427,
+      "transparentPixels": 742
+    }
+  ]
+}

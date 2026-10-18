@@ -669,3 +669,11 @@ h2 {
     transition: none;
   }
 }
+
+/* Sites接続時の参加URLと勝数ランキングは認証情報を含めず表示する。 */
+.join-panel { margin-bottom: 20px; padding: 24px 28px; }
+.join-panel h2 { margin: 10px 0; }
+.join-panel p { line-height: 1.65; }
+.join-url { display: block; margin: 16px 0; color: var(--ink, #163f4b); overflow-wrap: anywhere; text-decoration: underline; text-underline-offset: 4px; }
+.rank-time { display: block; margin-top: 4px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+.room-code { overflow-wrap: anywhere; }

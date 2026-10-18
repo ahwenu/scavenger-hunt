@@ -1,0 +1,3144 @@
+{
+  "schemaVersion": 1,
+  "source": "99-reference/original-sheet.png",
+  "sourceSize": [
+    1536,
+    1024
+  ],
+  "coordinateSystem": "sourceRect=[x,y,width,height], top-left origin, pixels",
+  "colorSpace": "RGB pixel values retained; color profile not normalized",
+  "scale": "1x only; original pixels, no generated or reconstructed artwork",
+  "created": "2026-10-18",
+  "assetCount": 136,
+  "assets": [
+    {
+      "id": "girl-flag",
+      "name": "メインキャラ・旗を持つ基本ポーズ",
+      "category": "01-characters",
+      "file": "01-characters/girl-flag.png",
+      "originalCrop": "90-source-crops/01-characters/girl-flag.png",
+      "width": 279,
+      "height": 272,
+      "sourceRect": [
+        20,
+        41,
+        281,
+        272
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": "周囲の紙吹雪と説明文を除外。キャラクターと旗は一体。",
+      "alignedFile": "09-aligned-sprites/girl-flag.png",
+      "alignedCanvas": [
+        320,
+        320
+      ],
+      "alignedOffset": [
+        20,
+        40
+      ]
+    },
+    {
+      "id": "girl-camera",
+      "name": "メインキャラ・撮影ポーズ",
+      "category": "01-characters",
+      "file": "01-characters/girl-camera.png",
+      "originalCrop": "90-source-crops/01-characters/girl-camera.png",
+      "width": 240,
+      "height": 271,
+      "sourceRect": [
+        305,
+        42,
+        240,
+        271
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": "カメラ・しっぽを含む。",
+      "alignedFile": "09-aligned-sprites/girl-camera.png",
+      "alignedCanvas": [
+        320,
+        320
+      ],
+      "alignedOffset": [
+        40,
+        41
+      ]
+    },
+    {
+      "id": "robot-flag",
+      "name": "ロボット・基本ポーズ",
+      "category": "01-characters",
+      "file": "01-characters/robot-flag.png",
+      "originalCrop": "90-source-crops/01-characters/robot-flag.png",
+      "width": 235,
+      "height": 252,
+      "sourceRect": [
+        577,
+        48,
+        235,
+        254
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": "旗・メガホンを含む。",
+      "alignedFile": "09-aligned-sprites/robot-flag.png",
+      "alignedCanvas": [
+        320,
+        320
+      ],
+      "alignedOffset": [
+        42,
+        60
+      ]
+    },
+    {
+      "id": "robot-guide",
+      "name": "ロボット・案内",
+      "category": "01-characters",
+      "file": "01-characters/robot-guide.png",
+      "originalCrop": "90-source-crops/01-characters/robot-guide.png",
+      "width": 110,
+      "height": 97,
+      "sourceRect": [
+        828,
+        42,
+        110,
+        97
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "原画の白い胴体の輪郭が背景に溶け込んでいるため、この1点は背景付き原画切り抜き。再描画・輪郭補完なし。",
+      "alignedFile": "09-aligned-sprites/robot-guide.png",
+      "alignedCanvas": [
+        320,
+        320
+      ],
+      "alignedOffset": [
+        105,
+        215
+      ]
+    },
+    {
+      "id": "robot-judging",
+      "name": "ロボット・判定中",
+      "category": "01-characters",
+      "file": "01-characters/robot-judging.png",
+      "originalCrop": "90-source-crops/01-characters/robot-judging.png",
+      "width": 109,
+      "height": 98,
+      "sourceRect": [
+        949,
+        40,
+        109,
+        98
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": "虫眼鏡を含む。",
+      "alignedFile": "09-aligned-sprites/robot-judging.png",
+      "alignedCanvas": [
+        320,
+        320
+      ],
+      "alignedOffset": [
+        105,
+        214
+      ]
+    },
+    {
+      "id": "robot-success",
+      "name": "ロボット・成功",
+      "category": "01-characters",
+      "file": "01-characters/robot-success.png",
+      "originalCrop": "90-source-crops/01-characters/robot-success.png",
+      "width": 127,
+      "height": 129,
+      "sourceRect": [
+        816,
+        176,
+        127,
+        129
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "周囲の星と紙吹雪を含む。",
+      "alignedFile": "09-aligned-sprites/robot-success.png",
+      "alignedCanvas": [
+        320,
+        320
+      ],
+      "alignedOffset": [
+        96,
+        183
+      ]
+    },
+    {
+      "id": "robot-failure",
+      "name": "ロボット・失敗",
+      "category": "01-characters",
+      "file": "01-characters/robot-failure.png",
+      "originalCrop": "90-source-crops/01-characters/robot-failure.png",
+      "width": 105,
+      "height": 125,
+      "sourceRect": [
+        951,
+        177,
+        108,
+        128
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "落ち込み線を含む。",
+      "alignedFile": "09-aligned-sprites/robot-failure.png",
+      "alignedCanvas": [
+        320,
+        320
+      ],
+      "alignedOffset": [
+        107,
+        187
+      ]
+    },
+    {
+      "id": "girl-smile",
+      "name": "笑顔",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-smile.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-smile.png",
+      "width": 108,
+      "height": 116,
+      "sourceRect": [
+        1086,
+        43,
+        108,
+        116
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-smile.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        26,
+        36
+      ]
+    },
+    {
+      "id": "girl-wink",
+      "name": "ウィンク",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-wink.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-wink.png",
+      "width": 100,
+      "height": 115,
+      "sourceRect": [
+        1198,
+        44,
+        100,
+        115
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-wink.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        30,
+        37
+      ]
+    },
+    {
+      "id": "girl-clear",
+      "name": "喜び・クリア",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-clear.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-clear.png",
+      "width": 115,
+      "height": 115,
+      "sourceRect": [
+        1301,
+        44,
+        115,
+        115
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-clear.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        22,
+        37
+      ]
+    },
+    {
+      "id": "girl-surprised",
+      "name": "びっくり",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-surprised.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-surprised.png",
+      "width": 111,
+      "height": 115,
+      "sourceRect": [
+        1416,
+        43,
+        111,
+        116
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-surprised.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        24,
+        37
+      ]
+    },
+    {
+      "id": "girl-thinking",
+      "name": "考える",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-thinking.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-thinking.png",
+      "width": 113,
+      "height": 121,
+      "sourceRect": [
+        1086,
+        183,
+        113,
+        123
+      ],
+      "trimOffset": [
+        0,
+        2
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-thinking.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        23,
+        31
+      ]
+    },
+    {
+      "id": "girl-sad",
+      "name": "落ち込み・失敗",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-sad.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-sad.png",
+      "width": 99,
+      "height": 120,
+      "sourceRect": [
+        1199,
+        184,
+        99,
+        122
+      ],
+      "trimOffset": [
+        0,
+        2
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-sad.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        30,
+        32
+      ]
+    },
+    {
+      "id": "girl-cheer",
+      "name": "応援",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-cheer.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-cheer.png",
+      "width": 115,
+      "height": 122,
+      "sourceRect": [
+        1301,
+        184,
+        115,
+        122
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-cheer.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        22,
+        30
+      ]
+    },
+    {
+      "id": "girl-please",
+      "name": "お願い・かわいく",
+      "category": "02-expressions",
+      "file": "02-expressions/girl-please.png",
+      "originalCrop": "90-source-crops/02-expressions/girl-please.png",
+      "width": 112,
+      "height": 121,
+      "sourceRect": [
+        1416,
+        184,
+        112,
+        122
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "胸元までの表情素材。元シートで切れている下端はそのまま。",
+      "alignedFile": "09-aligned-sprites/girl-please.png",
+      "alignedCanvas": [
+        160,
+        160
+      ],
+      "alignedOffset": [
+        24,
+        31
+      ]
+    },
+    {
+      "id": "schoolyard",
+      "name": "運動会の校庭",
+      "category": "03-backgrounds",
+      "file": "03-backgrounds/schoolyard.png",
+      "originalCrop": "90-source-crops/03-backgrounds/schoolyard.png",
+      "width": 205,
+      "height": 136,
+      "sourceRect": [
+        18,
+        380,
+        205,
+        136
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "背景イラスト。看板・旗・風船は描き込み済み。"
+    },
+    {
+      "id": "sky-bunting",
+      "name": "青空・旗・風船",
+      "category": "03-backgrounds",
+      "file": "03-backgrounds/sky-bunting.png",
+      "originalCrop": "90-source-crops/03-backgrounds/sky-bunting.png",
+      "width": 181,
+      "height": 136,
+      "sourceRect": [
+        233,
+        380,
+        181,
+        136
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "背景イラスト。看板・旗・風船は描き込み済み。"
+    },
+    {
+      "id": "entrance-gate",
+      "name": "看板・入場ゲート",
+      "category": "03-backgrounds",
+      "file": "03-backgrounds/entrance-gate.png",
+      "originalCrop": "90-source-crops/03-backgrounds/entrance-gate.png",
+      "width": 188,
+      "height": 136,
+      "sourceRect": [
+        424,
+        380,
+        188,
+        136
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "背景イラスト。看板・旗・風船は描き込み済み。"
+    },
+    {
+      "id": "scoreboard",
+      "name": "得点板・応援席",
+      "category": "03-backgrounds",
+      "file": "03-backgrounds/scoreboard.png",
+      "originalCrop": "90-source-crops/03-backgrounds/scoreboard.png",
+      "width": 188,
+      "height": 136,
+      "sourceRect": [
+        622,
+        380,
+        188,
+        136
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "背景イラスト。看板・旗・風船は描き込み済み。"
+    },
+    {
+      "id": "decoration-strip",
+      "name": "装飾パーツ帯・全体",
+      "category": "04-decorations",
+      "file": "04-decorations/decoration-strip.png",
+      "originalCrop": "90-source-crops/04-decorations/decoration-strip.png",
+      "width": 789,
+      "height": 56,
+      "sourceRect": [
+        22,
+        538,
+        789,
+        56
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "全パーツと小さな紙吹雪を保持した参照用。"
+    },
+    {
+      "id": "bunting",
+      "name": "ガーランド・連続旗",
+      "category": "04-decorations",
+      "file": "04-decorations/bunting.png",
+      "originalCrop": "90-source-crops/04-decorations/bunting.png",
+      "width": 190,
+      "height": 50,
+      "sourceRect": [
+        24,
+        539,
+        191,
+        51
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "star-shine",
+      "name": "きらきら星・大",
+      "category": "04-decorations",
+      "file": "04-decorations/star-shine.png",
+      "originalCrop": "90-source-crops/04-decorations/star-shine.png",
+      "width": 40,
+      "height": 48,
+      "sourceRect": [
+        230,
+        538,
+        40,
+        49
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "exclamation-blue-1",
+      "name": "青の感嘆符・1",
+      "category": "04-decorations",
+      "file": "04-decorations/exclamation-blue-1.png",
+      "originalCrop": "90-source-crops/04-decorations/exclamation-blue-1.png",
+      "width": 25,
+      "height": 31,
+      "sourceRect": [
+        286,
+        541,
+        25,
+        31
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "star-yellow",
+      "name": "黄色い星",
+      "category": "04-decorations",
+      "file": "04-decorations/star-yellow.png",
+      "originalCrop": "90-source-crops/04-decorations/star-yellow.png",
+      "width": 37,
+      "height": 38,
+      "sourceRect": [
+        317,
+        547,
+        37,
+        39
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "exclamation-blue-2",
+      "name": "青の感嘆符・2",
+      "category": "04-decorations",
+      "file": "04-decorations/exclamation-blue-2.png",
+      "originalCrop": "90-source-crops/04-decorations/exclamation-blue-2.png",
+      "width": 23,
+      "height": 31,
+      "sourceRect": [
+        366,
+        538,
+        24,
+        32
+      ],
+      "trimOffset": [
+        1,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "confetti-red",
+      "name": "赤い紙吹雪",
+      "category": "04-decorations",
+      "file": "04-decorations/confetti-red.png",
+      "originalCrop": "90-source-crops/04-decorations/confetti-red.png",
+      "width": 17,
+      "height": 17,
+      "sourceRect": [
+        359,
+        572,
+        17,
+        17
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "confetti-yellow",
+      "name": "黄色い紙吹雪",
+      "category": "04-decorations",
+      "file": "04-decorations/confetti-yellow.png",
+      "originalCrop": "90-source-crops/04-decorations/confetti-yellow.png",
+      "width": 23,
+      "height": 23,
+      "sourceRect": [
+        398,
+        538,
+        26,
+        24
+      ],
+      "trimOffset": [
+        3,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "confetti-green",
+      "name": "緑の紙吹雪",
+      "category": "04-decorations",
+      "file": "04-decorations/confetti-green.png",
+      "originalCrop": "90-source-crops/04-decorations/confetti-green.png",
+      "width": 13,
+      "height": 14,
+      "sourceRect": [
+        416,
+        567,
+        13,
+        16
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "confetti-pink",
+      "name": "ピンクの紙吹雪",
+      "category": "04-decorations",
+      "file": "04-decorations/confetti-pink.png",
+      "originalCrop": "90-source-crops/04-decorations/confetti-pink.png",
+      "width": 22,
+      "height": 24,
+      "sourceRect": [
+        388,
+        560,
+        24,
+        28
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "confetti-yellow-small",
+      "name": "黄色い小さな紙吹雪",
+      "category": "04-decorations",
+      "file": "04-decorations/confetti-yellow-small.png",
+      "originalCrop": "90-source-crops/04-decorations/confetti-yellow-small.png",
+      "width": 14,
+      "height": 13,
+      "sourceRect": [
+        279,
+        576,
+        14,
+        16
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "crown",
+      "name": "王冠",
+      "category": "04-decorations",
+      "file": "04-decorations/crown.png",
+      "originalCrop": "90-source-crops/04-decorations/crown.png",
+      "width": 49,
+      "height": 40,
+      "sourceRect": [
+        444,
+        550,
+        49,
+        43
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "trophy",
+      "name": "トロフィー",
+      "category": "04-decorations",
+      "file": "04-decorations/trophy.png",
+      "originalCrop": "90-source-crops/04-decorations/trophy.png",
+      "width": 48,
+      "height": 46,
+      "sourceRect": [
+        499,
+        546,
+        48,
+        47
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "flag-blue",
+      "name": "青い旗",
+      "category": "04-decorations",
+      "file": "04-decorations/flag-blue.png",
+      "originalCrop": "90-source-crops/04-decorations/flag-blue.png",
+      "width": 42,
+      "height": 44,
+      "sourceRect": [
+        548,
+        550,
+        44,
+        44
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "flag-yellow",
+      "name": "黄色い旗",
+      "category": "04-decorations",
+      "file": "04-decorations/flag-yellow.png",
+      "originalCrop": "90-source-crops/04-decorations/flag-yellow.png",
+      "width": 31,
+      "height": 41,
+      "sourceRect": [
+        601,
+        550,
+        34,
+        44
+      ],
+      "trimOffset": [
+        3,
+        3
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "megaphone",
+      "name": "メガホン",
+      "category": "04-decorations",
+      "file": "04-decorations/megaphone.png",
+      "originalCrop": "90-source-crops/04-decorations/megaphone.png",
+      "width": 47,
+      "height": 44,
+      "sourceRect": [
+        640,
+        549,
+        47,
+        45
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "cone",
+      "name": "コーン",
+      "category": "04-decorations",
+      "file": "04-decorations/cone.png",
+      "originalCrop": "90-source-crops/04-decorations/cone.png",
+      "width": 34,
+      "height": 39,
+      "sourceRect": [
+        690,
+        550,
+        34,
+        44
+      ],
+      "trimOffset": [
+        0,
+        5
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "stopwatch",
+      "name": "ストップウォッチ",
+      "category": "04-decorations",
+      "file": "04-decorations/stopwatch.png",
+      "originalCrop": "90-source-crops/04-decorations/stopwatch.png",
+      "width": 38,
+      "height": 40,
+      "sourceRect": [
+        725,
+        550,
+        40,
+        44
+      ],
+      "trimOffset": [
+        0,
+        4
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "camera",
+      "name": "カメラ",
+      "category": "04-decorations",
+      "file": "04-decorations/camera.png",
+      "originalCrop": "90-source-crops/04-decorations/camera.png",
+      "width": 42,
+      "height": 40,
+      "sourceRect": [
+        766,
+        550,
+        42,
+        44
+      ],
+      "trimOffset": [
+        0,
+        3
+      ],
+      "transparency": true,
+      "mode": "largest",
+      "notes": ""
+    },
+    {
+      "id": "button-start",
+      "name": "ゲームスタート！",
+      "category": "05-ui",
+      "file": "05-ui/button-start.png",
+      "originalCrop": "90-source-crops/05-ui/button-start.png",
+      "width": 264,
+      "height": 62,
+      "sourceRect": [
+        849,
+        385,
+        264,
+        62
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "button-next",
+      "name": "次のお題へ",
+      "category": "05-ui",
+      "file": "05-ui/button-next.png",
+      "originalCrop": "90-source-crops/05-ui/button-next.png",
+      "width": 266,
+      "height": 60,
+      "sourceRect": [
+        849,
+        448,
+        266,
+        60
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "button-retry",
+      "name": "もう一度撮る",
+      "category": "05-ui",
+      "file": "05-ui/button-retry.png",
+      "originalCrop": "90-source-crops/05-ui/button-retry.png",
+      "width": 140,
+      "height": 61,
+      "sourceRect": [
+        846,
+        515,
+        140,
+        61
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "button-hint",
+      "name": "ヒントを見る",
+      "category": "05-ui",
+      "file": "05-ui/button-hint.png",
+      "originalCrop": "90-source-crops/05-ui/button-hint.png",
+      "width": 145,
+      "height": 62,
+      "sourceRect": [
+        990,
+        515,
+        145,
+        62
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "icon-home",
+      "name": "ホーム・アイコン",
+      "category": "05-ui",
+      "file": "05-ui/icon-home.png",
+      "originalCrop": "90-source-crops/05-ui/icon-home.png",
+      "width": 32,
+      "height": 32,
+      "sourceRect": [
+        1214,
+        371,
+        33,
+        32
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "icon-ranking",
+      "name": "ランキング・アイコン",
+      "category": "05-ui",
+      "file": "05-ui/icon-ranking.png",
+      "originalCrop": "90-source-crops/05-ui/icon-ranking.png",
+      "width": 33,
+      "height": 32,
+      "sourceRect": [
+        1293,
+        371,
+        33,
+        32
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "icon-rules",
+      "name": "ルール・アイコン",
+      "category": "05-ui",
+      "file": "05-ui/icon-rules.png",
+      "originalCrop": "90-source-crops/05-ui/icon-rules.png",
+      "width": 37,
+      "height": 32,
+      "sourceRect": [
+        1376,
+        371,
+        37,
+        33
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "icon-settings",
+      "name": "設定・アイコン",
+      "category": "05-ui",
+      "file": "05-ui/icon-settings.png",
+      "originalCrop": "90-source-crops/05-ui/icon-settings.png",
+      "width": 32,
+      "height": 33,
+      "sourceRect": [
+        1466,
+        370,
+        34,
+        35
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "nav-home",
+      "name": "ホーム・文字付き",
+      "category": "05-ui",
+      "file": "05-ui/nav-home.png",
+      "originalCrop": "90-source-crops/05-ui/nav-home.png",
+      "width": 40,
+      "height": 50,
+      "sourceRect": [
+        1208,
+        371,
+        46,
+        50
+      ],
+      "trimOffset": [
+        1,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "nav-ranking",
+      "name": "ランキング・文字付き",
+      "category": "05-ui",
+      "file": "05-ui/nav-ranking.png",
+      "originalCrop": "90-source-crops/05-ui/nav-ranking.png",
+      "width": 63,
+      "height": 50,
+      "sourceRect": [
+        1280,
+        371,
+        67,
+        50
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "nav-rules",
+      "name": "ルール・文字付き",
+      "category": "05-ui",
+      "file": "05-ui/nav-rules.png",
+      "originalCrop": "90-source-crops/05-ui/nav-rules.png",
+      "width": 40,
+      "height": 49,
+      "sourceRect": [
+        1374,
+        371,
+        41,
+        50
+      ],
+      "trimOffset": [
+        1,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "nav-settings",
+      "name": "設定・文字付き",
+      "category": "05-ui",
+      "file": "05-ui/nav-settings.png",
+      "originalCrop": "90-source-crops/05-ui/nav-settings.png",
+      "width": 34,
+      "height": 50,
+      "sourceRect": [
+        1464,
+        370,
+        40,
+        51
+      ],
+      "trimOffset": [
+        0,
+        1
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "accent-action",
+      "name": "オレンジの動き線",
+      "category": "05-ui",
+      "file": "05-ui/accent-action.png",
+      "originalCrop": "90-source-crops/05-ui/accent-action.png",
+      "width": 47,
+      "height": 48,
+      "sourceRect": [
+        1120,
+        386,
+        47,
+        48
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "ribbon-round",
+      "name": "第1競技！リボン",
+      "category": "05-ui",
+      "file": "05-ui/ribbon-round.png",
+      "originalCrop": "90-source-crops/05-ui/ribbon-round.png",
+      "width": 165,
+      "height": 77,
+      "sourceRect": [
+        1142,
+        436,
+        165,
+        77
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "flag-round",
+      "name": "競技・赤旗",
+      "category": "05-ui",
+      "file": "05-ui/flag-round.png",
+      "originalCrop": "90-source-crops/05-ui/flag-round.png",
+      "width": 33,
+      "height": 43,
+      "sourceRect": [
+        1320,
+        437,
+        34,
+        47
+      ],
+      "trimOffset": [
+        0,
+        4
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "timer-topic",
+      "name": "お題・タイマー",
+      "category": "05-ui",
+      "file": "05-ui/timer-topic.png",
+      "originalCrop": "90-source-crops/05-ui/timer-topic.png",
+      "width": 151,
+      "height": 71,
+      "sourceRect": [
+        1367,
+        439,
+        151,
+        72
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "badge-rank",
+      "name": "2位・順位バッジ",
+      "category": "05-ui",
+      "file": "05-ui/badge-rank.png",
+      "originalCrop": "90-source-crops/05-ui/badge-rank.png",
+      "width": 114,
+      "height": 60,
+      "sourceRect": [
+        1154,
+        522,
+        114,
+        60
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "progress-clear",
+      "name": "クリア数3/10・進捗",
+      "category": "05-ui",
+      "file": "05-ui/progress-clear.png",
+      "originalCrop": "90-source-crops/05-ui/progress-clear.png",
+      "width": 242,
+      "height": 60,
+      "sourceRect": [
+        1275,
+        522,
+        242,
+        60
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": "画像内の文言・値は固定。可変値はHTML/CSSで実装推奨。"
+    },
+    {
+      "id": "title-logo",
+      "name": "ゲームタイトルロゴ",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/title-logo.png",
+      "originalCrop": "90-source-crops/06-screen-parts/title-logo.png",
+      "width": 151,
+      "height": 100,
+      "sourceRect": [
+        30,
+        676,
+        151,
+        100
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "start-character-duo",
+      "name": "スタート・キャラ2体",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/start-character-duo.png",
+      "originalCrop": "90-source-crops/06-screen-parts/start-character-duo.png",
+      "width": 159,
+      "height": 111,
+      "sourceRect": [
+        24,
+        779,
+        159,
+        111
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "question-stage-hud",
+      "name": "お題・競技/問題数表示",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/question-stage-hud.png",
+      "originalCrop": "90-source-crops/06-screen-parts/question-stage-hud.png",
+      "width": 89,
+      "height": 32,
+      "sourceRect": [
+        211,
+        664,
+        89,
+        32
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "question-rank-hud",
+      "name": "お題・順位/得点表示",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/question-rank-hud.png",
+      "originalCrop": "90-source-crops/06-screen-parts/question-rank-hud.png",
+      "width": 63,
+      "height": 35,
+      "sourceRect": [
+        305,
+        662,
+        63,
+        35
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "question-prompt-card",
+      "name": "お題カード",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/question-prompt-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/question-prompt-card.png",
+      "width": 151,
+      "height": 64,
+      "sourceRect": [
+        212,
+        695,
+        151,
+        64
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "question-timer",
+      "name": "お題・タイマー",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/question-timer.png",
+      "originalCrop": "90-source-crops/06-screen-parts/question-timer.png",
+      "width": 88,
+      "height": 28,
+      "sourceRect": [
+        244,
+        763,
+        88,
+        28
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "camera-viewfinder",
+      "name": "撮影プレビュー・枠と写真",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/camera-viewfinder.png",
+      "originalCrop": "90-source-crops/06-screen-parts/camera-viewfinder.png",
+      "width": 151,
+      "height": 129,
+      "sourceRect": [
+        214,
+        793,
+        151,
+        129
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "camera-gallery-button",
+      "name": "カメラ・画像選択ボタン",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/camera-gallery-button.png",
+      "originalCrop": "90-source-crops/06-screen-parts/camera-gallery-button.png",
+      "width": 31,
+      "height": 35,
+      "sourceRect": [
+        218,
+        880,
+        31,
+        35
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "camera-shutter-button",
+      "name": "カメラ・撮影ボタン",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/camera-shutter-button.png",
+      "originalCrop": "90-source-crops/06-screen-parts/camera-shutter-button.png",
+      "width": 71,
+      "height": 65,
+      "sourceRect": [
+        254,
+        883,
+        71,
+        65
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "camera-switch-button",
+      "name": "カメラ・切替ボタン",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/camera-switch-button.png",
+      "originalCrop": "90-source-crops/06-screen-parts/camera-switch-button.png",
+      "width": 32,
+      "height": 36,
+      "sourceRect": [
+        327,
+        880,
+        32,
+        36
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "apple-photo",
+      "name": "りんごの写真・手と背景込み",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/apple-photo.png",
+      "originalCrop": "90-source-crops/06-screen-parts/apple-photo.png",
+      "width": 88,
+      "height": 93,
+      "sourceRect": [
+        244,
+        800,
+        88,
+        93
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ai-speech",
+      "name": "AI判定中・吹き出し",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ai-speech.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ai-speech.png",
+      "width": 133,
+      "height": 68,
+      "sourceRect": [
+        402,
+        696,
+        133,
+        68
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ai-robot-large",
+      "name": "AI判定中・ロボット",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ai-robot-large.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ai-robot-large.png",
+      "width": 135,
+      "height": 126,
+      "sourceRect": [
+        400,
+        756,
+        135,
+        126
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ai-progress",
+      "name": "AI判定中・進捗バー",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ai-progress.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ai-progress.png",
+      "width": 142,
+      "height": 36,
+      "sourceRect": [
+        398,
+        890,
+        142,
+        36
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "success-clear-header",
+      "name": "成功・CLEARロゴと王冠",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/success-clear-header.png",
+      "originalCrop": "90-source-crops/06-screen-parts/success-clear-header.png",
+      "width": 182,
+      "height": 113,
+      "sourceRect": [
+        572,
+        663,
+        182,
+        113
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "success-cheering-character",
+      "name": "成功・応援キャラ",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/success-cheering-character.png",
+      "originalCrop": "90-source-crops/06-screen-parts/success-cheering-character.png",
+      "width": 149,
+      "height": 87,
+      "sourceRect": [
+        588,
+        753,
+        149,
+        87
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "success-points-ribbon",
+      "name": "成功・+500pt札",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/success-points-ribbon.png",
+      "originalCrop": "90-source-crops/06-screen-parts/success-points-ribbon.png",
+      "width": 174,
+      "height": 48,
+      "sourceRect": [
+        577,
+        826,
+        174,
+        48
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "success-rank-card",
+      "name": "成功・順位カード",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/success-rank-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/success-rank-card.png",
+      "width": 74,
+      "height": 53,
+      "sourceRect": [
+        584,
+        870,
+        74,
+        53
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "success-progress-card",
+      "name": "成功・進捗カード",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/success-progress-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/success-progress-card.png",
+      "width": 76,
+      "height": 53,
+      "sourceRect": [
+        663,
+        870,
+        76,
+        53
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "success-next-button",
+      "name": "成功・次のお題ボタン",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/success-next-button.png",
+      "originalCrop": "90-source-crops/06-screen-parts/success-next-button.png",
+      "width": 158,
+      "height": 43,
+      "sourceRect": [
+        582,
+        922,
+        158,
+        43
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "failure-speech",
+      "name": "失敗・ざんねん吹き出し",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/failure-speech.png",
+      "originalCrop": "90-source-crops/06-screen-parts/failure-speech.png",
+      "width": 142,
+      "height": 66,
+      "sourceRect": [
+        791,
+        676,
+        142,
+        66
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "failure-character-duo",
+      "name": "失敗・キャラ2体",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/failure-character-duo.png",
+      "originalCrop": "90-source-crops/06-screen-parts/failure-character-duo.png",
+      "width": 151,
+      "height": 140,
+      "sourceRect": [
+        789,
+        743,
+        151,
+        140
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "failure-message-card",
+      "name": "失敗・メッセージカード",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/failure-message-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/failure-message-card.png",
+      "width": 147,
+      "height": 39,
+      "sourceRect": [
+        788,
+        876,
+        147,
+        39
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "failure-hint-button",
+      "name": "失敗・ヒントボタン",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/failure-hint-button.png",
+      "originalCrop": "90-source-crops/06-screen-parts/failure-hint-button.png",
+      "width": 153,
+      "height": 29,
+      "sourceRect": [
+        783,
+        913,
+        153,
+        29
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "failure-retry-button",
+      "name": "失敗・再撮影ボタン",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/failure-retry-button.png",
+      "originalCrop": "90-source-crops/06-screen-parts/failure-retry-button.png",
+      "width": 153,
+      "height": 25,
+      "sourceRect": [
+        783,
+        941,
+        153,
+        25
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "stages-title-ribbon",
+      "name": "ステージ選択・見出し",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stages-title-ribbon.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stages-title-ribbon.png",
+      "width": 145,
+      "height": 39,
+      "sourceRect": [
+        975,
+        679,
+        145,
+        39
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "stages-back-button",
+      "name": "ステージ選択・戻る",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stages-back-button.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stages-back-button.png",
+      "width": 39,
+      "height": 42,
+      "sourceRect": [
+        959,
+        894,
+        39,
+        42
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "stages-guidance",
+      "name": "ステージ選択・案内",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stages-guidance.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stages-guidance.png",
+      "width": 120,
+      "height": 48,
+      "sourceRect": [
+        996,
+        894,
+        120,
+        48
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "stages-robot",
+      "name": "ステージ選択・ロボット",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stages-robot.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stages-robot.png",
+      "width": 42,
+      "height": 50,
+      "sourceRect": [
+        1084,
+        890,
+        42,
+        50
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ranking-title-ribbon",
+      "name": "ランキング・見出し",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-title-ribbon.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-title-ribbon.png",
+      "width": 145,
+      "height": 36,
+      "sourceRect": [
+        1161,
+        673,
+        145,
+        36
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ranking-tab-all",
+      "name": "ランキング・全体タブ",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-tab-all.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-tab-all.png",
+      "width": 68,
+      "height": 23,
+      "sourceRect": [
+        1172,
+        710,
+        68,
+        23
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ranking-tab-friends",
+      "name": "ランキング・フレンドタブ",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-tab-friends.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-tab-friends.png",
+      "width": 64,
+      "height": 23,
+      "sourceRect": [
+        1241,
+        710,
+        64,
+        23
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ranking-table-panel",
+      "name": "ランキング・表全体",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-table-panel.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-table-panel.png",
+      "width": 177,
+      "height": 225,
+      "sourceRect": [
+        1146,
+        704,
+        177,
+        225
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "ranking-user-row",
+      "name": "ランキング・自分の行",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-user-row.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-user-row.png",
+      "width": 170,
+      "height": 32,
+      "sourceRect": [
+        1148,
+        875,
+        170,
+        32
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-title-ribbon",
+      "name": "遊び方・見出し",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-title-ribbon.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-title-ribbon.png",
+      "width": 144,
+      "height": 43,
+      "sourceRect": [
+        1360,
+        677,
+        144,
+        43
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-01-card",
+      "name": "遊び方1・お題を確認",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-01-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-01-card.png",
+      "width": 74,
+      "height": 70,
+      "sourceRect": [
+        1347,
+        724,
+        74,
+        70
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-02-card",
+      "name": "遊び方2・見つけて撮る",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-02-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-02-card.png",
+      "width": 85,
+      "height": 70,
+      "sourceRect": [
+        1424,
+        724,
+        85,
+        70
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-03-card",
+      "name": "遊び方3・AIが判定",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-03-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-03-card.png",
+      "width": 75,
+      "height": 87,
+      "sourceRect": [
+        1347,
+        798,
+        75,
+        87
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-04-card",
+      "name": "遊び方4・結果を確認",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-04-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-04-card.png",
+      "width": 84,
+      "height": 87,
+      "sourceRect": [
+        1425,
+        798,
+        84,
+        87
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-message",
+      "name": "遊び方・説明文",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-message.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-message.png",
+      "width": 158,
+      "height": 45,
+      "sourceRect": [
+        1348,
+        891,
+        158,
+        45
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-robot",
+      "name": "遊び方・ロボット",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-robot.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-robot.png",
+      "width": 48,
+      "height": 63,
+      "sourceRect": [
+        1470,
+        906,
+        48,
+        63
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-camera-1",
+      "name": "遊び方・カメラ1",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-camera-1.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-camera-1.png",
+      "width": 36,
+      "height": 32,
+      "sourceRect": [
+        1361,
+        748,
+        36,
+        32
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-camera-2",
+      "name": "遊び方・カメラ2",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-camera-2.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-camera-2.png",
+      "width": 36,
+      "height": 32,
+      "sourceRect": [
+        1451,
+        748,
+        36,
+        32
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-robot-card",
+      "name": "遊び方・判定ロボット",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-robot-card.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-robot-card.png",
+      "width": 70,
+      "height": 62,
+      "sourceRect": [
+        1349,
+        822,
+        70,
+        62
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "howto-clear",
+      "name": "遊び方・CLEAR",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/howto-clear.png",
+      "originalCrop": "90-source-crops/06-screen-parts/howto-clear.png",
+      "width": 78,
+      "height": 50,
+      "sourceRect": [
+        1427,
+        825,
+        78,
+        50
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面見本からの原寸切り抜き。背景や重なりを含む合成見本。"
+    },
+    {
+      "id": "stage-01",
+      "name": "ステージ1",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-01.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-01.png",
+      "width": 51,
+      "height": 55,
+      "sourceRect": [
+        962,
+        724,
+        51,
+        55
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-02",
+      "name": "ステージ2",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-02.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-02.png",
+      "width": 49,
+      "height": 55,
+      "sourceRect": [
+        1016,
+        724,
+        49,
+        55
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-03",
+      "name": "ステージ3",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-03.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-03.png",
+      "width": 51,
+      "height": 55,
+      "sourceRect": [
+        1068,
+        724,
+        51,
+        55
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-04",
+      "name": "ステージ4",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-04.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-04.png",
+      "width": 51,
+      "height": 52,
+      "sourceRect": [
+        962,
+        782,
+        51,
+        52
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-05",
+      "name": "ステージ5",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-05.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-05.png",
+      "width": 49,
+      "height": 52,
+      "sourceRect": [
+        1016,
+        782,
+        49,
+        52
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-06",
+      "name": "ステージ6",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-06.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-06.png",
+      "width": 51,
+      "height": 52,
+      "sourceRect": [
+        1068,
+        782,
+        51,
+        52
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-07-locked",
+      "name": "ステージ7・ロック",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-07-locked.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-07-locked.png",
+      "width": 37,
+      "height": 42,
+      "sourceRect": [
+        962,
+        838,
+        37,
+        42
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-08-locked",
+      "name": "ステージ8・ロック",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-08-locked.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-08-locked.png",
+      "width": 37,
+      "height": 42,
+      "sourceRect": [
+        1002,
+        838,
+        37,
+        42
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-09-locked",
+      "name": "ステージ9・ロック",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-09-locked.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-09-locked.png",
+      "width": 37,
+      "height": 42,
+      "sourceRect": [
+        1042,
+        838,
+        37,
+        42
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "stage-10-locked",
+      "name": "ステージ10・ロック",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/stage-10-locked.png",
+      "originalCrop": "90-source-crops/06-screen-parts/stage-10-locked.png",
+      "width": 37,
+      "height": 42,
+      "sourceRect": [
+        1082,
+        838,
+        37,
+        42
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "旗/鍵/数字/枠込みの合成見本。"
+    },
+    {
+      "id": "ranking-row-1",
+      "name": "ランキング・1位の行",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-row-1.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-row-1.png",
+      "width": 166,
+      "height": 26,
+      "sourceRect": [
+        1150,
+        737,
+        166,
+        26
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "名前・得点・アバターを含む固定画像。"
+    },
+    {
+      "id": "ranking-row-2",
+      "name": "ランキング・2位の行",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-row-2.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-row-2.png",
+      "width": 166,
+      "height": 26,
+      "sourceRect": [
+        1150,
+        763,
+        166,
+        26
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "名前・得点・アバターを含む固定画像。"
+    },
+    {
+      "id": "ranking-row-3",
+      "name": "ランキング・3位の行",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-row-3.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-row-3.png",
+      "width": 166,
+      "height": 26,
+      "sourceRect": [
+        1150,
+        789,
+        166,
+        26
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "名前・得点・アバターを含む固定画像。"
+    },
+    {
+      "id": "ranking-row-4",
+      "name": "ランキング・4位の行",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-row-4.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-row-4.png",
+      "width": 166,
+      "height": 26,
+      "sourceRect": [
+        1150,
+        815,
+        166,
+        26
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "名前・得点・アバターを含む固定画像。"
+    },
+    {
+      "id": "ranking-row-5",
+      "name": "ランキング・5位の行",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-row-5.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-row-5.png",
+      "width": 166,
+      "height": 28,
+      "sourceRect": [
+        1150,
+        841,
+        166,
+        28
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "名前・得点・アバターを含む固定画像。"
+    },
+    {
+      "id": "ranking-avatar-1",
+      "name": "ランキング・アバター1",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-avatar-1.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-avatar-1.png",
+      "width": 23,
+      "height": 23,
+      "sourceRect": [
+        1180,
+        739,
+        23,
+        23
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "小さな画面見本内のアバター。低解像度。"
+    },
+    {
+      "id": "ranking-avatar-2",
+      "name": "ランキング・アバター2",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-avatar-2.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-avatar-2.png",
+      "width": 23,
+      "height": 23,
+      "sourceRect": [
+        1180,
+        766,
+        23,
+        23
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "小さな画面見本内のアバター。低解像度。"
+    },
+    {
+      "id": "ranking-avatar-3",
+      "name": "ランキング・アバター3",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-avatar-3.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-avatar-3.png",
+      "width": 23,
+      "height": 23,
+      "sourceRect": [
+        1180,
+        792,
+        23,
+        23
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "小さな画面見本内のアバター。低解像度。"
+    },
+    {
+      "id": "ranking-avatar-4",
+      "name": "ランキング・アバター4",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-avatar-4.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-avatar-4.png",
+      "width": 23,
+      "height": 23,
+      "sourceRect": [
+        1180,
+        818,
+        23,
+        23
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "小さな画面見本内のアバター。低解像度。"
+    },
+    {
+      "id": "ranking-avatar-5",
+      "name": "ランキング・アバター5",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-avatar-5.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-avatar-5.png",
+      "width": 23,
+      "height": 23,
+      "sourceRect": [
+        1180,
+        846,
+        23,
+        23
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "小さな画面見本内のアバター。低解像度。"
+    },
+    {
+      "id": "ranking-avatar-6",
+      "name": "ランキング・アバター6",
+      "category": "06-screen-parts",
+      "file": "06-screen-parts/ranking-avatar-6.png",
+      "originalCrop": "90-source-crops/06-screen-parts/ranking-avatar-6.png",
+      "width": 24,
+      "height": 24,
+      "sourceRect": [
+        1180,
+        879,
+        24,
+        24
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "小さな画面見本内のアバター。低解像度。"
+    },
+    {
+      "id": "01-start",
+      "name": "①スタート画面",
+      "category": "07-screens",
+      "file": "07-screens/01-start.png",
+      "originalCrop": "90-source-crops/07-screens/01-start.png",
+      "width": 174,
+      "height": 313,
+      "sourceRect": [
+        18,
+        654,
+        174,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "02-question",
+      "name": "②お題画面",
+      "category": "07-screens",
+      "file": "07-screens/02-question.png",
+      "originalCrop": "90-source-crops/07-screens/02-question.png",
+      "width": 172,
+      "height": 313,
+      "sourceRect": [
+        202,
+        654,
+        172,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "03-judging",
+      "name": "③AI判定中",
+      "category": "07-screens",
+      "file": "07-screens/03-judging.png",
+      "originalCrop": "90-source-crops/07-screens/03-judging.png",
+      "width": 168,
+      "height": 313,
+      "sourceRect": [
+        384,
+        654,
+        168,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "04-success",
+      "name": "④クリア画面・成功",
+      "category": "07-screens",
+      "file": "07-screens/04-success.png",
+      "originalCrop": "90-source-crops/07-screens/04-success.png",
+      "width": 199,
+      "height": 313,
+      "sourceRect": [
+        562,
+        654,
+        199,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "05-failure",
+      "name": "⑤クリア画面・失敗",
+      "category": "07-screens",
+      "file": "07-screens/05-failure.png",
+      "originalCrop": "90-source-crops/07-screens/05-failure.png",
+      "width": 173,
+      "height": 313,
+      "sourceRect": [
+        771,
+        654,
+        173,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "06-stage-select",
+      "name": "⑥ステージ選択",
+      "category": "07-screens",
+      "file": "07-screens/06-stage-select.png",
+      "originalCrop": "90-source-crops/07-screens/06-stage-select.png",
+      "width": 177,
+      "height": 313,
+      "sourceRect": [
+        953,
+        654,
+        177,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "07-ranking",
+      "name": "⑦ランキング",
+      "category": "07-screens",
+      "file": "07-screens/07-ranking.png",
+      "originalCrop": "90-source-crops/07-screens/07-ranking.png",
+      "width": 188,
+      "height": 313,
+      "sourceRect": [
+        1139,
+        654,
+        188,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "08-howto",
+      "name": "⑧遊び方",
+      "category": "07-screens",
+      "file": "07-screens/08-howto.png",
+      "originalCrop": "90-source-crops/07-screens/08-howto.png",
+      "width": 182,
+      "height": 313,
+      "sourceRect": [
+        1336,
+        654,
+        182,
+        313
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": false,
+      "mode": "crop",
+      "notes": "画面全体の固定イメージ。UIを実装したファイルではない。"
+    },
+    {
+      "id": "section-main",
+      "name": "メインキャラクター見出し",
+      "category": "08-section-labels",
+      "file": "08-section-labels/section-main.png",
+      "originalCrop": "90-source-crops/08-section-labels/section-main.png",
+      "width": 335,
+      "height": 35,
+      "sourceRect": [
+        12,
+        7,
+        335,
+        35
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "section-robot",
+      "name": "サブキャラクター見出し",
+      "category": "08-section-labels",
+      "file": "08-section-labels/section-robot.png",
+      "originalCrop": "90-source-crops/08-section-labels/section-robot.png",
+      "width": 269,
+      "height": 35,
+      "sourceRect": [
+        553,
+        7,
+        269,
+        35
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "section-expressions",
+      "name": "表情見出し",
+      "category": "08-section-labels",
+      "file": "08-section-labels/section-expressions.png",
+      "originalCrop": "90-source-crops/08-section-labels/section-expressions.png",
+      "width": 386,
+      "height": 35,
+      "sourceRect": [
+        1084,
+        7,
+        386,
+        35
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "section-background",
+      "name": "背景・装飾見出し",
+      "category": "08-section-labels",
+      "file": "08-section-labels/section-background.png",
+      "originalCrop": "90-source-crops/08-section-labels/section-background.png",
+      "width": 164,
+      "height": 32,
+      "sourceRect": [
+        12,
+        344,
+        164,
+        32
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "section-ui",
+      "name": "UIボタン・ラベル見出し",
+      "category": "08-section-labels",
+      "file": "08-section-labels/section-ui.png",
+      "originalCrop": "90-source-crops/08-section-labels/section-ui.png",
+      "width": 178,
+      "height": 34,
+      "sourceRect": [
+        832,
+        345,
+        178,
+        34
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    },
+    {
+      "id": "section-screens",
+      "name": "画面イメージ見出し",
+      "category": "08-section-labels",
+      "file": "08-section-labels/section-screens.png",
+      "originalCrop": "90-source-crops/08-section-labels/section-screens.png",
+      "width": 199,
+      "height": 31,
+      "sourceRect": [
+        14,
+        622,
+        199,
+        31
+      ],
+      "trimOffset": [
+        0,
+        0
+      ],
+      "transparency": true,
+      "mode": "alpha",
+      "notes": ""
+    }
+  ],
+  "alignedSpriteCount": 15,
+  "alphaMethod": "Border-connected pale-background removal; white areas protected; source RGB values retained. No generated pixels. Matte edge colors may remain."
+}
