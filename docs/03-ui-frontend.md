@@ -1,5 +1,7 @@
 # 画面仕様・デザインとフロントエンドの境界
 
+> 2026-10-18追記：提供デザイン画像の8画面をTypeScriptで現行Sitesの参加者URLへ組み込む作業を追加した。現行コードとこの文書のMVP案（URL、120秒、チーム/得点など）には差があり、[参加者画面コンテキスト](participant-frontend/mobile-frontend-context.md)で区別する。QRからの約100人は全員プレイヤーとする指示を受けた。画像の10競技・+500点とヒントのAPI追加は[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)の実装依頼であり、まだ実装済みの仕様ではない。
+
 デザインはAkibako さん、Sitesの参加者向けフロントエンド開発はmae さん。Plugin Extensionsのホスト画面開発は未定（Ahwenu）とし、mae さんの担当には含めない。API処理はAhwenu、バックエンドはさが さんが担当する。
 
 ## デザイン方針

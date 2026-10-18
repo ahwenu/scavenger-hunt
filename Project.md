@@ -14,6 +14,8 @@ Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
 
+参加者向け画面は提供デザインをもとにTypeScriptで実装する方針です。現行Sitesの参加URLと画面見本の扱いは[ADR-0011](docs/adr/0011-participant-typescript-ui.md)を参照してください。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。進行・得点・ヒントの追加APIは[バックエンド実装依頼 Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)で依頼中で、Issue記載の数値・契約は実装/仕様反映前の依頼内容です。
+
 今回の作業はAhwenuのAPI処理に限定し、独立した `api/` でお題生成・写真判定を提供し、拡張からMCP経由で接続します。Sitesの画面・ゲーム状態・DB・配備設定は他担当が扱い、今回変更しません。実AIの確認画面と、サンプルの参加チーム・ランキングを表示するゲームデモは分離します。[11 API連携](docs/11-api-integration.md)を参照してください。
 
 通常のお題生成はResponses APIのStructured Outputs、写真判定はDecisions APIを使います。ブラウザプレビューからMCP経由の実お題生成と、JPEG画像の実判定を1例確認しました。Agents APIは参考写真を明示的に有効にしたときだけ使い、このモードの成功は未確認です。標準生成の変更理由と検証結果は[ADR-0010](docs/adr/0010-independent-ai-api.md)に記録しています。
