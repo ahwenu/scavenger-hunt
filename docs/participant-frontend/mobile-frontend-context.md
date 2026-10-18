@@ -10,23 +10,23 @@
 
 ## この文書の役割
 
-取り込まれたプロトタイプを改修する際に、現行方針、実コード、別メモの希望、担当間の境界を一か所で確認するための索引。仕様の正本は [Project.md](../Project.md)、[画面仕様](../docs/03-ui-frontend.md)、[API契約](../docs/04-api-contract.md)、[担当分担](../docs/07-delivery-plan.md)、[ADR一覧](../docs/adr/README.md)。取り込みの位置づけは[10 デモアプリの取り込み](../docs/10-demo-import.md)。この文書だけでゲームルールやAPIを変更しない。
+取り込まれたプロトタイプを改修する際に、現行方針、実コード、別メモの希望、担当間の境界を一か所で確認するための索引。仕様の正本は [Project.md](../../Project.md)、[画面仕様](../03-ui-frontend.md)、[API契約](../04-api-contract.md)、[担当分担](../07-delivery-plan.md)、[ADR一覧](../adr/README.md)。取り込みの位置づけは[10 デモアプリの取り込み](../10-demo-import.md)。この文書だけでゲームルールやAPIを変更しない。
 
 ## 確定した前提と、まだ案のもの
 
 | 区分 | 内容 | 根拠 |
 | --- | --- | --- |
-| 確定 | 参加者はスマホのブラウザを使い、Sitesに参加者画面とAPIを置く。ホスト画面はPlugin Extensionsに置く | [ADR-0001](../docs/adr/0001-product-surfaces.md) |
-| 確定 | mae担当は参加者画面の処理、カメラ、写真送信、API接続、復帰。デザインはAkibakoさん、ゲーム・保存はさがさん、HTTP契約・AI接続はAhwenu | [ADR-0002](../docs/adr/0002-team-boundaries.md)、[07](../docs/07-delivery-plan.md) |
-| 確定 | 制作チーム名はONE LEASE、アプリ名はカリモノ、キャッチコピーは「借り物王に俺はなる！」 | [ADR-0007](../docs/adr/0007-product-identity.md) |
-| 提案 | 3問・各120秒・合格10点・2秒ポーリングなどのMVP数値 | [ADR-0005](../docs/adr/0005-mvp-game-consistency.md) |
-| 提案 | Sitesスターター、D1/R2、独立した `plugin/`、AIアダプター | [ADR-0003](../docs/adr/0003-sites-runtime-storage.md)、[0004](../docs/adr/0004-ai-adapters.md)、[0006](../docs/adr/0006-deployment-and-folder-boundaries.md) |
+| 確定 | 参加者はスマホのブラウザを使い、Sitesに参加者画面とAPIを置く。ホスト画面はPlugin Extensionsに置く | [ADR-0001](../adr/0001-product-surfaces.md) |
+| 確定 | mae担当は参加者画面の処理、カメラ、写真送信、API接続、復帰。デザインはAkibakoさん、ゲーム・保存はさがさん、HTTP契約・AI接続はAhwenu | [ADR-0002](../adr/0002-team-boundaries.md)、[07](../07-delivery-plan.md) |
+| 確定 | 制作チーム名はONE LEASE、アプリ名はカリモノ、キャッチコピーは「借り物王に俺はなる！」 | [ADR-0007](../adr/0007-product-identity.md) |
+| 提案 | 3問・各120秒・合格10点・2秒ポーリングなどのMVP数値 | [ADR-0005](../adr/0005-mvp-game-consistency.md) |
+| 提案 | Sitesスターター、D1/R2、独立した `plugin/`、AIアダプター | [ADR-0003](../adr/0003-sites-runtime-storage.md)、[0004](../adr/0004-ai-adapters.md)、[0006](../adr/0006-deployment-and-folder-boundaries.md) |
 
 10月17日の議事録には「参加者側もPlugin Extensions」という古い配置案がある。10月18日のProject.mdとAcceptedのADR-0001を、現時点の画面配置の基準とする。配置を変えるなら関係担当の合意と後継ADRが必要。
 
 ## 参加者がたどる体験
 
-現行仕様上の表示候補は、参加コードと名前の入力 → ロビー → お題と残り時間 → カメラ → 写真確認 → 送信・判定中 → 合否と得点 → 順位・次問待ち → 最終結果。URLは画面ごとに増やす必要はなく、部屋のサーバー状態で表示を切り替える。画面一覧と状態は[03](../docs/03-ui-frontend.md)を参照。
+現行仕様上の表示候補は、参加コードと名前の入力 → ロビー → お題と残り時間 → カメラ → 写真確認 → 送信・判定中 → 合否と得点 → 順位・次問待ち → 最終結果。URLは画面ごとに増やす必要はなく、部屋のサーバー状態で表示を切り替える。画面一覧と状態は[03](../03-ui-frontend.md)を参照。
 
 参加者側で特に扱う状態（仕様案であり、取り込み実装には未実装のものを含む）:
 
@@ -45,7 +45,7 @@
 
 ## 取り込まれた実装の現在地
 
-`apps/web/app.js` が参加者画面とブラウザ用ホスト画面を同じファイルで組み立て、`apps/web/live-camera.js` が参加者のカメラ表示と撮影を担う。Sites向け配信・APIは `apps/cloud/` にあり、`apps/server/` はローカル開発用のサーバー。コードの配置と取り込み範囲は[10](../docs/10-demo-import.md)に記録されている。
+`apps/web/app.js` が参加者画面とブラウザ用ホスト画面を同じファイルで組み立て、`apps/web/live-camera.js` が参加者のカメラ表示と撮影を担う。Sites向け配信・APIは `apps/cloud/` にあり、`apps/server/` はローカル開発用のサーバー。コードの配置と取り込み範囲は[10](../10-demo-import.md)に記録されている。
 
 | 項目 | コードで確認した現状 | 現行仕様との関係 |
 | --- | --- | --- |
@@ -64,12 +64,12 @@
 
 | 層 | mae担当が扱うこと | 外部との受け渡し |
 | --- | --- | --- |
-| 表示 | Akibakoさんの表示部品を画面状態に応じて組み立てる。色だけに頼らず合否・エラーを伝える | 部品のpropsと状態見本は[03](../docs/03-ui-frontend.md) |
+| 表示 | Akibakoさんの表示部品を画面状態に応じて組み立てる。色だけに頼らず合否・エラーを伝える | 部品のpropsと状態見本は[03](../03-ui-frontend.md) |
 | 参加者の操作 | 参加、撮影、再撮影、提出、判定確認、部屋再取得、復帰を一連の操作として管理する | サーバーの採点・締切を端末で複製しない |
-| API境界 | 共有DTOとエラーコードを利用し、Cookie、Idempotency-Key、`room.version` を扱う | 契約の正本は[04](../docs/04-api-contract.md)。変更時はAhwenu・さがさんと確認 |
+| API境界 | 共有DTOとエラーコードを利用し、Cookie、Idempotency-Key、`room.version` を扱う | 契約の正本は[04](../04-api-contract.md)。変更時はAhwenu・さがさんと確認 |
 | 端末アダプター | カメラ、JPEG変換・縮小、プレビューURL解放、ポーリングとタブ復帰 | 実機確認が必要。端末時計は採点に使わない |
 
-画面からDB/R2やOpenAIへ直接つながず、`参加者画面 → 操作と状態 → APIクライアント → Sites API` の依存に寄せる。現在は画面・操作・API呼出の多くが `apps/web/app.js` に同居しているため、この依存方向は整理の目標であって実装済みの構造ではない。ホスト拡張は別UIで、同じAPIの管理権限をMCP経由で使う方針だが、取り込まれたコードにはSites内のホスト画面がある。ディレクトリ案と現状の差は[09](../docs/09-repository-structure.md)と[10](../docs/10-demo-import.md)を参照。
+画面からDB/R2やOpenAIへ直接つながず、`参加者画面 → 操作と状態 → APIクライアント → Sites API` の依存に寄せる。現在は画面・操作・API呼出の多くが `apps/web/app.js` に同居しているため、この依存方向は整理の目標であって実装済みの構造ではない。ホスト拡張は別UIで、同じAPIの管理権限をMCP経由で使う方針だが、取り込まれたコードにはSites内のホスト画面がある。ディレクトリ案と現状の差は[09](../09-repository-structure.md)と[10](../10-demo-import.md)を参照。
 
 ## 追加メモと現行仕様の差
 

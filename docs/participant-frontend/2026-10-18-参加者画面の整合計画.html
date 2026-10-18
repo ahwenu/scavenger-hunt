@@ -65,7 +65,7 @@
 
   <section aria-labelledby="scope"><h2 id="scope">何を作るか</h2>
     <ol class="steps">
-      <li><strong>コンテキスト文書：</strong><code>ai-context/mobile-frontend-context.md</code> に、参加者の体験、実コード、mae担当の境界、他担当から必要な契約、メモとの相違を記す。詳細仕様は既存の03・04・07とADRへリンクする。</li>
+      <li><strong>コンテキスト文書：</strong><code>docs/participant-frontend/mobile-frontend-context.md</code> に、参加者の体験、実コード、mae担当の境界、他担当から必要な契約、メモとの相違を記す。詳細仕様は既存の03・04・07とADRへリンクする。</li>
       <li><strong>実装の確認：</strong>取り込まれた <code>apps/web/</code> と <code>apps/cloud/</code> の画面遷移・カメラ・送信・結果・ランキング・復帰を読み、文書との差を記録した。</li>
       <li><strong>参加者画面の整合：</strong>実装が見つかったら、入口→待機→お題→撮影→送信・判定→結果・順位の流れを、APIから来る状態に合わせる。読み込み・通信失敗・カメラ拒否も画面状態として扱う。</li>
       <li><strong>結合確認：</strong>API契約がまだ仮の場合はモックで画面を確認し、実APIがある範囲で接続する。実機や実AIを試していない部分は未確認と記録する。</li>

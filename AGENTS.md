@@ -27,5 +27,5 @@
 
 ## 参加者画面の作業コンテキスト
 
-- 参加者画面を読む・変更する際は `ai-context/mobile-frontend-context.md` を確認する。現行の仕様とチームメモ、取り込まれたプロトタイプの差を整理した索引であり、仕様の正本はProject.md・03/04/07・ADRとする。
+- 参加者画面を読む・変更する際は `docs/participant-frontend/mobile-frontend-context.md` を確認する。現行の仕様とチームメモ、取り込まれたプロトタイプの差を整理した索引であり、仕様の正本はProject.md・03/04/07・ADRとする。
 - プロトタイプのコードは `apps/web/` と `apps/cloud/` に取り込み済み。コードで確認した動き、公開検証ページの記録、実機では未確認の動きを区別する。

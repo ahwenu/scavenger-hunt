@@ -8,7 +8,7 @@
 
 会場内でお題に合うものを探して撮影し、AIの判定による得点で競うスマホ向けブラウザゲーム。
 
-2026-10-18作成の以下の文書を初期案として、担当者間の実装契約に使います。デモアプリのコードは取り込み済みで、仕様との相違は[10 デモアプリ取り込み](docs/10-demo-import.md)と[参加者画面の作業コンテキスト](ai-context/mobile-frontend-context.md)に記録しています。
+2026-10-18作成の以下の文書を初期案として、担当者間の実装契約に使います。デモアプリのコードは取り込み済みで、仕様との相違は[10 デモアプリ取り込み](docs/10-demo-import.md)と[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
 
 ## 担当割り振り
 
@@ -37,8 +37,8 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [09 フォルダ構成・デプロイ](docs/09-repository-structure.md) | 担当別の編集先、独立ビルド、共有ファイルの更新ルール | 全員 |
 | [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
-| [参加者画面の作業コンテキスト](ai-context/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |
-| [参加者画面の整合計画](ai-context/2026-10-18-参加者画面の整合計画.html) | 実コードの確認結果と整合手順 | 全員 |
+| [参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |
+| [参加者画面の整合計画](docs/participant-frontend/2026-10-18-参加者画面の整合計画.html) | 実コードの確認結果と整合手順 | 全員 |
 
 構成：**ホスト画面＝Plugin Extensions／参加者スマホ画面とバックエンド＝Sites**。追加指示に従い、添付図からホスト画面の配置を変更しています。
 
