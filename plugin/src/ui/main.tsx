@@ -6,10 +6,14 @@ import { createHostBridge, type HostBridge } from './bridge.js';
 import type { HostAction, HostState } from '../shared/contracts.js';
 import type { AIStatus, AIChallenge } from '../shared/ai-contracts.js';
 import { AiPreview } from './AiPreview.js';
+import { SoundCredits } from './SoundControls.js';
+import { hostSounds } from './sound-effects.js';
+import { createGameSoundObserver } from './sound-events.js';
 
 declare global { interface Window { __KARIMONO_PREVIEW__?: boolean } }
 
 const initial: HostState = { mode: 'unconfigured', snapshot: null, notice: 'ホストのMCP接続を確認しています。' };
+const gameSounds = createGameSoundObserver(name => { void hostSounds.play(name); });
 
 /** 古いポーリング応答を除き、部屋操作と定期更新を直列にする。 */
 function HostController() {
@@ -25,6 +29,7 @@ function HostController() {
   const [aiBusy, setAIBusy] = useState(false);
   const [aiError, setAIError] = useState<string | null>(null);
   const aiInFlight = useRef(false);
+  const serverOffset = useRef(0);
 
   /** 同一部屋の古いversionは適用しない。 */
   function apply(next: HostState) {
@@ -32,12 +37,31 @@ function HostController() {
     const previous = current.current.snapshot?.room;
     const room = next.snapshot?.room;
     if (previous && room?.roomId === previous.roomId && room.version < previous.version) return;
+    if (next.serverTime && Number.isFinite(Date.parse(next.serverTime))) serverOffset.current = Date.parse(next.serverTime) - Date.now();
+    gameSounds.observe(room ? {
+      roomId: room.roomId, roundId: room.currentRound?.roundId,
+      phase: room.status === 'finished' ? 'finished' : room.currentRound?.status ?? room.status,
+      ready: next.snapshot?.topicsStatus === 'ready',
+      participants: next.snapshot?.teams.map(team => team.teamId),
+      scores: room.leaderboard.map(team => ({ id: team.teamId, score: team.score })),
+    } : null);
     current.current = next;
     setState(next);
   }
 
   useEffect(() => {
     active.current = true;
+    /** 文字入力や定期同期では起動せず、ボタン操作で音声を有効化する。 */
+    function gesture(event: MouseEvent) {
+      const target = (event.target as Element | null)?.closest('button,summary');
+      if (!target || target.matches(':disabled,.sound-toggle')) return;
+      void hostSounds.unlock().then(unlocked => { if (unlocked) void hostSounds.play('tap'); });
+    }
+    document.addEventListener('click', gesture, true);
+    const soundTimer = setInterval(() => {
+      const round = current.current.snapshot?.room.currentRound;
+      gameSounds.tick(round?.status === 'active' ? `round:${round.roundId}` : null, Date.parse(round?.deadlineAt ?? ''), Date.now() + serverOffset.current);
+    }, 250);
     const connection = createHostBridge(window.__KARIMONO_PREVIEW__ === true);
     bridge.current = connection;
     let timer: ReturnType<typeof setTimeout>;
@@ -63,7 +87,7 @@ function HostController() {
         if (active.current) setError(cause instanceof Error ? cause.message : 'Plugin Extensionsから開いてください。');
       } finally { if (active.current) setBusy(false); }
     })();
-    return () => { active.current = false; clearTimeout(timer); void connection.close(); };
+    return () => { active.current = false; clearTimeout(timer); clearInterval(soundTimer); document.removeEventListener('click', gesture, true); hostSounds.stop(); gameSounds.observe(null); void connection.close(); };
   }, []);
 
   /** 管理操作ごとに冪等キーと現在のversionを送る。 */
@@ -77,7 +101,8 @@ function HostController() {
       const name = { create: 'host_create_room', refresh: room ? 'host_get_room' : 'host_open', prepare: 'host_prepare_topics', start: 'host_start', advance: 'host_advance', finish: 'host_finish' }[action];
       const args: Record<string, unknown> = action === 'create' ? { operationId: crypto.randomUUID() } : action === 'refresh' ? room ? { roomId: room.roomId } : {} : action === 'prepare' ? { roomId: room?.roomId, source: current.current.mode === 'sites' ? 'ai' : 'preset', operationId: crypto.randomUUID() } : { roomId: room?.roomId, expectedVersion: room?.version, operationId: crypto.randomUUID() };
       apply(await bridge.current.call(name, args));
-    } catch (cause) { setError(cause instanceof Error ? cause.message : '操作に失敗しました。'); }
+      if (action === 'create') void hostSounds.play('join');
+    } catch (cause) { void hostSounds.play('retry'); setError(cause instanceof Error ? cause.message : '操作に失敗しました。'); }
     finally { inFlight.current = false; if (active.current) setBusy(false); }
   }
 
@@ -91,6 +116,7 @@ function HostController() {
     setError(null);
     try {
       apply(await bridge.current.call('host_set_hint', { roomId: room.roomId, roundId, text, expectedVersion: room.version, operationId: crypto.randomUUID() }));
+      void hostSounds.play('submit');
     } catch (cause) { if (active.current) setError(cause instanceof Error ? cause.message : '共通ヒントを保存できませんでした。'); }
     finally { inFlight.current = false; if (active.current) setBusy(false); }
   }
@@ -104,16 +130,16 @@ function HostController() {
     try {
       if (generate) {
         const result = await bridge.current.generateAI(crypto.randomUUID());
-        if (active.current) setChallenge(result.data);
+        if (active.current) { setChallenge(result.data); void hostSounds.play('ready'); }
       } else {
         const status = await bridge.current.checkAI();
         if (active.current) setAIStatus(status);
       }
-    } catch (cause) { if (active.current) setAIError(cause instanceof Error ? cause.message : 'AI APIに接続できませんでした。'); }
+    } catch (cause) { if (active.current) { void hostSounds.play('retry'); setAIError(cause instanceof Error ? cause.message : 'AI APIに接続できませんでした。'); } }
     finally { aiInFlight.current = false; if (active.current) setAIBusy(false); }
   }
 
-  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} /><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy || busy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></>;
+  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} /><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy || busy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /><SoundCredits /></>;
 }
 
 createRoot(document.getElementById('root')!).render(<HostController />);

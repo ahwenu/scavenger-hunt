@@ -2,6 +2,7 @@
 import type { HostAction, HostState } from "../shared/contracts.js";
 import { useState } from "react";
 import { JoinQr } from "./JoinQr.js";
+import { SoundToggle } from "./SoundControls.js";
 import girlFlag from "./assets/girl-flag.png";
 import robotFlag from "./assets/robot-flag.png";
 import girlCheer from "./assets/girl-cheer.png";
@@ -130,6 +131,7 @@ export function HostDashboard({
             </h1>
           </div>
         </div>
+        <SoundToggle />
         <span className={`mode-badge ${isDemo ? "mode-demo" : ""}`}>
           {isDemo ? "GAME DEMO / 見本" : isSites ? room ? "SITES / 実接続" : "SITES / 接続モード" : "ゲームAPI 未接続"}
         </span>

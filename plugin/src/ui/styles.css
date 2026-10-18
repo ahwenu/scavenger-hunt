@@ -233,3 +233,12 @@ h2 { font-size: 23px; font-weight: 900; letter-spacing: -.035em; line-height: 1.
 .stage-progress .stage-completed { background: #fcedc2; color: #66511e; }
 .stage-progress .stage-locked { color: var(--muted); }
 @media (max-width: 380px) { .stage-progress { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* 効果音はホストがすぐ切り替えられる位置に置く。 */
+.sound-toggle{min-height:40px;padding:8px 13px;border:2px solid #24587d;border-radius:999px;background:#fff7df;color:#17415e;font:inherit;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
+.sound-toggle[aria-pressed="true"]{background:#ffe486}
+.sound-toggle:focus-visible,.sound-credits summary:focus-visible{outline:3px solid #297bba;outline-offset:3px}
+.sound-credits{max-width:720px;margin:16px auto 24px;padding:0 18px;font-size:12px;line-height:1.8;color:#4b6171}
+.sound-credits summary{cursor:pointer}
+.sound-credits a{text-decoration:underline;color:inherit}
+@media(max-width:560px){.masthead{flex-wrap:wrap}.masthead>.sound-toggle{margin-left:auto}}

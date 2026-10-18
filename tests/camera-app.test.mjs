@@ -3,15 +3,16 @@ import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import { readFile } from 'node:fs/promises';
 import { webcrypto } from 'node:crypto';
+import { soundPlayer, gameSounds } from '../apps/web/sound-effects.js';
 
 /** Execute the actual application pipeline with HTTP and camera rendering as boundary doubles. */
 async function appHarness() {
-  const source = (await readFile(new URL('../apps/web/app.js', import.meta.url), 'utf8')).replace(/^import .*live-camera.*\r?\n/, '').replace(/if\(isLanding\)\{landing\(\);\}else\{skeleton\(\);[\s\S]*$/, '');
+  const source = (await readFile(new URL('../apps/web/app.js', import.meta.url), 'utf8')).replace(/^import .*\r?\n/gm, '').replace(/if\(isLanding\)\{landing\(\);\}else\{skeleton\(\);[\s\S]*$/, '');
   const nodes = new Map(), updates = [], posts = [];
   const node = key => { if (!nodes.has(key)) nodes.set(key, { textContent: '', hidden: false, value: 'pass', classList: { add() {}, remove() {}, toggle() {} } }); return nodes.get(key); };
   let current = { room: { id: 'test-room', name: 'Test' }, round: null, players: [{ id: 'me', name: 'Me', joinedAt: Date.now() - 60000 }], mine: [], stats: { pending: 0 }, lobby: { status: 'waiting', deadline: Date.now() + 30000 }, sync: 'polling', serverTime: Date.now() };
   let online = true, postBehavior = async () => ({ id: 'receipt-one', status: 'queued', receivedAt: Date.now() });
-  const context = vm.createContext({ document: { querySelector: node }, location: new URL('https://game.example/rooms/test-room/join'), localStorage: { getItem: key => key.endsWith(':token') ? 'participant-token' : key.endsWith(':id') ? 'me' : null, setItem() {} }, URL, FormData, Blob, File, crypto: webcrypto, Date, setTimeout: () => 1, clearTimeout() {}, matchMedia: () => ({ matches: false }), fetch: async (url, options = {}) => {
+  const context = vm.createContext({ soundPlayer, gameSounds, document: { querySelector: node }, location: new URL('https://game.example/rooms/test-room/join'), localStorage: { getItem: key => key.endsWith(':token') ? 'participant-token' : key.endsWith(':id') ? 'me' : null, setItem() {} }, URL, FormData, Blob, File, crypto: webcrypto, Date, setTimeout: () => 1, clearTimeout() {}, matchMedia: () => ({ matches: false }), fetch: async (url, options = {}) => {
     if (!online) throw new TypeError('Network offline');
     if (String(url).endsWith('/submit')) { posts.push(options.body); const result = await postBehavior(options.body); return { ok: true, status: 202, json: async () => result }; }
     return { ok: true, status: 200, headers: { get: () => '' }, json: async () => structuredClone({ ...current, serverTime: Date.now() }) };

@@ -9,7 +9,10 @@ export default {
     const url = new URL(request.url);
     if (url.pathname.startsWith('/api/')) return handleApi(request, env as unknown as GameEnv, ctx);
     const asset = assets[url.pathname] || (url.pathname === '/' || /^\/rooms\/[^/]+\/(?:host|join)$/.test(url.pathname) ? assets['/'] : undefined);
-    if (asset && ['GET','HEAD'].includes(request.method)) return new Response(request.method==='HEAD'?null:asset.body, { headers: { 'Content-Type': asset.type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Content-Security-Policy': "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" } });
+    if (asset && ['GET','HEAD'].includes(request.method)) {
+      const body = request.method === 'HEAD' ? null : asset.encoding === 'base64' ? Uint8Array.from(atob(asset.body), character => character.charCodeAt(0)) : asset.body;
+      return new Response(body, { headers: { 'Content-Type': asset.type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Content-Security-Policy': "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" } });
+    }
     let binding = ctx.props?.CONNECTORS;
     // Local preview emulates the same request-scoped capability. This branch and
     // the auxiliary service binding are absent from production builds.

@@ -1,0 +1,109 @@
+{
+  "author": "OtoLogic",
+  "homepage": "https://otologic.jp/",
+  "license": "CC BY 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "retrievedAt": "2026-10-18",
+  "changes": "先頭の無音をカット、短縮、フェード、ピーク調整、モノラル44.1kHz/96kbps MP3化",
+  "clips": [
+    {
+      "cue": "tap",
+      "file": "tap_Quiz-Button03-2.mp3",
+      "sourceFile": "Quiz-Button03-2.mp3",
+      "sourcePage": "https://otologic.jp/free/se/quiz01.html",
+      "durationSeconds": 0.28,
+      "processing": "start 0.110s, length 0.28s, gain x2.3",
+      "sha256": "ec36fe99068b67c265dfa4895e34a182c7dd4cdd411eb9252b1d8aa9126e2ee5"
+    },
+    {
+      "cue": "submit",
+      "file": "submit_Quiz-Button03-1.mp3",
+      "sourceFile": "Quiz-Button03-1.mp3",
+      "sourcePage": "https://otologic.jp/free/se/quiz01.html",
+      "durationSeconds": 0.48,
+      "processing": "start 0.176s, length 0.48s, gain x2.2",
+      "sha256": "88ecdac2d7465def6123c7aa8e5408d833d177da5fbf46a2b98a9d7e70353b1f"
+    },
+    {
+      "cue": "join",
+      "file": "join_Onoma-Sparkle13-5.mp3",
+      "sourceFile": "Onoma-Sparkle13-5(Fast).mp3",
+      "sourcePage": "https://otologic.jp/free/se/sparkle01.html",
+      "durationSeconds": 1.15,
+      "processing": "start 0.085s, length 1.15s, gain x3.7",
+      "sha256": "321edfeacd88b8c92595f6ee971267841ec9db39f572b67354508fc47d195488"
+    },
+    {
+      "cue": "shutter",
+      "file": "shutter_Camera-Compact01-01.mp3",
+      "sourceFile": "Camera-Compact01-01(Shutter).mp3",
+      "sourcePage": "https://otologic.jp/free/se/camera01.html",
+      "durationSeconds": 0.28,
+      "processing": "start 0.101s, length 0.28s, gain x0.8",
+      "sha256": "a388d956f9c363bddb6eb84f9ab87cb83e943fbe97bbb3a19af5cb688c66a317"
+    },
+    {
+      "cue": "start",
+      "file": "start_Quiz-Question02-3.mp3",
+      "sourceFile": "Quiz-Question02-3(High).mp3",
+      "sourcePage": "https://otologic.jp/free/se/quiz01.html",
+      "durationSeconds": 1.15,
+      "processing": "start 0.111s, length 1.15s, gain x1.5",
+      "sha256": "6211ef6d5e94853bbd5fa8b24c08942d3e2c10323665befd4b74c09ec5e33f21"
+    },
+    {
+      "cue": "success",
+      "file": "success_Quiz-Ding_Dong05-2.mp3",
+      "sourceFile": "Quiz-Ding_Dong05-2(Fast-Long).mp3",
+      "sourcePage": "https://otologic.jp/free/se/quiz01.html",
+      "durationSeconds": 1.45,
+      "processing": "start 0.100s, length 1.45s, gain x2.2",
+      "sha256": "a3f8d0ac46d14f0f90565841b0a420a4e1eea5631907ea2482650fc91fac628c"
+    },
+    {
+      "cue": "retry",
+      "file": "retry_Quiz-Buzzer05-2.mp3",
+      "sourceFile": "Quiz-Buzzer05-2(Short).mp3",
+      "sourcePage": "https://otologic.jp/free/se/quiz01.html",
+      "durationSeconds": 0.38,
+      "processing": "start 0.111s, length 0.38s, gain x3.5",
+      "sha256": "db7b55323b69a773bf05636bc29ed10eaa52439c8baeeeb51e91f188d5468477"
+    },
+    {
+      "cue": "tick",
+      "file": "tick_Countdown06-5.mp3",
+      "sourceFile": "Countdown06-5.mp3",
+      "sourcePage": "https://otologic.jp/free/se/countdown01.html",
+      "durationSeconds": 0.25,
+      "processing": "start 0.106s, length 0.25s, gain x3.4",
+      "sha256": "d2502f9ff5e2896253d8a2fad13c1093d5e6dcce28539f2bce918c84159b5b83"
+    },
+    {
+      "cue": "timeup",
+      "file": "timeup_Countdown06-1.mp3",
+      "sourceFile": "Countdown06-1.mp3",
+      "sourcePage": "https://otologic.jp/free/se/countdown01.html",
+      "durationSeconds": 0.85,
+      "processing": "start 2.070s, length 0.85s, gain x2.6",
+      "sha256": "4c15b92e02845e9e30f5ba496664f3050622a909cf6c0e96661f1820eab9df2e"
+    },
+    {
+      "cue": "result",
+      "file": "result_Quiz-Results01-1.mp3",
+      "sourceFile": "Quiz-Results01-1.mp3",
+      "sourcePage": "https://otologic.jp/free/se/quiz01.html",
+      "durationSeconds": 3.1,
+      "processing": "start 0.110s, length 3.10s, gain x1.6",
+      "sha256": "c0bbbeb5b09a940b085a8493bd0ea5b54f942ed8f144a7c369cdf8ab0f768279"
+    },
+    {
+      "cue": "victory",
+      "file": "victory_yattaze1.mp3",
+      "sourceFile": "yattaze!1.mp3",
+      "sourcePage": "https://otologic.jp/free/jing/short1.html",
+      "durationSeconds": 3.6,
+      "processing": "start 0.092s, length 3.60s, gain x1.2",
+      "sha256": "2b1bd639777e35fb302410610d2a074af5360940729fa067d69b2f64179ffccd"
+    }
+  ]
+}

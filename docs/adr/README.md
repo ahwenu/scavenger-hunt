@@ -20,6 +20,7 @@ ADR（Architecture Decision Record）には「何を選び、なぜ選び、ど�
 | [0011](0011-new-sites-deployment.md) | 新Sitesへ全ソースを保持し、Cloud実行と拡張接続を分ける | Accepted | 2026-10-18 | 2026-10-18 |
 | [0012](0012-sports-day-host-ui.md) | 運動会・猫耳素材をホスト用レスポンシブUIへ取り込む | Accepted | 2026-10-18 | 2026-10-18 |
 | [0013](0013-issue1-player-game-contract.md) | Issue #1の100人・10競技・初合格500点と状態/ヒントAPI | Accepted | 2026-10-18 | 2026-10-18 |
+| [0014](0014-game-sound-effects.md) | モバイルとPlugin Extensionsに無料素材のゲーム効果音を同梱する | Accepted | 2026-10-18 | 2026-10-18 |
 
 ## 状態
 
