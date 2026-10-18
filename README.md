@@ -42,11 +42,11 @@
 
 ## 画面
 
-2026年10月18日に取得した画面です。スマホ向けは公開Sitesを390×844のブラウザ表示領域で取得したページ全体、ホスト向けはPlugin Extensions用UIをSitesへ実接続したブラウザプレビューです。撮影条件は[画像の記録](docs/images/README.md)にまとめています。
+2026年10月18日に取得した画面です。スマホ向けは最新の参加者画面を反映した公開Sitesの実部屋を、390×844のブラウザ表示領域で撮り直しました。ホスト向けはPlugin Extensions用UIをSitesへ実接続したブラウザプレビューです。撮影条件は[画像の記録](docs/images/README.md)にまとめています。
 
 ### スマホからの参加
 
-<img src="docs/images/mobile-join.jpg" alt="スマホ幅の公開参加画面。ニックネームと任意の自己紹介を入力して参加できる。" width="300">
+<img src="docs/images/mobile-join.jpg" alt="公開Sitesの参加前画面。猫耳キャラクターとロボットが迎え、ニックネームを入力して参加できる。" width="300">
 
 ### Plugin Extensions用のホスト画面
 
@@ -91,7 +91,8 @@ flowchart TB
 | 領域 | 技術・サービス | 役割・実装場所 |
 | --- | --- | --- |
 | Web公開・サーバー | ChatGPT Sites / Cloudflare Workers / Vinext・Vite | 参加者画面・静的資産と同一オリジンの `/api/rooms/:id` を配信。`apps/cloud/` |
-| 参加者画面 | React / TypeScript / CSS、HTML / JavaScript | React版の参加・撮影・結果画面は `apps/cloud/app/participant/`。公開画面の取得に使った配信資産は `apps/web/` |
+| 参加者画面 | React / TypeScript / CSS | 公開Sitesの `/rooms/:id/join` で参加・撮影・結果・順位を表示。`apps/cloud/app/participant/` |
+| 入口・ブラウザホスト画面 | HTML / CSS / JavaScript | 入口と旧ブラウザホスト用の配信資産。`apps/web/` からSites向け資産を生成 |
 | ホスト画面 | Plugin Extensions / React / TypeScript | QR招待、進行、共通ヒント、参加者・順位表示、ランキング変化の演出。`plugin/src/ui/` |
 | 拡張とゲームの接続 | MCP / MCP Apps SDK / Node.js / Zod | UI操作をツール呼び出しに変換し、Sites応答を検証して表示。`plugin/src/server/` |
 | お題生成 | OpenAI Responses API / Structured Outputs | お題・説明・2つの判定条件・制限時間をJSON Schemaに沿って生成。`apps/cloud/lib/text-agent.mjs` |
@@ -171,7 +172,7 @@ SITES_API_BASE_URL=https://karimono-one-lease.ahwenu.chatgpt.site
 README.md              プロジェクトの概要・遊び方・技術・審査観点
 Project.md             仕様と開発文書の入口
 apps/cloud/            Sitesの参加者画面・Workers API・DB定義
-apps/web/              HTML/CSS/JavaScriptの配信資産・撮影処理
+apps/web/              入口・旧ブラウザホスト用の配信資産
 apps/server/           ローカル実行用サーバー
 plugin/                Plugin ExtensionsのホストUI・MCPサーバー
 api/                   独立したお題生成・写真判定API
