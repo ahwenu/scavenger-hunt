@@ -6,7 +6,7 @@
 
 **公開Sites：[karimono-one-lease.ahwenu.chatgpt.site](https://karimono-one-lease.ahwenu.chatgpt.site/)**
 
-[配備記録](docs/12-sites-deployment.md)では、v6で当時の参加者React画面とBGMを公開しています。現在のソースに追加したルート `/` の新トップ、「さっちゃん」の声、参加者画面への効果音接続は、今回まだ公開再配備していません。
+公開環境で、実Plugin Extensionsの部屋作成から参加・写真提出・AI判定・500点の加点・両画面の順位反映まで確認しました。[一連の検証記録](docs/17-public-game-e2e.md)と[配備記録](docs/12-sites-deployment.md)を参照してください。
 
 参加者はホストが共有するQRまたは参加リンクから部屋に入ります。スマホへのアプリインストールやアカウント登録は不要です。ホストはChatGPT Work / Codexの **Plugin Extensions** から、招待・お題の準備・競技の進行・順位確認を行います。
 
@@ -44,17 +44,26 @@
 
 ## 画面
 
-2026年10月18日に取得した画面です。スマホ向けはv6配備時点の参加者画面を反映した公開Sitesの実部屋を、390×844のブラウザ表示領域で撮り直した記録です。ホスト向けはPlugin Extensions用UIをSitesへ実接続したブラウザプレビューです。撮影条件は[画像の記録](docs/images/README.md)にまとめています。
+2026年10月18日、公開Sitesの同じ部屋で取得した画面です。参加者画面は390×844のブラウザ表示、ホスト画面はインストール済みPlugin Extensions 0.4.1の実パネルです。スマホ実機のカメラ撮影は未検証です。操作と撮影条件は[一連の検証記録](docs/17-public-game-e2e.md)にまとめています。
 
-### スマホからの参加
+### お題と写真の判定基準
 
-<img src="docs/images/mobile-join.jpg" alt="公開Sitesの参加前画面。猫耳キャラクターとロボットが迎え、ニックネームを入力して参加できる。" width="300">
+公開Sites v8で、写真提出前に2つの判定条件と撮影時の注意を読めるよう修正しました。第2問でも、前問の500点・1位が維持されることを確認しています。
 
-### Plugin Extensions用のホスト画面
+<img src="docs/images/public-e2e/criteria-fixed.jpg" alt="公開Sites v8の参加者画面。お題と写真の判定基準2件、実物を撮影する注意文を表示。" width="300">
 
-招待QR、競技の進行、ランキングを同じ画面で確認できます。狭いパネルではタブ、多人数の一覧ではページを切り替えます。
+### 写真提出後の合格・得点と順位
 
-![Sitesに接続したホストUI。参加QR、進行操作、ランキングを表示。](docs/images/plugin-host.jpg)
+紙コップのお題へ実物写真を提出し、AI判定後の500点と1位を確認しました。
+
+<img src="docs/images/public-e2e/participant-accepted.jpg" alt="公開Sitesの参加者画面。実AIの判定でCLEARとなり、500点、1位、1競技目を表示。" width="300">
+<img src="docs/images/public-e2e/participant-ranking.jpg" alt="同じ参加者画面のランキング。公開E2E確認Aが500点で1位。" width="300">
+
+### 実Plugin Extensionsのホスト画面
+
+実パネルから部屋作成・お題の準備・開始を操作し、参加者と同じ500点・1位が順位タブへ自動反映されました。招待・進行・順位はタブで切り替え、多人数の一覧ではページを切り替えます。
+
+![実Plugin Extensionsの順位タブ。公開E2E確認Aが500点で1位となり、参加者画面と一致。](docs/images/public-e2e/plugin-ranking.jpg)
 
 ## 技術スタックとサービス構成
 
@@ -132,9 +141,9 @@ flowchart TB
 実装の確認と、公開環境・実AI・実端末の確認を分けて記録しています。
 
 - **公開API：** 100HTTPクライアントの参加、100写真の受付、各500点、本人の結果分離、共通ヒントの取得を確認。加点の負荷確認には固定の判定応答を使用しました。終盤の通信失敗と後続確認の結果も[受け渡し記録](docs/14-issue1-ahwenu-handoff.md)に残しています。
-- **実AI：** 公開SitesとMCPを通じたResponses APIのお題生成、JPEG提出、Decisions APIによる条件不一致・0点の経路を確認。実AIでの合格500点、判定品質の評価、100実端末の同時利用は未検証です。
+- **公開環境での一連操作・実AI：** 実Plugin Extensionsで部屋作成・開始、参加者画面で登録・写真選択・提出、Responses APIのお題生成とDecisions APIの合格判定を確認。500点・1位が参加者とホストに反映され、参加ページ再読み込み後も復帰しました。以前の条件不一致・0点の確認と合わせ、[公開ゲームの検証記録](docs/17-public-game-e2e.md)に範囲を記載しています。判定品質全般と100実端末の同時利用は未検証です。
 - **ホストUI：** 接続の再試行、複数サイズの表示、多人数の一覧、ランキング変化の検証記録は[Plugin Extensions仕様](docs/08-plugin-extensions.md)にまとめています。
-- **READMEの画面画像：** 公開Sitesの参加画面と、Sitesへ実接続したホストUIをブラウザで取得しました。実機カメラ撮影やネイティブ拡張パネルの直接操作を検証した記録ではありません。
+- **READMEの画面画像：** 公開Sitesの参加者画面を390×844のブラウザ表示で、ホストの順位を実Plugin Extensionsのパネルで取得しました。提出には既存の実物写真を使い、スマホ実機のカメラ撮影は未検証です。写真の出典も[検証記録](docs/17-public-game-e2e.md)に記載しています。
 
 ## 開発する
 

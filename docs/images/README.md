@@ -1,6 +1,19 @@
 # README掲載画像の取得記録
 
-取得日：2026-10-18。プロジェクトの画面をブラウザで表示し、JPEGで保存した。スマホ画像は最新の参加者画面を反映した公開Sites v6で撮り直し、ホスト画像は前回の取得画像を維持した。
+取得日：2026-10-18。READMEには公開ゲームの一連操作と、判定基準の修正を反映したSites v8の画面を掲載する。参加者はスマホ幅のブラウザ、ホストは実Plugin Extensions 0.4.1のパネルで取得し、JPEGで保存した。
+
+| ファイル | 取得元・表示条件 | 画面の状態 |
+| --- | --- | --- |
+| [public-e2e/criteria-fixed.jpg](public-e2e/criteria-fixed.jpg) | 公開Sites v8、390×844、全ページ | 第2問「付箋を探そう」。判定基準2件と実物写真の注意文、撮影操作を表示 |
+| [public-e2e/participant-accepted.jpg](public-e2e/participant-accepted.jpg) | 公開Sitesの同じ部屋、390×844 | 実物の紙コップ写真を提出し、実AI合格で500点・1位 |
+| [public-e2e/participant-ranking.jpg](public-e2e/participant-ranking.jpg) | 同じ参加者ブラウザ | 公開E2E確認Aの500点・1位 |
+| [public-e2e/plugin-ranking.jpg](public-e2e/plugin-ranking.jpg) | インストール済み実Plugin Extensions 0.4.1の順位タブ | 同じ部屋・参加者の500点・1位が自動反映 |
+
+参加者画像は実機スマホのカメラ撮影ではない。既存の実物写真を選択して提出し、実AIの判定と加点を確認した。写真の出典・確認操作・公開反映の詳細は[17 公開ゲームの一連確認](../17-public-game-e2e.md)へ記載する。認証情報や秘密設定は画像に含めていない。
+
+## 旧画像の取得記録
+
+以下はREADME差し替え前の記録として保持する。
 
 | ファイル | 取得元・表示条件 | 画面の状態 |
 | --- | --- | --- |
