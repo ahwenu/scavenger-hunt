@@ -1,5 +1,7 @@
 # 技術構成と採用方針
 
+> 2026-10-18更新：本番ゲーム記録の保存先はSupabaseとする（[ADR-0016](adr/0016-supabase-game-persistence.md)）。現在のCloud実装・既存Sites配備はD1/R2。以下のD1/R2図・表は当初案の履歴で、Supabase接続を示さない。Sites/Cloudの実行配置を維持し、API背後の保存実装を移す受け渡しは[16](16-supabase-integration.md)を参照。接続URL・秘密設定・スキーマ・写真の保存先変更は未確認。
+
 ## 方針
 
 追加指示を優先し、Sitesには参加者向けモバイル画面・API・DB・画像保存を集約する。ホスト画面はPlugin Extensionsに分離し、MCP経由で同じSitesバックエンドを操作する。同一リポジトリで、Akibako さん（デザイン）、mae さん（モバイルフロントエンド）、さが さん（バックエンド）、Ahwenu（API処理）が責務を分ける。拡張画面開発は未定（Ahwenu）。詳細は[07 分担](07-delivery-plan.md)と[08 Plugin Extensions](08-plugin-extensions.md)を参照。

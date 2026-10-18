@@ -1,0 +1,36 @@
+# ADR-0015: 参加者の画像準拠UIを現行SitesのTypeScript画面に置く
+
+- 状態：Accepted
+- 作成日：2026-10-18
+- 最終更新：2026-10-18
+- 関係担当：mae（参加者画面）、Akibako（デザイン）、さが（ゲーム状態）、Ahwenu（HTTP API）
+- 決定の根拠：ユーザーの画像準拠・TypeScript・Sitesへ配備可能な形という指示、現行 `apps/cloud/` のビルド確認
+- 置き換えるADR：なし
+- 後継ADR：なし
+
+## 背景と決定
+
+参加者画面の現行配信は取り込み済みのデモHTMLから行われる。提供された画面デザインに沿う8画面をTypeScript/Reactで組み、現在のSitesソース `apps/cloud/` の `/rooms/:id/join` に置く。画面見本は `/design-preview` に分け、実ゲームではデモ数値を表示しない。既存のSites内ホスト画面とルートはこの変更では維持する。Sitesをリポジトリ直下へ移す判断は本ADRに含めない。
+
+参加者画面は現行の部屋参加・状態取得・写真提出APIを利用する。採点、競技の進行、締切、順位の確定はサーバー側に残す。初版時点で未実装だった500点・10競技・ヒントは、main統合で[ADR-0013](0013-issue1-player-game-contract.md)のAPIを利用できるようになった。実画面ではscore/rank/awardedPoints/stagesと保存済みヒントを表示し、端末で加点を仮計算しない。Supabaseとライブ更新の追加項目は[ADR-0016](0016-supabase-game-persistence.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)へ分ける。
+
+## 代替案と理由
+
+既存の `apps/web/app.js` 全体を画像に合わせて改修する案では、参加者画面とブラウザ用ホスト画面が同じファイルに残る。参加者ルートを独立させ、既存ホストとゲームAPIへの影響を限定する。
+
+## 影響とトレードオフ
+
+現行デモの配信コードと新しい参加者UIが一時的に併存する。配信分岐は参加者URLのみReactへ通し、ホストURLは現行の静的アセットを返す。画像シート由来の透過キャラクターと背景は元画像の解像度を補う生成・編集素材であり、ピクセル単位の一致を保証しない。正式素材が届けば同じ静的画像パスで差し替えられる。
+
+## 検証・見直し条件
+
+`apps/cloud/` で型チェックとSitesビルドが成功し、ローカルで `/design-preview` と `/rooms/test/join` がHTMLを返すことを確認した。画面見本のスタート・お題・成功をブラウザーで確認した。その後、ローカルD1の1人参加→画像ファイル提出→デモ結果と通信・表示モック9ケースを確認した。最新main統合後の型検査/buildと、バックエンド・既存音のテスト19件が成功した。このTypeScript画面の公開配備、スマホ実機撮影、100実端末とSupabase接続は未確認。別担当のD1公開100HTTP試験記録は[14](../14-issue1-ahwenu-handoff.md)で区別する。
+
+## 関連仕様
+
+[参加者画面の作業コンテキスト](../participant-frontend/mobile-frontend-context.md)、[画面仕様](../03-ui-frontend.md)、[フォルダ構成](../09-repository-structure.md)、[実装計画](../ai-reports/2026-10-18-デザイン画像から参加者画面を実装する計画.html)
+
+## 変更履歴
+
+- 2026-10-18：参加者画面のTypeScript化と現行Sitesでの配信境界を記録。
+- 2026-10-18：mainのADR-0012〜0014との番号衝突を避け0015へ改番。mainの実装済みゲーム契約と、新UIの確認範囲を反映。

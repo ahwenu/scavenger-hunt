@@ -10,6 +10,8 @@
 
 後続のAhwenu担当によるHTTP/MCP対応・公開配備の状況と、mae さん向けの最終応答例/配備版は[14](14-issue1-ahwenu-handoff.md)に記録する。元PRの検証履歴と新しい公開結果を分ける。
 
+本番ゲーム記録はSupabaseへ接続する方針（[ADR-0016](adr/0016-supabase-game-persistence.md)）。現行コードはD1/R2で、保存先の移行、人数/順位更新のrevision・在席数等は残る実装依頼として[16](16-supabase-integration.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)へまとめる。既存API・参加者Bearer・ホストCookieを維持し、Supabase Authや `/api/v1` へ同時移行しない。
+
 ## 以下は初期API案（Issue #1の実装契約ではない）
 
 API契約・HTTPルート・外部API接続・MCPサーバーはAhwenuが担当する。ルートから呼ぶゲーム処理・DB/R2・認証/認可サービスはさが さん、モバイルからのAPI利用はmae さん、拡張画面からのMCP利用は未定（Ahwenu）が担当する。責務の詳細は[07 分担](07-delivery-plan.md)を参照。

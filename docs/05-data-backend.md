@@ -6,7 +6,13 @@
 
 ヒントはnullableなrounds.hintとして追加し、`0003_issue1_round_hint` を生成した。既存行は未用意、GETでAIを呼ばず、ホストが現競技へ設定できる。得点用テーブルは追加しない。10競技目の受付終了後も未確定提出がある間はplaying、全件確定後にfinished。競技間は直前roundをclosedとして保持する。既存のuploading/queuedは120秒、processingは65秒リースで中断を復旧し、失効したAI結果を加点しない。
 
-API例・検証・適用手順は[12](12-issue1-backend-handoff.md)。ローカルD1/R2で100人のデモ処理を確認したが、本番DBにはまだ適用していない。以下のteams/score_events・10点・v1契約・24時間画像保持などは初期提案の履歴であり、今回採用済みとは扱わない。既存Sitesは提出写真を判定後に削除する。
+API例・検証・適用手順は[12](12-issue1-backend-handoff.md)。後続作業で公開v3と0003を適用し、D1/R2で公開100HTTPクライアントのデモを確認した記録がある（[14](14-issue1-ahwenu-handoff.md)）。終盤transport失敗1件と補完確認は同書を参照。このマージ時に試験を再実行したものではない。以下のteams/score_events・10点・v1契約・24時間画像保持などは初期提案の履歴であり、今回採用済みとは扱わない。既存Sitesは提出写真を判定後に削除する。
+
+## Supabaseへの統合（2026-10-18追記）
+
+ゲーム記録の本番保存先はSupabaseのPostgresとする（[ADR-0016](adr/0016-supabase-game-persistence.md)）。実装済みのCloudはD1/R2のまま。スキーマ・SQL・接続設定・移行は未実装/未確認で、以下のD1テーブルは当初案として残す。現在のコードは `players`、`rounds`、`submissions`、`pass_events` 等を使うため、この案をそのまま移行SQLとして使わない。
+
+Supabaseでは部屋・参加者・競技・提出・得点を永続化し、競合時の加点と提出確定をPostgresの一意制約とトランザクションで一度だけ反映する実装を依頼する。写真の保存先をSupabase Storageへ変えることは未確定。現行R2の一時保存・判定後削除と、以下の24時間保持案も異なるため、バックエンドPRで実装した保存期間と削除経路を明記する。入出力と受入条件は[16](16-supabase-integration.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)を参照。
 
 ## 以下は初期バックエンド案
 
