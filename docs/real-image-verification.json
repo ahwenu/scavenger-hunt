@@ -1,0 +1,72 @@
+{
+  "testedAt": "2026-10-17T15:43:45.094Z",
+  "provider": "OpenAI Decisions API",
+  "endpoint": "https://api.openai.com/v1/decisions",
+  "modelRequested": "gpt-6-luna",
+  "requestCount": 1,
+  "demo": false,
+  "passThreshold": 0.8,
+  "image": {
+    "file": "test-assets/banana.png",
+    "source": "https://commons.wikimedia.org/wiki/File:Banana.png",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/6/69/Banana.png",
+    "author": "Mark Schellhase (Mschel)",
+    "license": "Public domain, released worldwide by the author",
+    "bytesRead": 4200147,
+    "mime": "image/png",
+    "sha256": "1f374263ac83c4a04bff527978a7aa7430d6f17ddc333075d9f94d7aaddace98",
+    "sha1": "98b0e3b3b43c557d341de30aeff27c84f0724bd9",
+    "width": 1903,
+    "height": 2331,
+    "encodingSent": "inline base64 data:image/png",
+    "byteSource": "actual fs.readFile bytes, no URL-only substitute"
+  },
+  "challenges": [
+    {
+      "title": "黄色いバナナを見つけよう",
+      "criterion": "Does the photograph clearly show at least one real yellow banana fruit?",
+      "expectedPass": true
+    },
+    {
+      "title": "自動車を見つけよう",
+      "criterion": "Does the photograph clearly show a real automobile with visible wheels and a car body?",
+      "expectedPass": false
+    }
+  ],
+  "status": 200,
+  "requestId": "req_cfa383e901f84d28b848436c3718e413",
+  "modelReturned": "gpt-6-luna",
+  "usage": {
+    "input_tokens": 4741,
+    "input_tokens_details": {
+      "cached_tokens": 0,
+      "cache_write_tokens": 0
+    },
+    "output_tokens": 0,
+    "output_tokens_details": {
+      "reasoning_tokens": 0
+    },
+    "total_tokens": 4741
+  },
+  "answers": [
+    {
+      "name": "banana_visible",
+      "type": "predicate",
+      "probability": 1,
+      "pass": true,
+      "expectedPass": true,
+      "matchesExpectation": true
+    },
+    {
+      "name": "car_visible",
+      "type": "predicate",
+      "probability": 0,
+      "pass": false,
+      "expectedPass": false,
+      "matchesExpectation": true
+    }
+  ],
+  "success": true,
+  "apiErrors": [],
+  "elapsedMs": 3076
+}

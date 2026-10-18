@@ -1,0 +1,54 @@
+{
+  "testedAt": "2026-10-17T15:56:20.979Z",
+  "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+  "mode": "ai",
+  "paidCallsExpected": {
+    "agents": 1,
+    "decisions": 1
+  },
+  "errors": [],
+  "roomId": "662b8483f20f426ca2313a51895dbe6c",
+  "generationMs": 15662,
+  "challenge": {
+    "title": "紙コップとペン",
+    "description": "参加者1名・待機1名、回答率0％・正答率0％の回です。会場の机に紙コップとペンを並べて撮影してください。",
+    "criteria": [
+      "机の上に紙コップとペンが並んでいる様子を1枚に写す"
+    ],
+    "durationSeconds": 120,
+    "provider": "Agents API"
+  },
+  "photo": {
+    "source": "https://commons.wikimedia.org/wiki/File:Banana.png",
+    "author": "Mark Schellhase",
+    "license": "Public domain",
+    "bytes": 65126,
+    "sha256": "950857fc21437a374340708b9e8705ca276ef161c29258d59119d61c005e7be6",
+    "changes": "resize max960 JPEG75 EXIF stripped"
+  },
+  "receipt": {
+    "httpStatus": 202,
+    "elapsedMs": 1912,
+    "status": "queued"
+  },
+  "result": {
+    "status": "rejected",
+    "verdict": {
+      "pass": false,
+      "probabilities": [
+        0
+      ],
+      "provider": "Decisions API",
+      "reason": "基準を満たす実物が、はっきり写るように撮影してください。"
+    },
+    "observedAfterAckMs": 1446
+  },
+  "ranking": [
+    {
+      "name": "実写真検証",
+      "wins": 0,
+      "totalMs": 0
+    }
+  ],
+  "success": true
+}

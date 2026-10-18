@@ -1,0 +1,57 @@
+{
+  "testedAt": "2026-10-17T16:14:49.320Z",
+  "success": true,
+  "elapsedMs": 19498,
+  "referenceBytesRead": 129053,
+  "actualAgentsToolCalls": true,
+  "result": {
+    "objectType": "バナナ",
+    "title": "黄色いバナナを探そう",
+    "description": "室内にあるバナナを見つけてください。",
+    "criteria": [
+      "バナナである",
+      "黄色く、細長く湾曲している"
+    ],
+    "durationSeconds": 120,
+    "provider": "Agents API",
+    "sessionId": "sess_084f49f98c333a55006ad39ee683148197b90bf773e90ff43e",
+    "turnId": "turn_084f49f98c333a55006ad39ee9e03081978e2fbb3d9cdb31af",
+    "reference": {
+      "candidateId": "commons:22552194",
+      "title": "Cavendish banana from Maracaibo.jpg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cavendish_banana_from_Maracaibo.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "author": "Wilfredor",
+      "mime": "image/jpeg",
+      "width": 960,
+      "height": 670,
+      "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062",
+      "byteLength": 129053
+    },
+    "referenceTrace": [
+      {
+        "tool": "search_reference_photos",
+        "query": "banana fruit",
+        "candidateIds": [
+          "commons:12648869",
+          "commons:22552194",
+          "commons:24722150",
+          "commons:25211373"
+        ],
+        "resultCount": 4
+      },
+      {
+        "tool": "get_reference_photo",
+        "candidateId": "commons:22552194",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cavendish_banana_from_Maracaibo.jpg",
+        "license": "CC BY-SA 3.0",
+        "byteLength": 129053,
+        "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062",
+        "mime": "image/jpeg",
+        "width": 960,
+        "height": 670
+      }
+    ]
+  }
+}

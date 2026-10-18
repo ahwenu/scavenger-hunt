@@ -1,0 +1,197 @@
+{
+  "expectationsRecordedAt": "2026-10-17T15:51:05.524Z",
+  "provider": "OpenAI Decisions API",
+  "endpoint": "https://api.openai.com/v1/decisions",
+  "modelRequested": "gpt-6-luna",
+  "demo": false,
+  "passThreshold": 0.8,
+  "requestedCalls": 2,
+  "automaticRetries": 0,
+  "scope": "Visible mouth shape and garment color only; no emotional state or identity inference.",
+  "questions": [
+    {
+      "name": "visible_smile",
+      "type": "predicate",
+      "instructions": "Does the main clearly visible person have visibly raised mouth corners and a clearly visible smile? Judge only mouth shape and visible expression; do not infer happiness, mood, personality, identity, or other non-visible traits. If the expression is subtle or uncertain, use low probability."
+    },
+    {
+      "name": "neutral_gray_garment",
+      "type": "predicate",
+      "instructions": "Does a large, clearly visible area of the main person's outer upper-body garment appear neutral gray? Exclude garments that appear blue, navy, black, or white. A small gray highlight is insufficient. If darkness or lighting makes gray versus blue or black uncertain, use low probability."
+    }
+  ],
+  "cases": [
+    {
+      "id": "smile",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/President_Barack_Obama.jpg",
+      "file": "test-assets/boundary-smile.jpg",
+      "originalBytes": 1276121,
+      "originalSha256": "744dd848fbb0584229169e01c4944664957c62495fb9e8af514a088ebca43e19",
+      "bytes": 79434,
+      "sha256": "0d32a97c5b37cd24149c4519ffcaf752cdbed8c2d276b3543d2cb91d6148e3ea",
+      "width": 768,
+      "height": 960,
+      "changes": "Resize maximum960px, JPEG quality75; strip EXIF, no extra crop.",
+      "source": "https://commons.wikimedia.org/wiki/File:President_Barack_Obama.jpg",
+      "author": "Pete Souza",
+      "license": "Public domain (U.S. federal government official duties)",
+      "licenseUrl": "https://commons.wikimedia.org/wiki/File:President_Barack_Obama.jpg#Licensing",
+      "priorExpectations": [
+        {
+          "name": "visible_smile",
+          "expectation": "pass",
+          "expectedPass": true,
+          "observation": "Clearly raised mouth corners and visible teeth in a broad smile."
+        },
+        {
+          "name": "neutral_gray_garment",
+          "expectation": "reject",
+          "expectedPass": false,
+          "observation": "The outer garment appears dark navy, which is explicitly excluded."
+        }
+      ],
+      "bytesRead": 79434,
+      "encodingSent": "inline base64 data:image/jpeg from actual fs.readFile bytes",
+      "startedAt": "2026-10-17T15:51:05.528Z",
+      "httpStatus": 200,
+      "rateLimitHeaders": {
+        "x-ratelimit-limit-requests": "5000",
+        "x-ratelimit-limit-tokens": "2000000",
+        "x-ratelimit-remaining-requests": "4999",
+        "x-ratelimit-remaining-tokens": "1998835",
+        "x-ratelimit-reset-requests": "12ms",
+        "x-ratelimit-reset-tokens": "34ms"
+      },
+      "modelReturned": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 1164,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1164
+      },
+      "answers": [
+        {
+          "name": "visible_smile",
+          "type": "predicate",
+          "probability": 1,
+          "pass": true,
+          "label": "OK",
+          "priorExpectation": "pass",
+          "matchesExpectation": true,
+          "interpretation": "Matches prior visible-evidence expectation."
+        },
+        {
+          "name": "neutral_gray_garment",
+          "type": "predicate",
+          "probability": 0,
+          "pass": false,
+          "label": "NG",
+          "priorExpectation": "reject",
+          "matchesExpectation": true,
+          "interpretation": "Matches prior visible-evidence expectation."
+        }
+      ],
+      "apiErrors": [],
+      "elapsedMs": 1204,
+      "completedAt": "2026-10-17T15:51:06.732Z"
+    },
+    {
+      "id": "weak",
+      "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Official_portrait_of_Barack_Obama_by_Pete_Souza.jpg",
+      "file": "test-assets/boundary-weak.jpg",
+      "originalBytes": 1636773,
+      "originalSha256": "1cff29d148a630369b2eb51eccf2dcda8ff68124ffb7e38eaad9ad19bbb06c5b",
+      "bytes": 63547,
+      "sha256": "e09edaaa6fd0ac021d4ccc82ea9eb6a05009eaaca5f486c631e468364cd0701a",
+      "width": 706,
+      "height": 960,
+      "changes": "Resize to maximum960px, JPEG quality75, strip EXIF; original crop as supplied by Commons unchanged.",
+      "source": "https://commons.wikimedia.org/wiki/File:Official_portrait_of_Barack_Obama_by_Pete_Souza.jpg",
+      "author": "Pete Souza",
+      "license": "CC BY 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+      "priorExpectations": [
+        {
+          "name": "visible_smile",
+          "expectation": "ambiguous/hold",
+          "expectedPass": null,
+          "observation": "Closed lips and only weakly raised corners; not an unambiguous visible smile. Hold rather than declare ground truth."
+        },
+        {
+          "name": "neutral_gray_garment",
+          "expectation": "ambiguous/hold",
+          "expectedPass": null,
+          "observation": "Very dark charcoal/near-black outer garment; neutral gray versus black cannot be confidently separated by eye. Hold rather than declare ground truth."
+        }
+      ],
+      "bytesRead": 63547,
+      "encodingSent": "inline base64 data:image/jpeg from actual fs.readFile bytes",
+      "startedAt": "2026-10-17T15:51:06.733Z",
+      "httpStatus": 200,
+      "rateLimitHeaders": {
+        "x-ratelimit-limit-requests": "5000",
+        "x-ratelimit-limit-tokens": "2000000",
+        "x-ratelimit-remaining-requests": "4998",
+        "x-ratelimit-remaining-tokens": "1997700",
+        "x-ratelimit-reset-requests": "24ms",
+        "x-ratelimit-reset-tokens": "69ms"
+      },
+      "modelReturned": "gpt-6-luna",
+      "usage": {
+        "input_tokens": 1134,
+        "input_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0
+        },
+        "output_tokens": 0,
+        "output_tokens_details": {
+          "reasoning_tokens": 0
+        },
+        "total_tokens": 1134
+      },
+      "answers": [
+        {
+          "name": "visible_smile",
+          "type": "predicate",
+          "probability": 0.1,
+          "pass": false,
+          "label": "NG",
+          "priorExpectation": "ambiguous/hold",
+          "matchesExpectation": null,
+          "interpretation": "No ground-truth label assigned: this is an operational threshold outcome, not correctness evidence."
+        },
+        {
+          "name": "neutral_gray_garment",
+          "type": "predicate",
+          "probability": 0,
+          "pass": false,
+          "label": "NG",
+          "priorExpectation": "ambiguous/hold",
+          "matchesExpectation": null,
+          "interpretation": "No ground-truth label assigned: this is an operational threshold outcome, not correctness evidence."
+        }
+      ],
+      "apiErrors": [],
+      "elapsedMs": 771,
+      "completedAt": "2026-10-17T15:51:07.504Z"
+    }
+  ],
+  "completedAt": "2026-10-17T15:51:07.504Z",
+  "actualCalls": 2,
+  "apiErrors": [],
+  "allCallsSucceeded": true,
+  "limitations": [
+    "Only two selected photos and four predicates; no general accuracy claim.",
+    "Ambiguous cases have no ground-truth success score.",
+    "Model probability is not a calibrated guarantee.",
+    "Direct Decisions API inputs, not the game camera/upload/queue end-to-end route.",
+    "No backend retry or 70-person burst measured by this script.",
+    "Only whitelisted x-ratelimit limit/remaining/reset response headers retained; missing headers reported as absent."
+  ]
+}

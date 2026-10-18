@@ -1,0 +1,27 @@
+node_modules/
+data/
+.env*
+!.env.example
+playwright-report/
+test-results/
+
+# Local credentials, execution state, and generated files
+.DS_Store
+*.pem
+*.key
+*.p12
+*.pfx
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.log
+*.tsbuildinfo
+.sites-runtime/
+.wrangler/
+.next/
+.vinext/
+.agents/
+.codex/
+dist/
+site-deploy*.tar.gz

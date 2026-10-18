@@ -1,0 +1,63 @@
+{
+  "testedAt": "2026-10-17T17:02:20.817Z",
+  "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+  "mode": "demo",
+  "checks": [
+    "Public room creation returns distinct unguessable IDs, room-specific host and join links, scoped HttpOnly host cookies",
+    "Host/join pages render, exact room URLs are encoded in downloadable PNG QR, host status requires its cookie",
+    "Room creation alone leaves its clock empty; first join starts the timer, later joins preserve it, and scoped host extension adds exactly ten seconds",
+    "Direct room join needs name/profile only; no room code input",
+    "Foreign player credentials return401, foreign or absent host credentials return403",
+    "Room membership, ranks, private profiles and participant tokens remain isolated",
+    "First join automatically prepares a hidden shared challenge with frozen input; participant polling alone starts exactly one first round after the real 30 second deadline",
+    "Room A automatic start leaves room B on its independent extended countdown with no challenge or submissions",
+    "Confirmed demo judgment has one durable own pass event with a stable ID; replay and polling do not create another celebration",
+    "Actual JPEG bytes receive HTTP202 queued and become accepted with a visibly labelled demo verdict and ranking via polling",
+    "Identical image is refused within one room and allowed across rooms; final rankings and finishers remain separate"
+  ],
+  "errors": [],
+  "authentication": {
+    "platformAuthentication": "none",
+    "platformCookiesSent": false,
+    "sitesBypassUsed": false,
+    "cookieJar": "none (Node fetch)",
+    "anonymousRequests": [
+      "GET /",
+      "POST /api/rooms",
+      "GET /rooms/:id/host",
+      "GET /rooms/:id/join",
+      "GET /api/rooms/:id/qr.png",
+      "POST /api/rooms/:id/join",
+      "GET /api/rooms/:id/state"
+    ],
+    "gameHostCookie": "Only the newly created room host cookie is used for host operations and host-scoped state checks",
+    "gameParticipantBearer": "Only newly registered room participant tokens are used for own-photo submissions and own-state synchronization"
+  },
+  "roomIds": [
+    "43918bf47be54f1e8c67f45f7f462e50",
+    "b7f65e4c190b45d5a2b99a00ffb92ff6"
+  ],
+  "lobby": {
+    "firstJoinedAt": 1792256542055,
+    "deadline": 1792256572055,
+    "countdownMs": 30000,
+    "startedAt": 1792256572460,
+    "serverStartLagMs": 405,
+    "observedStartLagMs": 370,
+    "drivenByParticipantPolling": true,
+    "hostStartRequestUsed": false
+  },
+  "passEvent": {
+    "id": 75,
+    "rank": 1,
+    "provisional": false,
+    "stableAcrossReplayAndPolling": true
+  },
+  "demoUpload": {
+    "bytes": 2069,
+    "receiptHttpMs": 824,
+    "terminalStatus": "accepted",
+    "provider": "デモ判定"
+  },
+  "success": true
+}

@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1792252119420,
+      "tag": "0000_nappy_kinsey_walden",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792252751863,
+      "tag": "0001_boring_menace",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792253877516,
+      "tag": "0002_boring_swarm",
+      "breakpoints": true
+    }
+  ]
+}

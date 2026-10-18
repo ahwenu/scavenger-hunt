@@ -1,0 +1,34 @@
+{
+  "testedAt": "2026-10-17T16:02:06.275Z",
+  "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+  "mode": "ai",
+  "platformAuthentication": "none",
+  "paidCallsExpected": {
+    "agents": 1,
+    "decisions": 0
+  },
+  "errors": [],
+  "roomId": "75458ec539a344e0bd4dd4adac460100",
+  "prepareReceipt": {
+    "httpStatus": 202,
+    "elapsedMs": 230
+  },
+  "preparationObservedMs": 10273,
+  "taskHiddenUntilStart": true,
+  "startReceipt": {
+    "elapsedMs": 223,
+    "usedPrepared": true
+  },
+  "challenge": {
+    "title": "丸いコースターとペン",
+    "description": "丸いコースターとペンを机に並べ、両方がはっきり見えるように撮影してください。",
+    "criteria": [
+      "丸いコースターとペンが写っている",
+      "2つの物が机の上に並んでいる"
+    ],
+    "durationSeconds": 120,
+    "provider": "Agents API"
+  },
+  "preparedConsumed": true,
+  "success": true
+}

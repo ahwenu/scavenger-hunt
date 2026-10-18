@@ -1,0 +1,786 @@
+{
+  "banana": {
+    "testedAt": "2026-10-17T15:43:45.094Z",
+    "provider": "OpenAI Decisions API",
+    "endpoint": "https://api.openai.com/v1/decisions",
+    "modelRequested": "gpt-6-luna",
+    "requestCount": 1,
+    "demo": false,
+    "passThreshold": 0.8,
+    "image": {
+      "file": "test-assets/banana.png",
+      "source": "https://commons.wikimedia.org/wiki/File:Banana.png",
+      "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/6/69/Banana.png",
+      "author": "Mark Schellhase (Mschel)",
+      "license": "Public domain, released worldwide by the author",
+      "bytesRead": 4200147,
+      "mime": "image/png",
+      "sha256": "1f374263ac83c4a04bff527978a7aa7430d6f17ddc333075d9f94d7aaddace98",
+      "sha1": "98b0e3b3b43c557d341de30aeff27c84f0724bd9",
+      "width": 1903,
+      "height": 2331,
+      "encodingSent": "inline base64 data:image/png",
+      "byteSource": "actual fs.readFile bytes, no URL-only substitute"
+    },
+    "challenges": [
+      {
+        "title": "黄色いバナナを見つけよう",
+        "criterion": "Does the photograph clearly show at least one real yellow banana fruit?",
+        "expectedPass": true
+      },
+      {
+        "title": "自動車を見つけよう",
+        "criterion": "Does the photograph clearly show a real automobile with visible wheels and a car body?",
+        "expectedPass": false
+      }
+    ],
+    "status": 200,
+    "requestId": "req_cfa383e901f84d28b848436c3718e413",
+    "modelReturned": "gpt-6-luna",
+    "usage": {
+      "input_tokens": 4741,
+      "input_tokens_details": {
+        "cached_tokens": 0,
+        "cache_write_tokens": 0
+      },
+      "output_tokens": 0,
+      "output_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "total_tokens": 4741
+    },
+    "answers": [
+      {
+        "name": "banana_visible",
+        "type": "predicate",
+        "probability": 1,
+        "pass": true,
+        "expectedPass": true,
+        "matchesExpectation": true
+      },
+      {
+        "name": "car_visible",
+        "type": "predicate",
+        "probability": 0,
+        "pass": false,
+        "expectedPass": false,
+        "matchesExpectation": true
+      }
+    ],
+    "success": true,
+    "apiErrors": [],
+    "elapsedMs": 3076
+  },
+  "boundary": {
+    "expectationsRecordedAt": "2026-10-17T15:51:05.524Z",
+    "provider": "OpenAI Decisions API",
+    "endpoint": "https://api.openai.com/v1/decisions",
+    "modelRequested": "gpt-6-luna",
+    "demo": false,
+    "passThreshold": 0.8,
+    "requestedCalls": 2,
+    "automaticRetries": 0,
+    "scope": "Visible mouth shape and garment color only; no emotional state or identity inference.",
+    "questions": [
+      {
+        "name": "visible_smile",
+        "type": "predicate",
+        "instructions": "Does the main clearly visible person have visibly raised mouth corners and a clearly visible smile? Judge only mouth shape and visible expression; do not infer happiness, mood, personality, identity, or other non-visible traits. If the expression is subtle or uncertain, use low probability."
+      },
+      {
+        "name": "neutral_gray_garment",
+        "type": "predicate",
+        "instructions": "Does a large, clearly visible area of the main person's outer upper-body garment appear neutral gray? Exclude garments that appear blue, navy, black, or white. A small gray highlight is insufficient. If darkness or lighting makes gray versus blue or black uncertain, use low probability."
+      }
+    ],
+    "cases": [
+      {
+        "id": "smile",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/President_Barack_Obama.jpg",
+        "file": "test-assets/boundary-smile.jpg",
+        "originalBytes": 1276121,
+        "originalSha256": "744dd848fbb0584229169e01c4944664957c62495fb9e8af514a088ebca43e19",
+        "bytes": 79434,
+        "sha256": "0d32a97c5b37cd24149c4519ffcaf752cdbed8c2d276b3543d2cb91d6148e3ea",
+        "width": 768,
+        "height": 960,
+        "changes": "Resize maximum960px, JPEG quality75; strip EXIF, no extra crop.",
+        "source": "https://commons.wikimedia.org/wiki/File:President_Barack_Obama.jpg",
+        "author": "Pete Souza",
+        "license": "Public domain (U.S. federal government official duties)",
+        "licenseUrl": "https://commons.wikimedia.org/wiki/File:President_Barack_Obama.jpg#Licensing",
+        "priorExpectations": [
+          {
+            "name": "visible_smile",
+            "expectation": "pass",
+            "expectedPass": true,
+            "observation": "Clearly raised mouth corners and visible teeth in a broad smile."
+          },
+          {
+            "name": "neutral_gray_garment",
+            "expectation": "reject",
+            "expectedPass": false,
+            "observation": "The outer garment appears dark navy, which is explicitly excluded."
+          }
+        ],
+        "bytesRead": 79434,
+        "encodingSent": "inline base64 data:image/jpeg from actual fs.readFile bytes",
+        "startedAt": "2026-10-17T15:51:05.528Z",
+        "httpStatus": 200,
+        "rateLimitHeaders": {
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "2000000",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "1998835",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "34ms"
+        },
+        "modelReturned": "gpt-6-luna",
+        "usage": {
+          "input_tokens": 1164,
+          "input_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0
+          },
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1164
+        },
+        "answers": [
+          {
+            "name": "visible_smile",
+            "type": "predicate",
+            "probability": 1,
+            "pass": true,
+            "label": "OK",
+            "priorExpectation": "pass",
+            "matchesExpectation": true,
+            "interpretation": "Matches prior visible-evidence expectation."
+          },
+          {
+            "name": "neutral_gray_garment",
+            "type": "predicate",
+            "probability": 0,
+            "pass": false,
+            "label": "NG",
+            "priorExpectation": "reject",
+            "matchesExpectation": true,
+            "interpretation": "Matches prior visible-evidence expectation."
+          }
+        ],
+        "apiErrors": [],
+        "elapsedMs": 1204,
+        "completedAt": "2026-10-17T15:51:06.732Z"
+      },
+      {
+        "id": "weak",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Official_portrait_of_Barack_Obama_by_Pete_Souza.jpg",
+        "file": "test-assets/boundary-weak.jpg",
+        "originalBytes": 1636773,
+        "originalSha256": "1cff29d148a630369b2eb51eccf2dcda8ff68124ffb7e38eaad9ad19bbb06c5b",
+        "bytes": 63547,
+        "sha256": "e09edaaa6fd0ac021d4ccc82ea9eb6a05009eaaca5f486c631e468364cd0701a",
+        "width": 706,
+        "height": 960,
+        "changes": "Resize to maximum960px, JPEG quality75, strip EXIF; original crop as supplied by Commons unchanged.",
+        "source": "https://commons.wikimedia.org/wiki/File:Official_portrait_of_Barack_Obama_by_Pete_Souza.jpg",
+        "author": "Pete Souza",
+        "license": "CC BY 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by/3.0/",
+        "priorExpectations": [
+          {
+            "name": "visible_smile",
+            "expectation": "ambiguous/hold",
+            "expectedPass": null,
+            "observation": "Closed lips and only weakly raised corners; not an unambiguous visible smile. Hold rather than declare ground truth."
+          },
+          {
+            "name": "neutral_gray_garment",
+            "expectation": "ambiguous/hold",
+            "expectedPass": null,
+            "observation": "Very dark charcoal/near-black outer garment; neutral gray versus black cannot be confidently separated by eye. Hold rather than declare ground truth."
+          }
+        ],
+        "bytesRead": 63547,
+        "encodingSent": "inline base64 data:image/jpeg from actual fs.readFile bytes",
+        "startedAt": "2026-10-17T15:51:06.733Z",
+        "httpStatus": 200,
+        "rateLimitHeaders": {
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "2000000",
+          "x-ratelimit-remaining-requests": "4998",
+          "x-ratelimit-remaining-tokens": "1997700",
+          "x-ratelimit-reset-requests": "24ms",
+          "x-ratelimit-reset-tokens": "69ms"
+        },
+        "modelReturned": "gpt-6-luna",
+        "usage": {
+          "input_tokens": 1134,
+          "input_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 0
+          },
+          "output_tokens": 0,
+          "output_tokens_details": {
+            "reasoning_tokens": 0
+          },
+          "total_tokens": 1134
+        },
+        "answers": [
+          {
+            "name": "visible_smile",
+            "type": "predicate",
+            "probability": 0.1,
+            "pass": false,
+            "label": "NG",
+            "priorExpectation": "ambiguous/hold",
+            "matchesExpectation": null,
+            "interpretation": "No ground-truth label assigned: this is an operational threshold outcome, not correctness evidence."
+          },
+          {
+            "name": "neutral_gray_garment",
+            "type": "predicate",
+            "probability": 0,
+            "pass": false,
+            "label": "NG",
+            "priorExpectation": "ambiguous/hold",
+            "matchesExpectation": null,
+            "interpretation": "No ground-truth label assigned: this is an operational threshold outcome, not correctness evidence."
+          }
+        ],
+        "apiErrors": [],
+        "elapsedMs": 771,
+        "completedAt": "2026-10-17T15:51:07.504Z"
+      }
+    ],
+    "completedAt": "2026-10-17T15:51:07.504Z",
+    "actualCalls": 2,
+    "apiErrors": [],
+    "allCallsSucceeded": true,
+    "limitations": [
+      "Only two selected photos and four predicates; no general accuracy claim.",
+      "Ambiguous cases have no ground-truth success score.",
+      "Model probability is not a calibrated guarantee.",
+      "Direct Decisions API inputs, not the game camera/upload/queue end-to-end route.",
+      "No backend retry or 70-person burst measured by this script.",
+      "Only whitelisted x-ratelimit limit/remaining/reset response headers retained; missing headers reported as absent."
+    ]
+  },
+  "publicAI": {
+    "testedAt": "2026-10-17T15:56:20.979Z",
+    "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+    "mode": "ai",
+    "paidCallsExpected": {
+      "agents": 1,
+      "decisions": 1
+    },
+    "errors": [],
+    "roomId": "662b8483f20f426ca2313a51895dbe6c",
+    "generationMs": 15662,
+    "challenge": {
+      "title": "紙コップとペン",
+      "description": "参加者1名・待機1名、回答率0％・正答率0％の回です。会場の机に紙コップとペンを並べて撮影してください。",
+      "criteria": [
+        "机の上に紙コップとペンが並んでいる様子を1枚に写す"
+      ],
+      "durationSeconds": 120,
+      "provider": "Agents API"
+    },
+    "photo": {
+      "source": "https://commons.wikimedia.org/wiki/File:Banana.png",
+      "author": "Mark Schellhase",
+      "license": "Public domain",
+      "bytes": 65126,
+      "sha256": "950857fc21437a374340708b9e8705ca276ef161c29258d59119d61c005e7be6",
+      "changes": "resize max960 JPEG75 EXIF stripped"
+    },
+    "receipt": {
+      "httpStatus": 202,
+      "elapsedMs": 1912,
+      "status": "queued"
+    },
+    "result": {
+      "status": "rejected",
+      "verdict": {
+        "pass": false,
+        "probabilities": [
+          0
+        ],
+        "provider": "Decisions API",
+        "reason": "基準を満たす実物が、はっきり写るように撮影してください。"
+      },
+      "observedAfterAckMs": 1446
+    },
+    "ranking": [
+      {
+        "name": "実写真検証",
+        "wins": 0,
+        "totalMs": 0
+      }
+    ],
+    "success": true
+  },
+  "preparedAI": {
+    "testedAt": "2026-10-17T16:02:06.275Z",
+    "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+    "mode": "ai",
+    "platformAuthentication": "none",
+    "paidCallsExpected": {
+      "agents": 1,
+      "decisions": 0
+    },
+    "errors": [],
+    "roomId": "75458ec539a344e0bd4dd4adac460100",
+    "prepareReceipt": {
+      "httpStatus": 202,
+      "elapsedMs": 230
+    },
+    "preparationObservedMs": 10273,
+    "taskHiddenUntilStart": true,
+    "startReceipt": {
+      "elapsedMs": 223,
+      "usedPrepared": true
+    },
+    "challenge": {
+      "title": "丸いコースターとペン",
+      "description": "丸いコースターとペンを机に並べ、両方がはっきり見えるように撮影してください。",
+      "criteria": [
+        "丸いコースターとペンが写っている",
+        "2つの物が机の上に並んでいる"
+      ],
+      "durationSeconds": 120,
+      "provider": "Agents API"
+    },
+    "preparedConsumed": true,
+    "success": true
+  },
+  "publicSmoke": {
+    "testedAt": "2026-10-17T17:02:20.817Z",
+    "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+    "mode": "demo",
+    "checks": [
+      "Public room creation returns distinct unguessable IDs, room-specific host and join links, scoped HttpOnly host cookies",
+      "Host/join pages render, exact room URLs are encoded in downloadable PNG QR, host status requires its cookie",
+      "Room creation alone leaves its clock empty; first join starts the timer, later joins preserve it, and scoped host extension adds exactly ten seconds",
+      "Direct room join needs name/profile only; no room code input",
+      "Foreign player credentials return401, foreign or absent host credentials return403",
+      "Room membership, ranks, private profiles and participant tokens remain isolated",
+      "First join automatically prepares a hidden shared challenge with frozen input; participant polling alone starts exactly one first round after the real 30 second deadline",
+      "Room A automatic start leaves room B on its independent extended countdown with no challenge or submissions",
+      "Confirmed demo judgment has one durable own pass event with a stable ID; replay and polling do not create another celebration",
+      "Actual JPEG bytes receive HTTP202 queued and become accepted with a visibly labelled demo verdict and ranking via polling",
+      "Identical image is refused within one room and allowed across rooms; final rankings and finishers remain separate"
+    ],
+    "errors": [],
+    "authentication": {
+      "platformAuthentication": "none",
+      "platformCookiesSent": false,
+      "sitesBypassUsed": false,
+      "cookieJar": "none (Node fetch)",
+      "anonymousRequests": [
+        "GET /",
+        "POST /api/rooms",
+        "GET /rooms/:id/host",
+        "GET /rooms/:id/join",
+        "GET /api/rooms/:id/qr.png",
+        "POST /api/rooms/:id/join",
+        "GET /api/rooms/:id/state"
+      ],
+      "gameHostCookie": "Only the newly created room host cookie is used for host operations and host-scoped state checks",
+      "gameParticipantBearer": "Only newly registered room participant tokens are used for own-photo submissions and own-state synchronization"
+    },
+    "roomIds": [
+      "43918bf47be54f1e8c67f45f7f462e50",
+      "b7f65e4c190b45d5a2b99a00ffb92ff6"
+    ],
+    "lobby": {
+      "firstJoinedAt": 1792256542055,
+      "deadline": 1792256572055,
+      "countdownMs": 30000,
+      "startedAt": 1792256572460,
+      "serverStartLagMs": 405,
+      "observedStartLagMs": 370,
+      "drivenByParticipantPolling": true,
+      "hostStartRequestUsed": false
+    },
+    "passEvent": {
+      "id": 75,
+      "rank": 1,
+      "provisional": false,
+      "stableAcrossReplayAndPolling": true
+    },
+    "demoUpload": {
+      "bytes": 2069,
+      "receiptHttpMs": 824,
+      "terminalStatus": "accepted",
+      "provider": "デモ判定"
+    },
+    "success": true
+  },
+  "publicReference": {
+    "testedAt": "2026-10-17T16:55:25.872Z",
+    "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+    "mode": "ai",
+    "paidCallsExpected": {
+      "agents": 1,
+      "decisions": 2
+    },
+    "authentication": "Anonymous HTTP, room host cookie and participant token only",
+    "errors": [],
+    "roomId": "b00bf8ffb6004466a9a49a7658d2cfc0",
+    "autoStartObservedMs": 30858,
+    "challenge": {
+      "objectType": "黄色いバナナ",
+      "title": "黄色いバナナを見つけよう",
+      "description": "黄色く熟したバナナを1本見つけてください。",
+      "criteria": [
+        "バナナの形をしている",
+        "黄色く熟している"
+      ],
+      "durationSeconds": 120,
+      "provider": "Agents API",
+      "sessionId": "sess_0460aec7789ff22f006ad3a87f1b2c81949efd191b68099bbb",
+      "turnId": "turn_0460aec7789ff22f006ad3a882daf88194b2866787f1ae5af3",
+      "reference": {
+        "candidateId": "commons:22552194",
+        "title": "Cavendish banana from Maracaibo.jpg",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cavendish_banana_from_Maracaibo.jpg",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "author": "Wilfredor",
+        "mime": "image/jpeg",
+        "width": 960,
+        "height": 670,
+        "byteLength": 129053,
+        "url": "/api/rooms/b00bf8ffb6004466a9a49a7658d2cfc0/reference/6e1fbebf-f175-4b61-af42-6fa6579ee8d1"
+      }
+    },
+    "preStartReferenceHidden": true,
+    "toolTrace": {
+      "referenceTrace": [
+        {
+          "tool": "search_reference_photos",
+          "phase": "started",
+          "query": "yellow banana bunch",
+          "searchQuery": "banana"
+        },
+        {
+          "tool": "search_reference_photos",
+          "phase": "completed",
+          "elapsedMs": 979,
+          "query": "yellow banana bunch",
+          "candidateIds": [
+            "commons:22552194",
+            "commons:158273990",
+            "commons:113972132",
+            "commons:114468680"
+          ],
+          "resultCount": 4
+        },
+        {
+          "tool": "get_reference_photo",
+          "phase": "started",
+          "candidateId": "commons:22552194"
+        },
+        {
+          "tool": "get_reference_photo",
+          "phase": "completed",
+          "elapsedMs": 1010,
+          "candidateId": "commons:22552194",
+          "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cavendish_banana_from_Maracaibo.jpg",
+          "license": "CC BY-SA 3.0",
+          "byteLength": 129053,
+          "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062",
+          "mime": "image/jpeg",
+          "width": 960,
+          "height": 670
+        }
+      ]
+    },
+    "referenceDownload": {
+      "status": 200,
+      "bytes": 129053,
+      "mime": "image/jpeg",
+      "cacheControl": "public,max-age=86400,immutable",
+      "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062"
+    },
+    "reference70": {
+      "count": 70,
+      "allOK": true,
+      "elapsedMs": 1119
+    },
+    "exactCopy": 409,
+    "reencodedCopy": {
+      "receipt": {
+        "httpStatus": 202,
+        "elapsedMs": 678
+      },
+      "status": "rejected",
+      "verdict": {
+        "pass": false,
+        "probabilities": [
+          0.02,
+          1,
+          0.97,
+          0.86,
+          0
+        ],
+        "provider": "Decisions API",
+        "reason": "見本と同じ種類で、色や形が似た実物をはっきり撮影してください。"
+      },
+      "passEventId": null,
+      "events": [],
+      "observedAfterAckMs": 3402
+    },
+    "submittedPhoto": {
+      "source": "https://commons.wikimedia.org/wiki/File:Banana.png",
+      "author": "Mark Schellhase",
+      "license": "Public domain",
+      "bytes": 65126,
+      "changes": "max960 JPEG75 EXIF stripped",
+      "fixture": "A separate physical-object photograph; no claim of fresh user capture"
+    },
+    "realObject": {
+      "receipt": {
+        "httpStatus": 202,
+        "elapsedMs": 516
+      },
+      "status": "accepted",
+      "verdict": {
+        "pass": true,
+        "probabilities": [
+          0.93,
+          1,
+          0.98,
+          1,
+          0.99
+        ],
+        "provider": "Decisions API",
+        "reason": "見本と似た実物を確認できました！"
+      },
+      "passEventId": 74,
+      "events": [
+        {
+          "id": 74,
+          "type": "pass",
+          "playerId": "9e178c63-4589-439d-8c12-407613a7f105",
+          "name": "実写真検証",
+          "roundId": "6e1fbebf-f175-4b61-af42-6fa6579ee8d1",
+          "submissionId": "1b2198c1-ca2d-464d-921e-ddf7ca75c090",
+          "createdAt": 1792256164843,
+          "rank": 1,
+          "provisional": false,
+          "pendingAhead": 0
+        }
+      ],
+      "observedAfterAckMs": 1266
+    },
+    "success": true
+  },
+  "load": {
+    "local": {
+      "pollIntervalMs": 1000,
+      "pollJitterFraction": 0.3,
+      "testedAt": "2026-10-17T16:23:18.093Z",
+      "target": "http://127.0.0.1:58133",
+      "participants": 70,
+      "connectionMode": "poll",
+      "mode": "demo",
+      "imageDescription": "Unique valid JPEGs with random pixel texture; simulated photo upload sizes, not real-world subjects.",
+      "errors": [],
+      "authentication": {
+        "platformAuthentication": "none",
+        "platformCookiesSent": false,
+        "sitesBypassUsed": false,
+        "cookieJar": "none (Node fetch)",
+        "anonymousRequests": [
+          "POST /api/rooms",
+          "POST /api/rooms/:id/join"
+        ],
+        "gameHostCookie": "Only the newly created room host cookie is used for host operations",
+        "gameParticipantBearer": "Only newly registered room participant tokens are used for own-photo submissions and own-state synchronization"
+      },
+      "roomId": "558b57dbb1e1a84219a8192c1ba725b8",
+      "lobbyExtensions": 7,
+      "images": {
+        "count": 70,
+        "p50": 243503,
+        "p95": 243826,
+        "max": 244051,
+        "unit": "bytes",
+        "totalBytes": 17046880
+      },
+      "maxObservedPending": 70,
+      "maxObservedProcessing": 8,
+      "maxObservedQueued": 62,
+      "passEvents": {
+        "observedUniqueIds": 70,
+        "observedRoomHistoryIds": 70,
+        "ownEventSeenCount": 70
+      },
+      "connectionsOpened": 70,
+      "hostStartAction": "start-now",
+      "roundSyncMs": {
+        "count": 70,
+        "p50": 981.87,
+        "p95": 1257.21,
+        "max": 1284.57
+      },
+      "receiptHttpMs": {
+        "count": 70,
+        "p50": 92.34,
+        "p95": 125.07,
+        "max": 130.23
+      },
+      "passEventObservedMs": {
+        "count": 70,
+        "p50": 3175.93,
+        "p95": 5140.29,
+        "max": 5802.86
+      },
+      "completionObservedMs": {
+        "count": 70,
+        "p50": 3175.93,
+        "p95": 5140.29,
+        "max": 5802.86
+      },
+      "afterAckObservedMs": {
+        "count": 70,
+        "p50": 3077.8,
+        "p95": 5016.37,
+        "max": 5677.8
+      },
+      "httpStatuses": {
+        "202": 70
+      },
+      "ackStatuses": {
+        "queued": 70
+      },
+      "results": {
+        "accepted": 70
+      },
+      "observedStatuses": [
+        "queued",
+        "processing",
+        "accepted"
+      ],
+      "serverReceiptSpreadMs": 92,
+      "burstToAllObservedMs": 5855.85,
+      "throughputPerSecond": 11.95,
+      "fairReceiptOrder": true,
+      "final": {
+        "players": 70,
+        "accepted": 70,
+        "pending": 0,
+        "finishers": 70
+      },
+      "success": true
+    },
+    "public": {
+      "pollIntervalMs": 1000,
+      "pollJitterFraction": 0.3,
+      "testedAt": "2026-10-17T16:24:41.509Z",
+      "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+      "participants": 70,
+      "connectionMode": "poll",
+      "mode": "demo",
+      "imageDescription": "Unique valid JPEGs with random pixel texture; simulated photo upload sizes, not real-world subjects.",
+      "errors": [],
+      "authentication": {
+        "platformAuthentication": "none",
+        "platformCookiesSent": false,
+        "sitesBypassUsed": false,
+        "cookieJar": "none (Node fetch)",
+        "anonymousRequests": [
+          "POST /api/rooms",
+          "POST /api/rooms/:id/join"
+        ],
+        "gameHostCookie": "Only the newly created room host cookie is used for host operations",
+        "gameParticipantBearer": "Only newly registered room participant tokens are used for own-photo submissions and own-state synchronization"
+      },
+      "roomId": "5c270a52a92e4ff19f80d98946d255e7",
+      "lobbyExtensions": 7,
+      "images": {
+        "count": 70,
+        "p50": 243482,
+        "p95": 243854,
+        "max": 243914,
+        "unit": "bytes",
+        "totalBytes": 17045572
+      },
+      "maxObservedPending": 61,
+      "maxObservedProcessing": 8,
+      "maxObservedQueued": 50,
+      "passEvents": {
+        "observedUniqueIds": 70,
+        "observedRoomHistoryIds": 70,
+        "ownEventSeenCount": 70,
+        "evidenceSources": {
+          "room-history": 70
+        },
+        "finalHistoryLength": 40,
+        "eventCursor": 70
+      },
+      "connectionsOpened": 70,
+      "hostStartAction": "start-now",
+      "roundSyncMs": {
+        "count": 70,
+        "p50": 1109.48,
+        "p95": 2369.52,
+        "max": 2379.48
+      },
+      "receiptHttpMs": {
+        "count": 70,
+        "p50": 2839.94,
+        "p95": 3741.78,
+        "max": 6728.47
+      },
+      "passEventObservedMs": {
+        "count": 70,
+        "p50": 6421.79,
+        "p95": 8212.39,
+        "max": 8631.93
+      },
+      "completionObservedMs": {
+        "count": 70,
+        "p50": 6421.79,
+        "p95": 8212.39,
+        "max": 8631.93
+      },
+      "afterAckObservedMs": {
+        "count": 70,
+        "p50": 3578.46,
+        "p95": 4791.16,
+        "max": 5149.71
+      },
+      "httpStatuses": {
+        "202": 70
+      },
+      "ackStatuses": {
+        "queued": 70
+      },
+      "results": {
+        "accepted": 70
+      },
+      "observedStatuses": [
+        "uploading",
+        "queued",
+        "processing",
+        "accepted"
+      ],
+      "serverReceiptSpreadMs": 4844,
+      "burstToAllObservedMs": 8676.21,
+      "throughputPerSecond": 8.07,
+      "fairReceiptOrder": true,
+      "final": {
+        "players": 70,
+        "accepted": 70,
+        "pending": 0,
+        "finishers": 70
+      },
+      "success": true
+    }
+  }
+}
