@@ -6,7 +6,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const html = await readFile(new URL('../dist/preview.html', import.meta.url));
-const mcp = new Client({ name: 'karimono-local-preview', version: '0.2.0' });
+const mcp = new Client({ name: 'karimono-local-preview', version: '0.3.1' });
 const mode = process.env.KARIMONO_MODE || 'demo';
 const transport = new StdioClientTransport({
   command: process.execPath,

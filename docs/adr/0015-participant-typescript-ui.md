@@ -12,7 +12,7 @@
 
 参加者画面の現行配信は取り込み済みのデモHTMLから行われる。提供された画面デザインに沿う8画面をTypeScript/Reactで組み、現在のSitesソース `apps/cloud/` の `/rooms/:id/join` に置く。画面見本は `/design-preview` に分け、実ゲームではデモ数値を表示しない。既存のSites内ホスト画面とルートはこの変更では維持する。Sitesをリポジトリ直下へ移す判断は本ADRに含めない。
 
-参加者画面は現行の部屋参加・状態取得・写真提出APIを利用する。採点、競技の進行、締切、順位の確定はサーバー側に残す。画像内の+500点・10競技・ヒントなど、現行APIにない値は画面見本だけで使い、実画面ではAPIの値が入るまで仮計算しない。追加APIの実装依頼は [Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1) に分ける。
+参加者画面は現行の部屋参加・状態取得・写真提出APIを利用する。採点、競技の進行、締切、順位の確定はサーバー側に残す。初版時点で未実装だった500点・10競技・ヒントは、main統合で[ADR-0013](0013-issue1-player-game-contract.md)のAPIを利用できるようになった。実画面ではscore/rank/awardedPoints/stagesと保存済みヒントを表示し、端末で加点を仮計算しない。Supabaseとライブ更新の追加項目は[ADR-0016](0016-supabase-game-persistence.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)へ分ける。
 
 ## 代替案と理由
 
@@ -24,7 +24,7 @@
 
 ## 検証・見直し条件
 
-`apps/cloud/` で型チェックとSitesビルドが成功し、ローカルで `/design-preview` と `/rooms/test/join` がHTMLを返すことを確認した。画面見本のスタート・お題・成功をブラウザーで確認した。公開Sitesへの配備、実在する部屋での通し操作、スマホ実機撮影、約100人の同時利用は未確認。APIの追加契約と公開環境での検証後に画面の表示と本ADRを見直す。
+`apps/cloud/` で型チェックとSitesビルドが成功し、ローカルで `/design-preview` と `/rooms/test/join` がHTMLを返すことを確認した。画面見本のスタート・お題・成功をブラウザーで確認した。その後、ローカルD1の1人参加→画像ファイル提出→デモ結果と通信・表示モック9ケースを確認した。最新main統合後の型検査/buildと、バックエンド・既存音のテスト19件が成功した。このTypeScript画面の公開配備、スマホ実機撮影、100実端末とSupabase接続は未確認。別担当のD1公開100HTTP試験記録は[14](../14-issue1-ahwenu-handoff.md)で区別する。
 
 ## 関連仕様
 
@@ -33,3 +33,4 @@
 ## 変更履歴
 
 - 2026-10-18：参加者画面のTypeScript化と現行Sitesでの配信境界を記録。
+- 2026-10-18：mainのADR-0012〜0014との番号衝突を避け0015へ改番。mainの実装済みゲーム契約と、新UIの確認範囲を反映。

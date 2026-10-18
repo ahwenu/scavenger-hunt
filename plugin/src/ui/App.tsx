@@ -1,5 +1,14 @@
 /** カリモノのホスト用表示。通信とゲーム操作は呼び出し元へ委譲する。 */
 import type { HostAction, HostState } from "../shared/contracts.js";
+import { useState } from "react";
+import { JoinQr } from "./JoinQr.js";
+import { SoundToggle } from "./SoundControls.js";
+import girlFlag from "./assets/girl-flag.png";
+import robotFlag from "./assets/robot-flag.png";
+import girlCheer from "./assets/girl-cheer.png";
+import trophy from "./assets/trophy.png";
+import crown from "./assets/crown.png";
+import flagBlue from "./assets/flag-blue.png";
 import "./styles.css";
 
 export type { HostAction } from "../shared/contracts.js";
@@ -9,6 +18,25 @@ export interface HostDashboardProps {
   busy: boolean;
   error: string | null;
   onAction: (action: HostAction) => void;
+  onSetHint?: (roundId: string, text: string | null) => Promise<void>;
+}
+
+/** 入力途中の文を定期同期で消さず、保存が確認できた内容と区別して表示する。 */
+function CommonHint({ roundId, saved, enabled, busy, onSave }: { roundId: string; saved?: string | null; enabled: boolean; busy: boolean; onSave?: (roundId: string, text: string | null) => Promise<void> }) {
+  const [draft, setDraft] = useState(saved ?? '');
+  const disabled = !enabled || busy || !onSave;
+  return <div className="common-hint">
+    <label htmlFor="common-hint-text">共通ヒント</label>
+    <p id="common-hint-help" className="helper">受付中の競技に保存すると、参加者全員が同じヒントを確認できます。AIは呼び出しません。</p>
+    <textarea id="common-hint-text" aria-describedby="common-hint-help" maxLength={500} rows={3} value={draft} disabled={disabled} onChange={event => setDraft(event.target.value)} placeholder="例：机の上やかばんの中を探してみよう" />
+    <div className="hint-actions">
+      <span className="helper">{draft.length} / 500文字</span>
+      <button className="button button-secondary" disabled={disabled || !draft.trim()} onClick={() => void onSave?.(roundId, draft.trim())}>{busy ? '処理中…' : 'ヒントを保存'}</button>
+      <button className="button button-quiet" disabled={disabled} onClick={() => void onSave?.(roundId, null)}>ヒントを削除</button>
+    </div>
+    <p className="helper" aria-live="polite">{saved === undefined ? 'この画面では保存済みヒントをまだ取得していません。' : saved === null ? 'この競技のヒントは削除済みです。' : `保存を確認したヒント：${saved}`}</p>
+    {!enabled && <p className="helper">共通ヒントの変更は写真受付中だけ利用できます。</p>}
+  </div>;
 }
 
 const roomLabels = {
@@ -64,6 +92,7 @@ export function HostDashboard({
   busy,
   error,
   onAction,
+  onSetHint,
 }: HostDashboardProps) {
   const snapshot = state.snapshot;
   const room = snapshot?.room;
@@ -93,34 +122,34 @@ export function HostDashboard({
       <header className="masthead">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">
-            K
+            <img src={crown} alt="" width="36" height="30" />
           </span>
           <div>
-            <p className="eyebrow">ONE LEASE / HOST CONSOLE</p>
+            <p className="eyebrow">ONE LEASE / 運営本部</p>
             <h1>
-              カリモノ<span className="brand-period">.</span>
+              カリモノ
             </h1>
           </div>
         </div>
+        <SoundToggle />
         <span className={`mode-badge ${isDemo ? "mode-demo" : ""}`}>
           {isDemo ? "GAME DEMO / 見本" : isSites ? room ? "SITES / 実接続" : "SITES / 接続モード" : "ゲームAPI 未接続"}
         </span>
       </header>
 
-      <section className="intro">
-        <div>
-          <p className="slogan">借り物王に俺はなる！</p>
-          <p className="intro-note">
-            探す。撮る。競い合う。
-            <br className="narrow-only" />
-            みんなの挑戦を、ここから進めよう。
-          </p>
+      <section className="intro" aria-label="カリモノ運動会">
+        <div className="intro-copy">
+          <span className="hero-ribbon">みんなで探して、撮って、競おう！</span>
+          <p className="slogan">借り物王に<br />俺はなる<span>！</span></p>
+          <p className="intro-note">ここは、カリモノの運営本部。<br />みんなの挑戦を、ここから進めよう。</p>
         </div>
-        <span className="host-label">
-          HOST
-          <br />
-          CONTROL
-        </span>
+        <div className="hero-characters" aria-hidden="true">
+          <span className="hero-speech">よーい、カリモノ！</span>
+          <img className="hero-girl" src={girlFlag} alt="" width="240" height="240" />
+          <img className="hero-robot" src={robotFlag} alt="" width="170" height="170" />
+          <span className="field-line field-line-one" />
+          <span className="field-line field-line-two" />
+        </div>
       </section>
 
       <div className="notice" role="status">
@@ -144,8 +173,8 @@ export function HostDashboard({
 
       {!room || !snapshot ? (
         <section className="empty-room surface">
-          <span className="section-kicker">01 / CREATE A ROOM</span>
-          <h2>さあ、ゲームの準備を。</h2>
+          <span className="section-kicker">HOST / ゲームの準備</span>
+          <h2>運動会、はじめよう！</h2>
           <p>
             部屋を作成すると、{isSites ? "参加者" : "参加チーム"}とランキングを
             <br />
@@ -160,6 +189,11 @@ export function HostDashboard({
             <span aria-hidden="true">↗</span>
           </button>
           {isSites && <button className="button button-quiet" disabled={busy} onClick={() => onAction("refresh")}>接続状態を再取得</button>}
+          <ol className="welcome-steps" aria-label="開催の流れ">
+            <li><b>1</b><span>部屋をつくる</span></li>
+            <li><b>2</b><span>みんなで集合</span></li>
+            <li><b>3</b><span>ゲーム開始！</span></li>
+          </ol>
           <p className="helper">
             {isDemo
               ? "実際の参加・撮影・AI判定には接続しません。"
@@ -192,11 +226,12 @@ export function HostDashboard({
               {busy ? "取得中…" : "最新状態を取得"}
             </button>
           </section>
+          <div className={`game-stage ${isSites ? "with-invite" : ""}`}>
           {isSites && (
             <section className="join-panel surface" aria-labelledby="join-heading">
-              <span className="section-kicker">INVITE PARTICIPANTS</span>
-              <h2 id="join-heading">スマホのブラウザで参加</h2>
-              {room.joinUrl ? <><p>参加URLを共有してください。非公開Sitesでは、参加者にもSitesへのアクセス権が必要です。</p><a className="join-url" href={room.joinUrl} target="_blank" rel="noreferrer">{room.joinUrl}</a></> : <p>実AIの接続準備が完了するまで参加URLを表示しません。Sitesの設定後に新しい部屋を作成してください。</p>}
+              <span className="section-kicker">01 / みんなを招待</span>
+              <h2 id="join-heading">QRを読み取って、集合！</h2>
+              {room.joinUrl ? <div className="join-content"><JoinQr url={room.joinUrl} /><div className="join-details"><span className="invite-label">スマホのブラウザで参加できます</span><p>QRコードを読み取るか、下の参加URLを開いてください。</p><span className="join-link-label">参加URL</span><a className="join-url" href={room.joinUrl} target="_blank" rel="noreferrer">{room.joinUrl}</a></div></div> : <p>実AIの接続準備が完了するまで参加URLを表示しません。Sitesの設定後に新しい部屋を作成してください。</p>}
               <p className="helper">部屋ID: {room.roomId} / ホスト認証はMCPサーバー内に保持します。再起動後の部屋復帰は未対応です。</p>
               {sites?.automaticLobbyStart && <p className="helper">参加者が登録されるとSites側で初回のお題準備・開始が自動進行します。</p>}
             </section>
@@ -208,7 +243,7 @@ export function HostDashboard({
               aria-labelledby="topic-heading"
             >
               <div className="section-heading">
-                <span className="section-kicker">01 / GAME PROGRESS</span>
+                <span className="section-kicker">02 / ゲームの進行</span>
                 <span className="small-tag">
                   {round
                     ? room.roundCount === null ? `第 ${round.number} 問` : `${round.number} / ${room.roundCount}`
@@ -233,6 +268,11 @@ export function HostDashboard({
                   : (round?.instruction ??
                     (isSites ? "参加者とお題の準備を確認してください。Sites側で初回の開始が自動進行します。" : "参加チームとお題の準備を確認して、ゲームを開始してください。"))}
               </p>
+              {isSites && sites?.stages && <ol className="stage-progress" aria-label="全競技の進行状況">
+                {sites.stages.map(stage => <li key={stage.number} className={`stage-${stage.status}`} aria-current={stage.status === 'active' ? 'step' : undefined}>
+                  <b>第{stage.number}競技</b><span>{{ completed: '完了', active: '進行中', locked: '未解放' }[stage.status]}</span>
+                </li>)}
+              </ol>}
               <div className="topic-metrics">
                 <div>
                   <span>お題の準備</span>
@@ -290,8 +330,9 @@ export function HostDashboard({
                   {isSites ? "ラウンドの受付を終了" : "ゲーム終了"}
                 </button>
               </div>
+              {isSites && <CommonHint key={round?.roundId ?? 'waiting'} roundId={round?.roundId ?? ''} saved={round?.hint} enabled={sites?.canSetHint === true && room.status !== 'finished'} busy={busy} onSave={onSetHint} />}
               <p className="helper">
-                {isSites ? !sites?.aiAvailable ? "Sites側のAI設定が必要です。デモへは切り替えません。" : sites?.gameMode !== 'ai' ? "実AIモードへの変更が必要です。" : canAdvance ? "次のお題を生成して開始します。有料のAI呼び出しを伴う場合があります。" : "受付終了は現在ラウンドだけに適用します。部屋全体の終了APIは未実装です。" : canStart
+                {isSites ? room.status === "finished" ? "全競技が終了しました。最終ランキングを確認してください。" : !sites?.aiAvailable ? "Sites側のAI設定が必要です。デモへは切り替えません。" : sites?.gameMode !== 'ai' ? "実AIモードへの変更が必要です。" : canAdvance ? "次のお題を生成して開始します。有料のAI呼び出しを伴う場合があります。" : "受付終了は現在ラウンドだけに適用します。部屋全体の終了APIは未実装です。" : canStart
                   ? "全員の準備ができたら開始してください。"
                   : room.status === "lobby"
                     ? "参加チームとお題の準備が必要です。"
@@ -310,23 +351,21 @@ export function HostDashboard({
               aria-labelledby="ranking-heading"
             >
               <div className="section-heading">
-                <span className="section-kicker">02 / LEADERBOARD</span>
+                <span className="section-kicker">03 / ただいまの順位</span>
                 <span className="small-tag">
                   {room.status === "finished" ? "FINAL" : "LIVE VIEW"}
                 </span>
               </div>
-              <h2 id="ranking-heading">
+              <h2 id="ranking-heading"><img className="heading-icon" src={trophy} alt="" width="32" height="31" />
                 {room.status === "finished" ? "最終ランキング" : "ランキング"}
               </h2>
               <p className="section-description">
                 {isDemo
                   ? "サンプルの得点を表示しています。"
-                  : isSites ? "勝数が多い順、同数なら累計回答時間が短い順です。さらに同じ場合は参加順・ID順です。" : "サーバーで確定した得点を表示します。"}
+                  : isSites ? room.scoreUnit === "points" ? "獲得ポイントの多い順です。同点はサーバーが確定した順位を表示します。" : "勝数が多い順、同数なら累計回答時間が短い順です。さらに同じ場合は参加順・ID順です。" : "サーバーで確定した得点を表示します。"}
               </p>
               {room.leaderboard.length === 0 ? (
-                <p className="inline-empty">
-                  {isSites ? "参加者が登録されると表示されます。" : "参加チームがそろうと表示されます。"}
-                </p>
+                <div className="ranking-empty"><img src={girlCheer} alt="" width="112" height="112" /><p className="inline-empty">{isSites ? "みんなの参加を待っています！" : "参加チームがそろうと表示されます。"}</p></div>
               ) : (
                 <ol className="ranking-list">
                   {room.leaderboard.map((team) => (
@@ -336,7 +375,7 @@ export function HostDashboard({
                     >
                       <span className="rank-number">
                         <span className="sr-only">順位 </span>
-                        {String(team.rank).padStart(2, "0")}
+                        {team.rank}
                       </span>
                       <span className="rank-team">{team.name}</span>
                       <span className="rank-score">
@@ -357,8 +396,8 @@ export function HostDashboard({
           >
             <div className="section-heading">
               <div>
-                <span className="section-kicker">03 / PARTICIPANTS</span>
-                <h2 id="teams-heading">
+                <span className="section-kicker">04 / 選手のみなさん</span>
+                <h2 id="teams-heading"><img className="heading-icon" src={flagBlue} alt="" width="25" height="26" />
                   {isSites ? "参加者" : "参加チーム"}
                   <span className="count-label">{snapshot.teams.length}</span>
                 </h2>
@@ -391,6 +430,7 @@ export function HostDashboard({
               {isSites ? "Sitesの集計APIには個別の最終通信・最新提出結果が含まれません。接続中や提出なしとは判定していません。" : "最終通信は取得した記録です。接続中であることを保証する表示ではありません。"}
             </p>
           </section>
+          </div>
           {isDemo && (
             <p className="demo-footnote">
               この部屋コードはデモ用です。スマホから参加することはできません。
@@ -400,7 +440,7 @@ export function HostDashboard({
       )}
       <footer className="footer">
         <span>カリモノ / ONE LEASE</span>
-        <span>HOST CONSOLE · SCAFFOLD</span>
+        <span>運営本部 / HOST</span>
       </footer>
     </main>
   );

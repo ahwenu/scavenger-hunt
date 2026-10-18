@@ -1,6 +1,12 @@
 # 画面仕様・デザインとフロントエンドの境界
 
-> 2026-10-18追記：提供デザイン画像の8画面をTypeScriptで現行Sitesの参加者URLへ組み込む作業を追加した。現行コードとこの文書のMVP案（URL、120秒、チーム/得点など）には差があり、[参加者画面コンテキスト](participant-frontend/mobile-frontend-context.md)で区別する。QRからの約100人は全員プレイヤーとする指示を受けた。画像の10競技・+500点とヒントのAPI追加は[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)の実装依頼であり、まだ実装済みの仕様ではない。
+> 2026-10-18追記：提供デザイン画像の8画面をTypeScript/Reactで現行Sitesの参加者URLへ組み込んだ。画面見本は `/design-preview`、配信境界は[ADR-0015](adr/0015-participant-typescript-ui.md)、起動・引き渡しは[参加者README](participant-frontend/README.md)を参照。
+
+## Issue #1対応の現在の受け渡し
+
+100人全員が個人プレイヤーとして参加し、最大10競技・各競技の初合格500点をサーバーが確定する。`game`、全10件の`stages`、`ranks[].score/rank`、`mine[].awardedPoints`、共通ヒントのGETは[12の応答例](12-issue1-backend-handoff.md)と[ADR-0013](adr/0013-issue1-player-game-contract.md)を基準とする。点数やステージ解放を端末で仮計算しない。開始前はround=null、競技間は直前roundのclosedを表示し、ホストが次競技を開始するまで待機する。ヒント未用意はavailable=false、写真の処理状態はqueued/processing/accepted/rejected/error。順位は連番で、同点同順位の初期案は使わない。
+
+バックエンド契約は公開v3へ配備された記録がある（[14](14-issue1-ahwenu-handoff.md)）。このブランチではTypeScript参加者画面へ得点・順位・ステージ・ヒントを接続した。参加者はBearer、写真は1MiB以下。新しい参加者画面の公開配備とスマホ実機確認は未実施で、下記のCookie契約等の初期案とは区別する。
 
 デザインはAkibako さん、Sitesの参加者向けフロントエンド開発はmae さん。Plugin Extensionsのホスト画面開発は未定（Ahwenu）とし、mae さんの担当には含めない。API処理はAhwenu、バックエンドはさが さんが担当する。
 
@@ -89,3 +95,7 @@ HTTPSとユーザーの許可がカメラ利用の前提となる。[MDN: getUse
 MVPはユーザー操作で `getUserMedia` を開始し、背面カメラを優先する。撮影後はCanvasで長辺1280px以下のJPEGにし、2 MiB以下で送る。変換後も大きければ再圧縮し、上限を満たせなければ送信しない。離脱時にカメラトラックを止め、プレビューURLを解放する。
 
 カメラが使えない端末向けに `input type=file` と `accept=image/*`、`capture=environment` を代替候補とし、実機で動作を確認する。ファイル選択を許す場合は過去写真を排除できないため、MVPでは厳密な不正防止を保証しない。サーバーが扱う形式はJPEGに限定し、HEIC等を変換できない場合は説明して撮り直しへ誘導する。
+
+## 2026-10-18 効果音の追加
+
+ユーザー指示により、操作・参加・開始・正解/不正解・残り5秒・結果発表の音を追加。モバイルは撮影・写真受付、Pluginはサーバーの加点増分と共通ヒント保存にも反応します。ON/OFF、作者/ライセンス表示、初回・定期同期の重複抑制を含みます。出典と検証範囲は[効果音仕様](15-sound-effects.md)を参照。ゲームルールと確定得点の契約は維持します。

@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "karimono-host",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "カリモノの部屋作成・参加状況・ランキングを管理するホスト画面の開発ひな形",
   "extensions": {
     "com.openai": {

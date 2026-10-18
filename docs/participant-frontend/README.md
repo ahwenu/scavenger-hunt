@@ -25,13 +25,14 @@ npm --prefix apps/cloud run start
 
 ## 部屋・QR・写真投稿を確認する
 
-**新しいローカルDBの初回だけ**、build後に3つのSQLを順番に適用する。既に初期化済みのDBへ再実行しない。以下はローカル専用で、公開DBへの適用手順ではない。
+**新しいローカルDBの初回だけ**、build後に4つのSQLを順番に適用する。既に0000〜0002を適用したDBは、再実行せず未適用の0003だけを適用する。0003も適用済みならSQLの再実行は不要。以下はローカル専用で、公開DBへの適用手順ではない。
 
 ```sh
 cd apps/cloud
 node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0000_nappy_kinsey_walden.sql
 node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0001_boring_menace.sql
 node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0002_boring_swarm.sql
+node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0003_issue1_round_hint.sql
 npm run start
 ```
 
@@ -58,6 +59,6 @@ npm run start -- --env-file "$PWD/.dev.vars"
 
 - 画像：`apps/cloud/public/design/sports-day/`。受領画面・切り出し素材・補完素材を分けて保持し、実装は静的画像として読む。
 - 音：`apps/cloud/public/audio/`。画面の音ボタンを押すとBGM・声・効果音を有効にする。Sunoへの差替え用プロンプトは[音楽制作メモ](../design/suno-karimono-bgm.md)。
-- 確認：参加者画面の通信モック6ケースを完了。型検査・buildの最終結果は[作業レポート一覧](../ai-reports/)を参照。ローカルD1の1人参加→画像ファイル提出→デモ成功/順位は確認済み。実機カメラ、100人同時、Supabase実接続は未確認。
+- 確認：参加者画面の通信・表示モック9ケース、最新main統合後の型検査/build、バックエンド・既存音のテスト19件が成功。モックにはサーバー順位の優先、参加99→100人/自分12→2位/500→1000点、古いrevisionの破棄を含む。詳細は[作業レポート一覧](../ai-reports/)を参照。ローカルD1の1人参加→画像ファイル提出→デモ成功/順位は確認済み。このTypeScript画面の実機カメラ、100実端末、Supabase実接続は未確認。mainの既存D1/v3には100HTTPクライアントの公開デモ記録があり、[14の成功/失敗範囲](../14-issue1-ahwenu-handoff.md)を参照。このUIでの再実行とは区別する。
 
 仕様の索引は[参加者画面コンテキスト](mobile-frontend-context.md)、画面/ゲームの正本は[Project.md](../../Project.md)と関連ADR。

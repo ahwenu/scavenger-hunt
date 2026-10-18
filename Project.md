@@ -10,13 +10,19 @@ Plugin Extensionsを自分の環境へ取り込む方は、[取り込み手順](
 
 会場内でお題に合うものを探して撮影し、AIの判定による得点で競うスマホ向けブラウザゲーム。
 
-Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能な `plugin/` にまとめています。[起動・移動手順](plugin/README.md)を参照してください。ローカル登録・有効化に加え、ユーザー操作と提供画像により実拡張内の表示・API接続確認・お題生成を確認済みです。また既存のデモ実装を元の配置で取り込んでおり、Sitesは `apps/cloud/`、ローカルデモは `apps/server/`・`apps/web/` にあります（[取り込み記録](docs/10-demo-import.md)）。取り込んだAPI・AI・配備設定の本環境での動作、現在の仕様への適合、拡張とのゲーム結合は未検証です。2026-10-18作成の以下の文書を、担当者間の実装契約に使います。
+Issue #1のバックエンド対応として、Sitesの既存 `/api/rooms/:id` を100人・最大10競技・各競技の初合格500点へ拡張しました。全10ステージ、確定得点・連番順位、競技ごとの共有ヒントを返します。さが さんの元実装・ローカル100人検証を保持し、後続のAhwenu担当作業でmain統合と公開v3配備・0003マイグレーション、Plugin 0.3.1のインストールを完了しました。公開100HTTPクライアントのデモ500点/finishedとヒント、実AIの条件不一致による不合格0点を確認済みです。実AIの合格500点・実端末100台・ネイティブパネル直接操作は未検証です。[受け渡し契約](docs/12-issue1-backend-handoff.md)と[ADR-0013](docs/adr/0013-issue1-player-game-contract.md)を参照してください。
+
+Ahwenu宛5項目の実装・配備・ファイルでの受け渡しを完了しました。main `669731c` をcommit/push済み。公開100HTTPクライアントのデモ第1競技で100人参加・100写真受付・各500点・本人分離・共通ヒントを確認し、補完1人10競技もfinishedへ到達しました。終盤のtransport失敗、実AIの陰性経路、陽性加点の未検証を[14 Ahwenu受け渡し](docs/14-issue1-ahwenu-handoff.md)へ分けて記録しています。Issueを閉じる操作やコメント送信は行っていません。
+
+Plugin Extensionsのホスト画面とMCPサーバーを、移動可能な `plugin/` にまとめています。[起動・移動手順](plugin/README.md)を参照してください。ローカル登録・有効化に加え、ユーザー操作と提供画像により実拡張内の表示・API接続確認・お題生成を確認済みです。Sitesソースは `apps/cloud/`、ローカルデモは `apps/server/`・`apps/web/` にあります。取り込み当初の未検証記録は[10](docs/10-demo-import.md)、今回の配備・実結合と残る未検証範囲は[14](docs/14-issue1-ahwenu-handoff.md)を参照してください。以下の文書を担当者間の実装契約に使います。
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
 
-参加者向け画面は提供デザインをもとにTypeScriptで実装する方針です。このブランチの参加URLと画面見本の扱いは[ADR-0015](docs/adr/0015-participant-typescript-ui.md)を参照してください。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。進行・得点・ヒントの追加APIは[バックエンド実装依頼 Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)で依頼中で、Issue記載の数値・契約は実装/仕様反映前の依頼内容です。
+参加者向け画面は提供デザインをもとにTypeScriptで実装する方針です。このブランチの参加URLと画面見本の扱いは[ADR-0015](docs/adr/0015-participant-typescript-ui.md)を参照してください。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。10競技・500点・共通ヒントのAPIはmainへ実装済みで、参加者画面はサーバーの確定値を表示します。Supabaseと人数/順位更新の追加契約は[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)の残依頼です。
 
-本番ゲーム記録の保存先は、ユーザー指示により**Supabase**とします（[ADR-0016](docs/adr/0016-supabase-game-persistence.md)）。参加人数と順位の変化を画面へ自動反映することも実演の要件です。現行コードと下記の既存Sites v2はD1/R2であり、Supabaseの接続・スキーマ・100人の同時利用は未確認です。参加者の同一オリジン `/api/rooms/:id` 境界を保つ引き渡しと設定項目は[16 Supabase統合](docs/16-supabase-integration.md)を参照してください。
+本番ゲーム記録の保存先は、ユーザー指示により**Supabase**とします（[ADR-0016](docs/adr/0016-supabase-game-persistence.md)）。参加人数と順位の変化を画面へ自動反映することも実演の要件です。現行コードと既存Sites v3はD1/R2であり、Supabaseの接続・スキーマ・Supabaseでの100人同時利用は未確認です。D1の公開100HTTP試験記録は上記14へ分けています。参加者の同一オリジン `/api/rooms/:id` 境界を保つ引き渡しと設定項目は[16 Supabase統合](docs/16-supabase-integration.md)を参照してください。
+
+ユーザー指定の運動会・猫耳キャラクターのスマホ案を参考に、0.3.0のホスト画面を実装しました。素材をpluginへ同梱し、参加者・勝利数・時間はHTMLで表示します。インストール済みHTMLの検証ホストで1280/390px表示・実部屋のQR読取/匿名参加ページ200、別MCPの明示デモ進行を確認済みです。この0.3.0画面確認ではネイティブ拡張パネルの直接操作、新しい参加登録・有料AI呼出は未実施でした。後続0.3.1の結果は14を参照してください（[ADR-0012](docs/adr/0012-sports-day-host-ui.md)、[素材ガイド](docs/design/sports-day-ui-assets-v1/README.md)）。
 
 独立API実装時の作業範囲はAhwenuのAPI処理に限定し、`api/` でお題生成・写真判定を提供して拡張からMCP経由で接続しました。この段階ではSites側を変更せず、実AIの確認画面とゲームデモを分離しています。[11 API連携](docs/11-api-integration.md)に当時の契約・検証を記録しています。現在の新Sites配備・Cloud/Web反映は、下記の追加指示に基づく別フェーズです。
 
@@ -24,7 +30,9 @@ Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能
 
 通常のお題生成はResponses APIのStructured Outputs、写真判定はDecisions APIを使います。ブラウザプレビューからMCP経由の実お題生成と、JPEG画像の実判定を1例確認しました。Agents APIは参考写真を明示的に有効にしたときだけ使い、このモードの成功は未確認です。標準生成の変更理由と検証結果は[ADR-0010](docs/adr/0010-independent-ai-api.md)に記録しています。
 
-その後、ユーザーがWork内の実Plugin Extensionsで「API接続確認」→「AI生成」を操作しました。提供画像2枚により、実拡張内の画面表示・API接続済み表示・「文房具のペンを探そう」の生成表示を1例確認しました。写真判定UI、Sitesの参加者・得点・順位との結合は未検証です。
+独立API実装時には、ユーザーのWork内実Plugin Extensionsでの「API接続確認」→「AI生成」操作と提供画像2枚から、接続済みと「文房具のペンを探そう」の表示を確認しました。当時未検証だったSitesの参加・得点・順位の結合は後続作業で検証し、現在の範囲と限界を14に記録しています。
+
+モバイルとPlugin UIにOtoLogicの無料効果音11種類を同梱し、操作・参加・撮影・受付・開始・正解/不正解・残り5秒・結果発表で再生します。端末別ON/OFFとクレジットを追加し、初回/定期同期の重複再生を抑制します。出典・加工内容・検証範囲は[15 効果音仕様](docs/15-sound-effects.md)、方針は[ADR-0014](docs/adr/0014-game-sound-effects.md)を参照。公開Sites配備・インストール済みPluginへの更新・実機試聴は今回未実施です。
 
 ## 担当割り振り
 
@@ -54,6 +62,9 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
 | [11 API連携](docs/11-api-integration.md) | Ahwenuの独立AI API、拡張との接続、秘密設定、Sitesとの受け渡し | Ahwenu・さが さん・拡張画面担当 |
 | [12 新Sitesの配置と接続](docs/12-sites-deployment.md) | 全ソースの保持、Cloud実行、publicアクセス・部屋認可、拡張の実ゲーム接続 | 全員 |
+| [12 Issue #1バックエンド受け渡し](docs/12-issue1-backend-handoff.md) | 100人・10競技・500点の契約と、さが さんの初期実装/ローカル検証履歴 | さが さん・Ahwenu・mae さん |
+| [13 MCP Events調査](docs/13-mcp-events-audit.md) | 公式イベント機能の未使用、2秒ポーリングと独自イベントの違い | Ahwenu・バックエンド・拡張画面担当 |
+| [14 Issue #1 Ahwenu受け渡し](docs/14-issue1-ahwenu-handoff.md) | 5項目の対応、確定HTTP/MCP契約、mae向け応答例、公開版の検証 | Ahwenu・さが さん・mae さん |
 | [16 Supabase統合](docs/16-supabase-integration.md) | 本番保存先、既存API互換、人数/順位の更新、環境設定、バックエンドへの受け渡し | mae さん・さが さん・Ahwenu |
 | [当日の全体コンテキスト](docs/hackathon/README.md) | ゴールを決める項目、実演の1周、担当間の受け渡し、確認済みの範囲 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |

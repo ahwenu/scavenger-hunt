@@ -1,6 +1,12 @@
 # 新Sitesへの配置とPlugin Extensionsのゲーム接続
 
-## 対象と現在の状態
+後続のIssue #1対応でv3を配備済み（2026-10-18 16:08 JST）。100人・10競技・初合格500点・全ステージ・保存済みヒントと0003マイグレーションを適用し、Plugin 0.3.1をインストールした。versionは `appgprj_6ad4611142408191ae99be09e3b27efb~appgver_bc7c0dbeeef88191857c824951236574`、deploymentは `appgdep_6ad4705c8e088191a7709d630c552030`、SitesソースSHAは `df6813631353211b2ff52d1a89df22dd36b951f1`。public・実行環境revision 1を維持し、621ファイルの秘密除外済みスナップショットを保持。元mainは `669731c6715a59a6236eae29e323d2977816a7d0` をcommit/push済み。公開100HTTPデモの500点/finished/ヒント、実AIの条件不一致による不合格0点とMCP順位/再送/ヒント保存/削除を確認。実AI合格500点・実端末100台・ネイティブパネル直接操作は未検証。[14](14-issue1-ahwenu-handoff.md)に全結果を記録し、最終保存ソース/配備IDはSitesのバージョン履歴を参照する。以下のv1/v2のwins順位・全体終了未対応は過去版の記録。
+
+## 以下はv1/v2の配置・仕様・検証履歴
+
+以下の取得元・配布版・wins順位・問題数上限なし・全体終了未対応などは**当時の仕様**を保持した履歴。現在のv3は100人・10競技・確定500点・全ステージ・finished・共通ヒントに対応し、最新の配備/公開試験は[14](14-issue1-ahwenu-handoff.md)を参照する。
+
+### 初回配置時点の対象
 
 本書はD1/R2で配備したSites v1/v2の記録。後続のユーザー指示により、本番ゲーム記録の保存先をSupabaseとする方針を[ADR-0016](adr/0016-supabase-game-persistence.md)に記録した。下記の配備・実AI結合結果はSupabase接続の検証ではない。移行の受け渡しは[16](16-supabase-integration.md)を参照。
 
@@ -50,7 +56,7 @@ Sites作業ルート app/
 
 OpenAIキーはSitesのサーバー実行時秘密設定だけから参照し、画面・MCPツール結果・保存用ソース・配布物へ渡さない。CloudのDBと画像ストレージは部屋・参加・提出・判定・順位の正本を持ち、ローカル `api/` のメモリ状態は引き継がない。
 
-現在のCloudは勝利数（wins）を順位に使い、アプリ全体を終了する操作は持たない。Plugin Extensionsの表示も勝利数とラウンド操作へ合わせる。従来仕様の「1問10点」「ゲーム全体の終了」を、接続アダプターが実装済みとして見せない。
+v1/v2時点のCloudは勝利数（wins）を順位に使い、アプリ全体を終了する操作は持たなかった。当時のPlugin Extensionsも勝利数とラウンド操作へ合わせた。従来仕様の「1問10点」「ゲーム全体の終了」を、当時の接続アダプターが実装済みとして見せない方針だった。
 
 ## ソースへ戻す変更とv2の再現手順
 
@@ -127,3 +133,5 @@ public変更後、匿名でトップにアクセスしHTTP 200・ログイン要
 ローカルAPIとWork内実拡張の過去の成功例は[11](11-api-integration.md)を参照し、新Sitesの成功記録と区別する。
 
 判断の記録：[ADR-0011](adr/0011-new-sites-deployment.md)。
+
+後続のQR修正（plugin 0.2.1）：参加リンクだけだったUIへ、ローカルqrcode行列から256pxの白黒SVG・余白4セルでQRを描画し、リンクを残した。外部QR通信・CSP緩和はなし。21件のテスト・型チェック・ビルド・通常/共有配布物の可搬性・CLIインストールと有効化が成功。インストール済みMCPリソースの未改変HTMLを公式AppBridge/PostMessageTransport、`sandbox=allow-scripts`、`connect-src none` の検証ホストで表示し、「部屋を作る」から実Sitesへ部屋を作成した。画面画像をmacOS Visionで読取してQRと参加URLの完全一致、そのURLの匿名HTTP 200・ログイン不要を確認。画像はGit対象外の `plugin/artifacts/installed-plugin-qr-0.2.1.png` に保存した。ネイティブCodexパネルの直接操作、参加登録、新しい有料AI呼出は今回行わず、この修正のcommit/pushも未実施。

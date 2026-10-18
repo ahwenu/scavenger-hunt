@@ -37,6 +37,8 @@ export interface RoomSnapshot {
     startsAt: string;
     deadlineAt: string;
     settleUntil: string;
+    /** このMCPプロセスで保存を確認した共通ヒント。未取得は省略する。 */
+    hint?: string | null;
   };
   teams: Array<{ teamId: string; name: string }>;
   leaderboard: Array<{ teamId: string; name: string; score: number; rank: number; totalMs?: number }>;
@@ -56,8 +58,10 @@ export interface HostSnapshot {
     canStart: boolean;
     canAdvance: boolean;
     canEndRound: boolean;
+    canSetHint?: boolean;
     pendingJudgments: number;
     automaticLobbyStart: boolean;
+    stages?: Array<{ number: number; status: 'completed' | 'active' | 'locked' }>;
   };
 }
 

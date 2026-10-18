@@ -8,7 +8,7 @@
 | --- | --- |
 | 本番ゲーム記録 | SupabaseのPostgresへ保存する方針。接続・SQL・マイグレーションは未実装/未確認 |
 | 実演 | 同じQRから来る約100人が全員プレイヤー。人数と順位を画面へ自動反映する |
-| 現行コード | `apps/cloud/lib/cloud-api.ts` はD1/R2。既存Sites v2の検証もこの構成 |
+| 現行コード | `apps/cloud/lib/cloud-api.ts` はD1/R2。既存Sites v3の検証もこの構成 |
 | フロント接続先 | `apps/cloud/app/participant/api.ts` から同一オリジンの `/api/rooms/:id`。Supabase直接接続はない |
 | 現行認可 | 参加者は部屋限定Bearer、ホストは部屋別HttpOnly Cookie。保存先変更と認証方式変更を一括にしない |
 | 未受領・未確認 | Supabase URL、サーバー用資格情報、既存スキーマ、画像保存先の変更、100人のSupabase実接続・実AI・実機撮影の負荷評価 |
@@ -19,18 +19,18 @@
 
 | ルート | 現行の入力と出力 | 依頼する追加 |
 | --- | --- | --- |
-| `POST /api/rooms/:id/join` | JSON `{name}` → **200** `{id,token}`。現行上限200人 | 同時に100人参加しても個別IDを返す。登録上限は既存200を保つ |
-| `GET /api/rooms/:id/state` | Bearer → `room,mode,serverTime,lobby,players,ranks,round,mine,stats` 等。時刻はepochミリ秒 | `game,stages,revision,live`、`ranks[].score/rank`、`mine[].awardedPoints`、`stats.activePlayers` |
+| `POST /api/rooms/:id/join` | JSON `{name}` → **201** `{id,token}`。現行上限100人、満員/終了409 | Supabaseでも個別ID・上限100・認可を維持 |
+| `GET /api/rooms/:id/state` | Bearer →既存状態と `game,stages,ranks[].score/rank,mine[].awardedPoints`。時刻はepochミリ秒 | `revision,live,stats.activePlayers`。既存の得点/順位は維持 |
 | `POST /api/rooms/:id/submit` | Bearer、multipart `roundId,requestId,photo` → 202 `{id,status,receivedAt}` | Supabaseへ受付を永続化し、重複受付・二重加点を防ぐ。再送は同じ提出ID |
-| `GET /api/rooms/:id/hint?roundId=...` | フロント側に呼出関数あり。現行サーバーは404 | 200 `{roundId,text,available}`。現在競技の保存済みヒントを全員へ返す |
+| `GET /api/rooms/:id/hint?roundId=...` | 200 `{roundId,text,available}`、未用意null/false、対象外409。ホストの保存/削除も実装済み | Supabaseでも保存済み共通ヒントを維持。閲覧時にAI生成しない |
 
-既存フィールドの名前・意味と `sync: "polling"` は互換を保つ。現在の `join` は201ではなく200であり、今回の依頼本文も200に合わせる。エラーは現行互換の `{error: "画面に表示できる説明"}` とし、機械判定コードは追加フィールドに置く。秘密値、他人の提出詳細、未来のお題は返さない。
+既存フィールドの名前・意味と `sync: "polling"` は互換を保つ。現在の `join` は201、最大100人。旧UIブランチの200/200人という記述はmain統合前の履歴であり、現契約へ戻さない。エラーは現行互換の `{error: "画面に表示できる説明"}` とし、機械判定コードは追加フィールドに置く。秘密値、他人の提出詳細、未来のお題は返さない。
 
-10競技、各競技の最初の合格だけ500点、得点降順→合格受付までの累計時間→参加時刻→IDの順序、ヒントはIssueの実装依頼。現行コードは勝利数順位で、点数・全ゲーム終了・ヒントは未実装。
+10競技、各競技の最初の合格だけ500点、得点降順→合格受付までの累計時間→参加時刻→IDの順序、共通ヒント、finishedは実装済み。正本は[ADR-0013](adr/0013-issue1-player-game-contract.md)、確定HTTP契約と公開v3の記録は[14](14-issue1-ahwenu-handoff.md)。今回照合したmainは `29e6728`。D1の公開100HTTPデモ記録と終盤transport失敗・補完結果を保持し、この作業の再実行結果やSupabase検証には読み替えない。
 
 ## 人数と順位のライブ更新
 
-初期の互換経路はstateの定期取得。追加の方式は、Supabase Realtimeをサーバーで受けて認可付き配信へ変換する方式やSSE等を、配備環境で検証して決める。秘密キーをクライアントへ渡すことを前提にしない。
+現行はstateの定期取得で人数/順位を自動更新する。以下のrevision/live/activePlayersはバックエンドへの追加依頼で、まだ応答されない。追加の配信方式は、Supabase Realtimeをサーバーで受けて認可付き配信へ変換する方式やSSE等を、配備環境で検証して決める。秘密キーをクライアントへ渡すことを前提にしない。
 
 - `revision: number`：部屋の表示内容が変わったとき増える単調な版。人数、競技、提出結果、得点/順位を同じ版のスナップショットとして返し、古い応答の上書き防止に使う。
 - `live: { pollIntervalMs: 2000, activeWindowMs: 30000, updatedAt: number }`：初期の依頼値。負荷試験で変更する場合は実測とともに契約へ反映する。

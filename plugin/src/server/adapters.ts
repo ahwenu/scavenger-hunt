@@ -2,12 +2,14 @@
 import { randomUUID } from 'node:crypto';
 import type { HostSnapshot, HostState } from '../shared/contracts.js';
 
-export type HostAction = 'open' | 'create_room' | 'get_room' | 'prepare_topics' | 'start' | 'advance' | 'finish' | 'purge_images';
+export type HostAction = 'open' | 'create_room' | 'get_room' | 'prepare_topics' | 'start' | 'advance' | 'finish' | 'purge_images' | 'set_hint';
 export interface HostInput {
   roomId?: string;
   operationId?: string;
   expectedVersion?: number;
   source?: 'ai' | 'preset';
+  roundId?: string;
+  text?: string | null;
 }
 
 /** Sitesアダプターに後から実装する操作境界。秘密値はHostStateへ入れない。 */
@@ -53,6 +55,7 @@ export class DemoHostAdapter implements HostAdapter {
 
   /** 冪等性・バージョン・許可された状態遷移を通してデモを操作する。 */
   execute(action: HostAction, input: HostInput): HostState {
+    if (action === 'set_hint') throw new HostOperationError('UNSUPPORTED_OPERATION', '共通ヒントの保存はSites接続時だけ利用できます。デモへ保存しません。');
     const operationKey = input.operationId ? `${action}:${input.operationId}` : null;
     const fingerprint = JSON.stringify(input);
     if (operationKey) {

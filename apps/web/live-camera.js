@@ -95,7 +95,7 @@ export function createLiveCamera(root,options={}){
   /** シャッターを1回押すと現在の映像を撮影し、そのまま送信する。 */
   async function capture(){
     if(!canSubmit()||cameraStatus!=='live')return;
-    options.onGesture?.();const epoch=++captureEpoch,capturedRound=roundId;operation=true;status='capturing';notice='';render();
+    options.onGesture?.();options.onShutter?.();const epoch=++captureEpoch,capturedRound=roundId;operation=true;status='capturing';notice='';render();
     try{
       const width=video.videoWidth,height=video.videoHeight,viewWidth=video.clientWidth,viewHeight=video.clientHeight;let crop=null;
       // object-fit:cover / object-position:center と同じ領域を、回転後も毎回計算する。
@@ -128,7 +128,7 @@ export function createLiveCamera(root,options={}){
   /** ライブ映像を使えない端末でも、EXIF等を残さず圧縮した写真だけを直ちに送信する。 */
   async function fallbackChanged(){
     const file=el('file').files?.[0];el('file').value='';if(!file||!canSubmit())return;
-    const epoch=++captureEpoch,capturedRound=roundId;operation=true;status='capturing';notice='';render();let bitmap,decoded;
+    options.onGesture?.();options.onShutter?.();const epoch=++captureEpoch,capturedRound=roundId;operation=true;status='capturing';notice='';render();let bitmap,decoded;
     try{
       if(file.size>20*1024*1024)throw Error('写真が大きすぎます。カメラの画質を下げてください。');
       const createBitmap=options.createImageBitmap||globalThis.createImageBitmap;

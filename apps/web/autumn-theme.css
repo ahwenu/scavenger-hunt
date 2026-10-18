@@ -18,3 +18,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 @media(min-width:901px){.season-label{display:inline-block}}
 @media(max-width:720px){.sticker{box-shadow:4px 4px 0 var(--autumn-gold)}}
 @media(prefers-reduced-motion:reduce){.topbar::after{animation:none}}
+
+/* 音の切替と素材表記を、カメラやホスト進行の外側に置く。 */
+.sound-toggle{min-height:40px;padding:8px 13px;border:2px solid #773b28;border-radius:999px;background:#fff7df;color:#613323;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
+.sound-toggle[aria-pressed="true"]{background:#ffe486}
+.sound-toggle:focus-visible,.sound-credits summary:focus-visible{outline:3px solid #2e70a5;outline-offset:3px}
+.host-board-title>.sound-toggle{float:right}
+.sound-credits{font-size:12px;line-height:1.7;text-align:left;max-width:620px;margin:12px auto}
+.sound-credits summary{cursor:pointer}
+.sound-credits a{text-decoration:underline}

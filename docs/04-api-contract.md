@@ -1,12 +1,18 @@
 # API契約：Sites・モバイル・Plugin Extensions
 
-## 現行実装とSupabase統合の参照先（2026-10-18追記）
+## 現在のSites実装：Issue #1
 
-本書の `/api/v1`・Cookie参加・10チーム等は当初のAPI案で、現在のCloud実装とは異なる。実装は `/api/rooms/:id`、参加者Bearer、ホストCookie、epochミリ秒の時刻、裸のJSON応答を使う。現行の参加登録は200、参加上限は200人。フロントが呼ぶルートと追加依頼は[16 Supabase統合](16-supabase-integration.md)および[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)を参照する。
+現在実装するゲームAPIは `/api/rooms/:id` 系であり、以下の `/api/v1` は初期提案として残す。Issue #1では参加者Bearerと部屋別ホストCookieを維持し、参加成功201、最大100人、10競技、初合格500点と連番順位を採用する。stateにはgame/stagesとscore/rank/awardedPointsを追加し、既存フィールドを保持する。写真は1MiB以下、multipartのrequestIdで再送を識別する。
 
-本番のゲーム記録はSupabaseへ接続する方針（[ADR-0016](adr/0016-supabase-game-persistence.md)）。この保存先変更に `/api/v1` やSupabase Authへの移行を含めない。約100人全員プレイヤー、人数/順位のライブ更新、入出力、認可、競合時の受入条件をIssueで受け渡し、実装後に確定契約を更新する。以下の旧API案を現行の実装済み仕様として扱わない。
+`GET /api/rooms/:id/hint?roundId=...` は参加者の現在競技の保存済みヒントだけを返す。未用意は200のnull/false、未来・終了競技は409。登録はホストCookie付き `POST /api/rooms/:id/host/hint` の `{roundId,text}`（1〜500文字、nullで削除）。GET時のAI生成はない。
 
-## 当初のAPI案
+入力・出力・待機状態・エラー・全10ステージの応答例は[12 Issue #1受け渡し](12-issue1-backend-handoff.md)、環境非依存の追加型は[game-contract.ts](../apps/cloud/lib/game-contract.ts)、判断は[ADR-0013](adr/0013-issue1-player-game-contract.md)。後続作業で公開v3と0003を適用し、Plugin 0.3.1をインストール済み。公開100HTTPデモで500点/順位/finished/ヒント、実AIで条件不一致の不合格0点・MCP順位・再送・ヒント保存/削除を確認。実AIの合格500点と実機100台は未検証で、独立デモDTOや独立AI APIとも区別する。
+
+後続のAhwenu担当によるHTTP/MCP対応・公開配備の状況と、mae さん向けの最終応答例/配備版は[14](14-issue1-ahwenu-handoff.md)に記録する。元PRの検証履歴と新しい公開結果を分ける。
+
+本番ゲーム記録はSupabaseへ接続する方針（[ADR-0016](adr/0016-supabase-game-persistence.md)）。現行コードはD1/R2で、保存先の移行、人数/順位更新のrevision・在席数等は残る実装依頼として[16](16-supabase-integration.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)へまとめる。既存API・参加者Bearer・ホストCookieを維持し、Supabase Authや `/api/v1` へ同時移行しない。
+
+## 以下は初期API案（Issue #1の実装契約ではない）
 
 API契約・HTTPルート・外部API接続・MCPサーバーはAhwenuが担当する。ルートから呼ぶゲーム処理・DB/R2・認証/認可サービスはさが さん、モバイルからのAPI利用はmae さん、拡張画面からのMCP利用は未定（Ahwenu）が担当する。責務の詳細は[07 分担](07-delivery-plan.md)を参照。
 

@@ -20,8 +20,13 @@ const cloudStateSchema = z.object({
   generating: z.boolean(), preparing: z.boolean(), prepared: z.boolean(),
   preparationError: z.string().nullable(),
   lobby: z.object({ deadline: z.number().nullable(), startedAt: z.number().nullable(), status: z.string() }),
+  game: z.object({ status: z.enum(['lobby', 'playing', 'finished']), totalRounds: z.number().int().positive() }).optional(),
+  stages: z.array(z.object({ number: z.number().int().positive(), status: z.enum(['completed', 'active', 'locked']) })).max(100).optional(),
   players: z.array(playerSchema).max(200),
-  ranks: z.array(playerSchema.extend({ wins: z.number().int().nonnegative(), totalMs: z.number().nonnegative() })).max(200),
+  ranks: z.array(playerSchema.extend({
+    wins: z.number().int().nonnegative(), totalMs: z.number().nonnegative(),
+    score: z.number().int().nonnegative().optional(), rank: z.number().int().positive().optional(),
+  })).max(200),
   round: z.object({
     id: idSchema, number: z.number().int().positive(), mode: z.enum(['demo', 'ai']), status: z.enum(['active', 'closed']),
     challenge: z.object({ title: z.string().max(500), description: z.string().max(5000) }),
@@ -35,6 +40,7 @@ interface RoomSession {
   version: number;
   signature: string;
   state?: HostState;
+  savedHint?: { roundId: string; text: string | null };
 }
 
 /** サービスゲートと部屋認証の失敗を固定メッセージへ変換する。 */
@@ -107,10 +113,11 @@ export class SitesHostAdapter implements HostAdapter {
     let state = this.toState(base, roomId, cloud);
     if (action === 'open' || action === 'get_room') return state;
     if (action === 'purge_images') throw new HostOperationError('UNSUPPORTED_OPERATION', 'Sitesでは提出写真を判定後に削除します。ホストからの一括削除APIは未実装です。');
-    if (['start', 'advance', 'finish'].includes(action) && state.snapshot!.room.version !== input.expectedVersion) {
+    if (['start', 'advance', 'finish', 'set_hint'].includes(action) && state.snapshot!.room.version !== input.expectedVersion) {
       throw new HostOperationError('VERSION_CONFLICT', '部屋の状態が変わりました。最新状態を取得してから操作してください。');
     }
-    if (action !== 'finish') {
+    if (cloud.game?.status === 'finished') throw new HostOperationError('INVALID_STATE', 'Sitesで全競技が終了しています。新しい部屋を作成してください。');
+    if (action !== 'finish' && action !== 'set_hint') {
       if (input.source === 'preset') throw new HostOperationError('AI_REQUIRED', 'Sites接続では実AIのお題を使用します。プリセットを実AIとして実行しません。');
       if (!cloud.aiAvailable) throw new HostOperationError('AI_NOT_CONFIGURED', 'Sites側のAI接続が未設定です。デモへ切り替えず、設定を待っています。');
       if (cloud.mode !== 'ai') {
@@ -120,6 +127,17 @@ export class SitesHostAdapter implements HostAdapter {
       }
     }
     switch (action) {
+      case 'set_hint': {
+        const text = input.text;
+        if (text !== null && (typeof text !== 'string' || text.length > 500 || !text.trim())) throw new HostOperationError('INVALID_HINT', 'ヒントは1〜500文字、削除時はnullを指定してください。');
+        if (!state.snapshot!.sites!.canSetHint || input.roundId !== cloud.round?.id) throw new HostOperationError('INVALID_STATE', '現在受付中の競技だけ共通ヒントを設定できます。最新状態を確認してください。');
+        const response = await this.request(base, `/api/rooms/${roomId}/host/hint`, 'POST', roomId, { roundId: input.roundId, text: text === null ? null : text.trim() });
+        const saved = z.object({ roundId: idSchema, text: z.string().min(1).max(500).nullable(), available: z.boolean() }).safeParse(response.body);
+        const expected = text === null ? null : text.trim();
+        if (!saved.success || saved.data.roundId !== input.roundId || saved.data.text !== expected || saved.data.available !== (expected !== null)) throw new HostOperationError('INVALID_RESPONSE', 'Sitesのヒント保存応答を確認できませんでした。自動再試行はしません。');
+        this.rooms.get(roomId)!.savedHint = { roundId: saved.data.roundId, text: saved.data.text };
+        break;
+      }
       case 'prepare_topics':
         if (!state.snapshot!.sites!.canPrepare) throw new HostOperationError('INVALID_STATE', '参加者を1人以上登録し、進行中のラウンドと判定の終了を待ってください。');
         await this.request(base, `/api/rooms/${roomId}/host/prepare`, 'POST', roomId, {});
@@ -138,7 +156,10 @@ export class SitesHostAdapter implements HostAdapter {
         break;
     }
     const next = this.toState(base, roomId, await this.getCloud(base, roomId));
-    if (action === 'finish') next.notice = `現在ラウンドの受付を終了しました。部屋全体の終了ではありません。 ${next.notice}`;
+    if (action === 'set_hint') next.notice = input.text === null ? '現在の競技の共通ヒントを削除しました。' : '現在の競技の共通ヒントを保存しました。参加者全員が同じヒントを取得できます。';
+    if (action === 'finish') next.notice = next.snapshot!.room.status === 'finished'
+      ? `現在ラウンドの受付を終了しました。Sitesで全競技の終了が確認されました。 ${next.notice}`
+      : `現在ラウンドの受付を終了しました。部屋全体の終了ではありません。 ${next.notice}`;
     return next;
   }
 
@@ -170,26 +191,31 @@ export class SitesHostAdapter implements HostAdapter {
     return parsed.data;
   }
 
-  /** 勝数・累計時間の実ランキングへ変換し、未取得の提出結果や通信時刻を捏造しない。 */
+  /** 新契約の確定得点・順位・全体進行を優先し、旧Sitesの勝数ランキングにも接続する。 */
   private toState(base: URL, roomId: string, cloud: CloudState): HostState {
     const round = cloud.round;
+    const savedHint = this.rooms.get(roomId)!.savedHint;
     const pending = cloud.stats.pending;
     const aiReady = cloud.aiAvailable && cloud.mode === 'ai';
     const idle = !round || round.status === 'closed';
+    const finished = cloud.game?.status === 'finished';
+    const hasPoints = cloud.ranks.every(player => player.score !== undefined) && (cloud.game !== undefined || cloud.ranks.length > 0);
     const snapshot: HostSnapshot = {
       room: {
         roomId, roomCode: roomId, roomName: cloud.room.name,
         joinUrl: aiReady ? new URL(`/rooms/${roomId}/join`, base).href : undefined,
-        status: round ? 'playing' : 'lobby', version: 0, roundCount: null, scoreUnit: 'wins',
+        status: cloud.game?.status ?? (round ? 'playing' : 'lobby'), version: 0,
+        roundCount: cloud.game?.totalRounds ?? null, scoreUnit: hasPoints ? 'points' : 'wins',
         currentRound: round ? {
           roundId: round.id, number: round.number,
+          ...(savedHint?.roundId === round.id ? { hint: savedHint.text } : {}),
           status: round.status === 'active' ? 'active' : pending > 0 ? 'closing' : 'result',
           title: round.challenge.title, instruction: round.challenge.description,
           startsAt: new Date(round.startedAt).toISOString(), deadlineAt: new Date(round.endsAt).toISOString(),
           settleUntil: new Date(round.endsAt).toISOString(),
         } : null,
         teams: cloud.players.map(player => ({ teamId: player.id, name: player.name })),
-        leaderboard: cloud.ranks.map((player, index) => ({ teamId: player.id, name: player.name, score: player.wins, rank: index + 1, totalMs: player.totalMs })),
+        leaderboard: cloud.ranks.map((player, index) => ({ teamId: player.id, name: player.name, score: hasPoints ? player.score! : player.wins, rank: player.rank ?? index + 1, totalMs: player.totalMs })),
         me: null,
       },
       topicsStatus: cloud.preparationError ? 'failed' : cloud.generating || cloud.preparing ? 'generating' : cloud.prepared ? 'ready' : 'empty',
@@ -197,18 +223,20 @@ export class SitesHostAdapter implements HostAdapter {
       teams: cloud.players.map(player => ({ teamId: player.id, name: player.name, lastSeenAt: null, latestSubmission: null })),
       sites: {
         aiAvailable: cloud.aiAvailable, gameMode: cloud.mode,
-        canPrepare: aiReady && idle && pending === 0 && cloud.players.length > 0 && !cloud.generating && !cloud.prepared,
-        canStart: aiReady && !round && cloud.players.length > 0 && cloud.prepared && !cloud.generating,
-        canAdvance: aiReady && !!round && idle && pending === 0 && !cloud.generating,
-        canEndRound: round?.status === 'active', pendingJudgments: pending,
-        automaticLobbyStart: !round && cloud.lobby.deadline !== null,
+        canPrepare: !finished && aiReady && idle && pending === 0 && cloud.players.length > 0 && !cloud.generating && !cloud.prepared,
+        canStart: !finished && aiReady && !round && cloud.players.length > 0 && cloud.prepared && !cloud.generating,
+        canAdvance: !finished && aiReady && !!round && idle && pending === 0 && !cloud.generating,
+        canEndRound: !finished && round?.status === 'active',
+        canSetHint: !finished && round?.status === 'active' && round.endsAt > cloud.serverTime, pendingJudgments: pending,
+        automaticLobbyStart: !finished && !round && cloud.lobby.deadline !== null,
+        ...(cloud.stages ? { stages: cloud.stages } : {}),
       },
     };
     const session = this.rooms.get(roomId)!;
     const signature = JSON.stringify(snapshot);
     if (signature !== session.signature) { session.version++; session.signature = signature; }
     snapshot.room.version = session.version;
-    const notice = !cloud.aiAvailable ? 'Sites接続済みですが、Sites側のAI設定が未完了です。実AIの準備・開始は利用できません。デモへは切り替えません。' : cloud.mode !== 'ai' ? 'Sitesはデモモードです。実AIモードへの変更が必要です。' : cloud.preparationError ? 'Sitesでお題の準備に失敗しました。最新状態を確認して準備を再実行してください。' : 'Sitesの実部屋へ接続しています。参加者登録後はSites側が初回のお題準備・開始を自動進行します。順位は勝数と累計回答時間で決まります。';
+    const notice = finished ? `Sitesで全${cloud.game!.totalRounds}競技が終了しました。確定したランキングを表示しています。` : !cloud.aiAvailable ? 'Sites接続済みですが、Sites側のAI設定が未完了です。実AIの準備・開始は利用できません。デモへは切り替えません。' : cloud.mode !== 'ai' ? 'Sitesはデモモードです。実AIモードへの変更が必要です。' : cloud.preparationError ? 'Sitesでお題の準備に失敗しました。最新状態を確認して準備を再実行してください。' : `Sitesの実部屋へ接続しています。参加者登録後はSites側が初回のお題準備・開始を自動進行します。順位は${hasPoints ? '得点' : '勝数'}と累計回答時間で決まります。`;
     const state: HostState = { mode: 'sites', snapshot, notice, serverTime: new Date(cloud.serverTime).toISOString() };
     session.state = state;
     return state;

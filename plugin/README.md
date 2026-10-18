@@ -8,6 +8,14 @@ ONE LEASE / **借り物王に俺はなる！**
 
 元リポジトリには既存デモも取り込まれています（Sitesは `apps/cloud/`、ローカル版は `apps/server/`・`apps/web/`）。このpluginはそれらのソースや依存を参照しません。Ahwenuの独立AI APIへはMCPサーバーからHTTP接続し、SitesのゲームAPI接続は後続作業です。
 
+
+## 0.3.0：運動会テーマのホスト画面
+
+運動会・猫耳キャラクターのスマホ案を参考に、ホスト画面を更新しました。参照素材はリポジトリの `docs/design/sports-day-ui-assets-v1` です。使用するPNGは `src/ui/assets/` に保持してUIへ埋め込むため、配布先で親フォルダや外部画像サービスを必要としません。参加者名・順位・勝数は画像に焼き込まず、取得した値を表示します。
+
+既存のSites接続・QR・参加URL・進行操作を維持します。更新後はPlugin Extensionsの画面を閉じて開き直し、旧画面が残る場合は拡張を再読み込みしてください。検証状況は元リポジトリの `docs/adr/0012-sports-day-host-ui.md` を参照してください。
+
+
 ## 現在の範囲
 
 - React / TypeScriptのホスト画面とMCP Appsブリッジ。
@@ -16,7 +24,9 @@ ONE LEASE / **借り物王に俺はなる！**
 - 単独ビルド、画面プレビュー、配布用アーカイブ作成。
 - 独立AI APIの接続状態と、実AIで生成したお題を確認する専用領域。
 
-デモの参加チーム・得点はサンプルです。実AIの生成結果をサンプルの部屋・チーム・順位へ反映しません。SitesのゲームHTTP通信、スマホの実参加、部屋の認証・永続化、QR生成は今後の実装です。ブラウザプレビューはPlugin Extensionsでの表示・認可・実機結合の確認とは別です。ローカルPlugin Extensionsへの登録は以下の手順で進め、登録結果と実表示確認の状態を分けて記録します。公開配備は別作業です。
+デモの参加チーム・得点はサンプルです。実AIの生成結果をサンプルの部屋・チーム・順位へ反映しません。sitesモードの実ゲーム接続と参加QRは実装済みで、確認範囲は以下に記録しています。ブラウザの検証ホストとネイティブのPlugin Extensions画面の確認は区別します。
+
+0.2.1では、参加URLをローカルでQR化して表示します。外部QRサービスへ通信せず、参加リンクも残します。QRが出ない場合は0.2.1へ更新し、プラグインを再読み込みしてください。CLI一覧のバージョン、更新後の `installedPath` と `.env.local` の接続設定も確認します。
 
 ## 開発を始める
 
@@ -107,13 +117,13 @@ npm run package
 npm run test:portable
 ```
 
-`artifacts/karimono-host-0.2.0.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
+`artifacts/karimono-host-0.3.1.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
 
 `test:portable` はアーカイブを空白を含む一時パスに展開し、`node_modules` のない配布物を別の作業ディレクトリから起動して確認します。パッケージ作成後に実行してください。
 
 ## ローカルPlugin Extensionsへ登録する
 
-他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.2.0.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
+他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.3.1.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
 
 この `plugin/` フォルダを作業ルートにし、チェック・テスト・ビルドを済ませてから、ローカルmarketplaceを準備して公式CLIへ登録します。
 
@@ -155,6 +165,8 @@ Work内の実Plugin Extensionsでの表示・API接続確認・生成操作は�
 
 ## Sitesを接続するとき
 
+QR修正の検証（0.2.1）：型チェック・ビルド・21件のテスト、通常/共有パッケージの可搬性が成功。インストール済みMCPのHTMLを未改変で公式AppBridge/PostMessageTransportの検証ホストへ表示し、画面の「部屋を作る」から実Sitesに部屋を作成してQRを確認しました。macOS Visionによる画面画像のQR読取で参加URLの完全一致を確認し、そのURLは匿名HTTP 200・ログイン不要でした。外部QR通信やCSP緩和は追加していません。ネイティブ拡張パネルの直接操作、参加登録、新しい有料AI呼出は今回の確認に含めません。
+
 1. さが さんのゲームサービスとAhwenuのHTTP API契約を確定する。
 2. `src/server/` のアダプターを実装し、操作の認可・冪等性・エラーをAPIへ接続する。ゲームの正本・採点・永続化をMCP側に複製しない。
 3. `src/shared/contracts.ts` の暫定DTOと正式な共有契約を対応させる。親の `../contracts` を直接参照せず、変換境界で移行して可搬性を保つ。
@@ -163,3 +175,13 @@ Work内の実Plugin Extensionsでの表示・API接続確認・生成操作は�
 `SITES_API_BASE_URL` と `HOST_SERVICE_TOKEN` は将来の接続用の予約名です。現段階では設定してもSitesに接続しません。トークンをUI・ツール結果・ログ・配布物に含めないでください。
 
 設計の正本は [Project.md](../Project.md)、[拡張仕様](../docs/08-plugin-extensions.md)、[フォルダ構成](../docs/09-repository-structure.md)、[ADR-0008](../docs/adr/0008-portable-plugin-scaffold.md) です。これらのリンクは元リポジトリ内で利用できます。フォルダ単独の移動・配布後も、このREADMEだけで起動・移動手順を確認できます。
+
+## 更新時のAI接続設定
+
+画面の更新と接続先の設定は別です。Sitesの部屋操作と独立AIのお題プレビューを両方利用する環境では、更新後のインストール先にも `KARIMONO_MODE`・`SITES_API_BASE_URL`・`KARIMONO_API_URL`・`KARIMONO_API_TOKEN_FILE` の4項目を引き継ぎます。Sitesだけの2項目へ置き換えると独立AIのお題プレビューは未設定になります。秘密設定は共有物へ同梱せず、利用者のローカル設定として復元します。
+
+## 効果音
+
+操作・部屋作成・参加者増加・準備完了・開始・加点・残り5秒・結果/全競技終了に同梱音源を使用します。上部の音ON/OFFは端末へ保存され、音がOFFのときもゲーム操作できます。初回状態取得や同じ定期応答で過去の音を再生しません。
+
+効果音・ジングル：[OtoLogic](https://otologic.jp/) / [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)。先頭・長さ・音量を調整し、フェードとモノラルMP3変換を行っています。クイズ、キラキラ、カメラ、カウントダウン、ジングル「やったぜ！」を使用。HTML内にもクレジットがあり、外部音源アクセスは不要です。

@@ -1,0 +1,31 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="author" content="Codex"><title>カリモノ 参加者画面の共有と接続状況</title><style>
+:root{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN",sans-serif;color:#173753;background:#edf5fa}*{box-sizing:border-box}body{margin:0;padding:28px 18px}main{max-width:980px;margin:auto;background:#fff;border-radius:20px;padding:clamp(22px,4vw,46px);box-shadow:0 12px 35px #244d6e14}h1{font-size:clamp(25px,5vw,36px);line-height:1.35;margin:10px 0 16px}h2{font-size:20px;margin:32px 0 12px}p,li{line-height:1.85}a{color:#176cb5;overflow-wrap:anywhere}.eyebrow{color:#d44378;letter-spacing:.08em;font-weight:800}.meta{font-size:12px;color:#566b7c}.lead{padding:18px 22px;background:#fff3d7;border-left:5px solid #e8b945;border-radius:10px}.links{display:flex;flex-wrap:wrap;gap:10px}.links a{padding:10px 14px;border:1px solid #b5d6e7;border-radius:10px;text-decoration:none;font-weight:750}table{border-collapse:collapse;width:100%;font-size:14px}th,td{text-align:left;vertical-align:top;padding:12px 10px;border-bottom:1px solid #d9e6ee}th{background:#eff7fb}td:first-child{font-weight:750;width:24%}code{font-size:.9em;background:#edf3f7;padding:2px 4px;overflow-wrap:anywhere}.diagram{overflow:auto;border:1px solid #d5e3ee;border-radius:12px;background:#fafcfe}.diagram svg{display:block;width:100%;min-width:600px;height:auto}.note{color:#536879;font-size:13px}footer{border-top:1px solid #d9e6ee;padding-top:16px;margin-top:28px;font-size:12px;color:#586d7d}@media(max-width:600px){body{padding:10px}main{padding:22px 16px;border-radius:14px}th,td{padding:10px 6px;font-size:12px}.links a{font-size:13px}}
+</style></head><body><main>
+<div class="eyebrow">ONE LEASE · カリモノ</div><h1>参加者画面を共有するための記録</h1>
+<p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 日付：2026-10-18 ／ 対象：main <code>29e6728</code> と参加者画面 <code>5b1e80b</code> の統合変更</p>
+<div class="lead">参加者画面の画像・撮影操作・人数と順位の自動更新・音声をまとめた。既にmainへ入っていた500点・10競技・ヒントのAPIを取り込み、同じ参加URLから利用する。Supabaseへの保存先変更はバックエンドの残作業。</div>
+<p class="links"><a href="../participant-frontend/README.md">起動・引き渡し手順</a><a href="../design/participant-assets-and-audio.md">画像・音声の対応</a><a href="../16-supabase-integration.md">Supabaseとの接続仕様</a><a href="https://github.com/ahwenu/scavenger-hunt/issues/1">バックエンド Issue #1</a></p>
+<h2>画面で変わったこと</h2>
+<table><thead><tr><th>見る場所</th><th>今回の状態</th></tr></thead><tbody>
+<tr><td>トップ</td><td>旗を持つロボットを描き直し、白い外装まで透けていた素材を交換。猫の子と配置は維持。</td></tr>
+<tr><td>お題・撮影</td><td>線画カメラだけの円形シャッターを横中央へ配置。写真選択は左の独立操作。撮影枠、説明、ヒントの間隔を調整。撮影内容は枠の中央表示と同じ範囲をJPEG化する。</td></tr>
+<tr><td>判定・成功・失敗</td><td>元の表情・配色・ポーズをもとに再描画した透過PNGを使用。短い登場・浮遊・結果表示の動きがあり、「動きを減らす」設定にも対応。</td></tr>
+<tr><td>遊び方</td><td>背景付きのロボット切り抜きを交換。説明文とロボットを別の欄にして、文章にキャラが重ならない配置へ変更。</td></tr>
+<tr><td>人数・順位</td><td>表示中は2秒ごとの状態取得で自動更新。人数を上部に表示し、ランキングには自分の順位を固定表示。全員分は一覧内でスクロールし、順位の入れ替わりを短く動かす。サーバーのrank/scoreを優先する。</td></tr>
+<tr><td>音</td><td>音ボタンを押すとBGM・オリジナルの猫/ロボの声・効果音を利用。現在の音源はElevenLabsで作成。Suno用プロンプトと差し替え先を別資料へ記載。</td></tr>
+</tbody></table>
+<p class="note">参照画像は高さ313pxの小さなラスタ画像。画面全体のピクセル完全一致ではなく、受領デザインの色・キャラクター・構図を保ちながらUIを実装している。ユーザーの追加指示により、批判ループの反復は途中で区切り、指摘された箇所の修正と共有を優先した。</p>
+<p class="note">撮影操作の余白と中央配置は、Mobbinの<a href="https://mobbin.com/screens/44030f08-0a38-495b-b0a5-965788955c34">Tolan</a>、<a href="https://mobbin.com/screens/1e6a1368-f235-4f71-9861-cf3ce2722274">WhatsApp</a>の実画面を参照。素材そのものの転載はしていない。</p>
+<h2>現在の接続と残る実装</h2>
+<div class="diagram"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 270" role="img" aria-label="参加者スマホとホストからSites APIへ接続し、現在はD1へ保存。Supabaseへの保存変更は依頼中。"><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#3e739b"/></marker></defs><g fill="#fff" stroke="#90b6d0" stroke-width="2"><rect x="24" y="38" width="190" height="72" rx="12"/><rect x="24" y="167" width="190" height="60" rx="12"/><rect x="335" y="90" width="160" height="84" rx="12"/><rect x="632" y="28" width="196" height="72" rx="12"/><rect x="632" y="171" width="196" height="72" rx="12" stroke-dasharray="6 4"/></g><g fill="#1c4463" text-anchor="middle" font-family="sans-serif" font-size="17"><text x="119" y="67">参加者のスマホ</text><text x="119" y="91" font-size="13">参加・撮影・順位表示</text><text x="119" y="202">Plugin ホスト</text><text x="415" y="138">Sites API</text><text x="730" y="59">D1</text><text x="730" y="82" font-size="13">現在の実装・得点の正本</text><text x="730" y="202">Supabase</text><text x="730" y="225" font-size="13">保存先の変更を依頼中</text></g><g stroke="#3e739b" stroke-width="2" fill="none" marker-end="url(#arrow)"><path d="M214 68H275V115H335"/><path d="M335 151H255V99H214"/><path d="M214 196H295V160H335"/><path d="M495 111H560V65H632"/><path d="M495 155H560V205H632" stroke-dasharray="6 4"/></g><g fill="#4f6e83" font-family="sans-serif" font-size="12"><text x="230" y="54">操作・状態取得</text><text x="245" y="145">人数・順位</text><text x="235" y="219">進行操作</text></g></svg></div>
+<p>フロントは同じサイトのAPIを呼ぶため、フロント用のSupabase/OpenAI秘密キーは不要。SupabaseのURL・サーバー専用キー・SQL・権限・移行をバックエンド側で設定する。<code>revision</code>が返った場合は古い版を破棄し、<code>activePlayers</code>が返った場合だけ接続中人数も表示する。これらの新フィールドとSupabase接続は未実装・未確認。</p>
+<h2>確認した範囲</h2>
+<table><thead><tr><th>確認</th><th>範囲と限界</th></tr></thead><tbody>
+<tr><td>型検査・ビルド</td><td>参加者画面のTypeScript検査とSites向けbuildが成功。CSSの重複出力警告は読み込み箇所をまとめて解消。</td></tr>
+<tr><td>非同期処理</td><td>通信・Reactの模擬環境9ケースが成功。再投稿、カメラ許可待ちの離脱、ラウンド変更、応答消失、取得の多重実行、プレビュー、サーバー順位優先、人数99→100・自身12→2位・得点更新、古い版の破棄を確認。実機カメラを使った試験ではない。</td></tr>
+<tr><td>最新mainの契約</td><td>バックエンド契約と既存音のテスト19件が成功。100人の登録上限、得点・ヒント・競技進行・二重加点などのローカル試験を含む。100台のスマホやSupabaseでの実測ではない。</td></tr>
+<tr><td>画面</td><td>ブラウザでカメラ中央配置、遊び方の全文表示、透過ロボット、ランキングを確認。前セッションではローカルD1の1人参加→画像ファイル提出→デモ成功・順位も確認。</td></tr>
+<tr><td>未確認</td><td>今回のReact画面の公開配備、iPhone/Androidの撮影、会場の100人同時利用、Supabase実接続。既存Sites v3の公開試験記録は別担当の記録であり、今回のReact画面の公開確認とは区別する。</td></tr>
+</tbody></table>
+<footer>根拠：参加者画面・APIアダプター・LiveStandings・CSS、最新mainのgame-state/game-contract、ADR-0015/0016。図はdraw.io MCPで作成した接続関係を同じ内容のインラインSVGとして掲載。</footer>
+</main></body></html>
