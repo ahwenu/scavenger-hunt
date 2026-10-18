@@ -1,5 +1,17 @@
 # Plugin Extensions：ホスト管理画面
 
+最新の確認（2026-10-18）：ユーザーのWork内実Plugin Extensionsでの「API接続確認」→「AI生成」操作と提供画像2枚により、画面表示・API接続済み表示・「文房具のペンを探そう」の生成表示を1例確認。写真判定UI・Sitesのゲーム進行・参加者・得点・順位との結合は未検証。
+
+## 今回の骨格と未実装範囲
+
+`plugin/` にホストReact UI、MCPツール、UIリソース、接続アダプターの境界をまとめる。フォルダ単位での移動を前提とし、Sitesや親ディレクトリのソース・依存を要求しない。[起動・移動手順](../plugin/README.md)、[ADR-0008](adr/0008-portable-plugin-scaffold.md)を参照。
+
+標準起動は未接続として扱い、明示的に選択するデモモードだけがサンプルの部屋・参加チーム・順位を操作する。ブラウザプレビューは画面確認用。実際のスマホ参加、AI、SitesのHTTP API、資格情報保管、永続化、プラグイン登録は今回の骨格に含めない。以下の認証・復帰・2秒ポーリング等は結合時の要件であり、骨格の存在だけで実証済みとは扱わない。
+
+後続のAPI接続では `ai_status` / `ai_generate_challenge` を追加し、Ahwenuの独立AI APIへMCPサーバーから接続する。実AI用の表示領域はゲームデモと分け、生成結果によってサンプル参加者や得点を変更しない。ここで接続するのはお題生成APIであり、Sitesのゲーム管理APIへの接続とは区別する（[11 API連携](11-api-integration.md)）。上記の「AIを含めない」は初期骨格の範囲を示す。
+
+公式CLIによるローカルmarketplace登録・インストール・有効化と、ユーザー操作による実拡張内の表示・API接続確認・生成を確認済み。再現手順と、ブラウザプレビューの別検証記録は[plugin/README.md](../plugin/README.md)を参照。
+
 ## 必須の構成
 
 **部屋を建てた人の画面はPlugin Extensions内に実装する。Sitesは参加者向けモバイル画面とバックエンド処理を担当する。** これはユーザーの追加指示による確定方針。ホストのSites管理ページへの置き換えは行わない。
@@ -60,11 +72,15 @@ UIはMCP経由だけで通信する構成を優先し、追加の外部通信が
 
 ```text
 plugin/
+  README.md              # 単独起動・ビルド・移動手順
+  package.json           # Sitesと独立した依存・スクリプト
+  package-lock.json      # plugin専用
   plugin.json            # プラグイン宣言
-  mcp.json               # MCP起動設定
-  src/server/            # ツール・HTTP接続・資格情報管理
+  mcp.json               # フォルダ基準のMCP起動設定
+  src/server/            # MCPツールと接続アダプター
   src/ui/                # ホスト画面とMCP接続
-  dist/                  # 配布用UI/MCPバンドル
+  src/shared/            # 暫定DTO。親contractsをimportしない
+  dist/                  # 配布用UI/MCPバンドル（生成物）
 ```
 
 - Akibako さん（デザイン）：主対象はモバイル。ホストにも使える色・文字・部品の共通トーンを提供する。
@@ -72,6 +88,8 @@ plugin/
 - Ahwenu（API処理）：MCPサーバー、ツール、資格情報の保管、Sitesの管理APIルートとHTTP接続を実装する。
 - さが さん（バックエンド）：部屋・参加チーム・順位の正本、ホスト権限の発行/検証、開始・次問・終了サービスを実装する。ゲーム記録の正本をMCP側に複製しない。
 - mae さん（フロントエンド）：Sitesの参加者モバイル画面を担当する。Plugin Extensionsの画面開発は担当に含めない。
+
+現段階のDTOは `plugin/src/shared/contracts.ts` に閉じる。Sites側の共有 `contracts/` が定まったらAhwenuが互換性とDTO変換を調整する。単に親フォルダの型を参照して移動できなくなる変更は避ける。
 
 ## MVPで必ず検証すること
 

@@ -2,11 +2,13 @@
 
 > 2026-10-18追記：デモ実装を元の配置で取り込んだため、現状のSitesルートは `apps/cloud/`。以下の直下配置は将来の構成案であり未実現。取り込み範囲と方針との差分は[10 デモアプリ取り込み](10-demo-import.md)を参照。
 
+> API担当の現在の作業先は独立した `api/`、拡張は `plugin/`。Sites担当の `apps/cloud/` や配備設定をAPI作業で変更しない。両パッケージはルートのデモ用ワークスペースから分離する。接続契約は[11 API連携](11-api-integration.md)を参照。
+
 ## 基本方針
 
-**Sitesをリポジトリ直下からビルド・配備できる構成を優先し、Plugin Extensionsは独立した配布単位にする。** MVPではワークスペース管理ツールや共通パッケージの事前ビルドを必須にしない。フォルダは人名ではなく機能で分け、担当者が変わっても配置を変えずに済むようにする。
+**Sitesを配備しやすく保ち、Plugin Extensionsは独立した配布単位にする。** Sitesを直下に置く初期案は以下に残すが、現在の `apps/cloud/` の移動は行わない。ルートの既存npmワークスペースはローカルデモ用で、pluginは参加させない。フォルダは人名ではなく機能で分け、担当者が変わっても配置を変えずに済むようにする。
 
-以下は実装時に作る配置案。現在は文書のみで、スターターや各ビルド設定は未作成・未検証。Sitesスターター固有の設定名・生成先は導入時のものを維持する。
+以下は将来の全体配置案で、現在のファイルツリーではない。Sites・ブラウザ画面・バックエンドのデモソースは取り込み済みで、現配置は10を参照する。今回追加する自己完結した `plugin/` の骨格は、既存デモと直接結合しない。拡張骨格の詳細と操作手順は[plugin/README.md](../plugin/README.md)、今回の暫定契約の判断は[ADR-0008](adr/0008-portable-plugin-scaffold.md)を参照。
 
 ## 配置案
 
@@ -74,7 +76,8 @@ scavenger-hunt-20261018/
 │   ├── .env.example                 # 接続先等の変数名だけ
 │   ├── src/
 │   │   ├── server/                  # Ahwenu。MCPツール・Sites接続
-│   │   └── ui/                      # 未定（Ahwenu）。ホスト画面
+│   │   ├── ui/                      # 未定（Ahwenu）。ホスト画面
+│   │   └── shared/                  # 骨格用の暫定DTO。親をimportしない
 │   ├── tests/server/                # Ahwenu
 │   ├── tests/ui/                    # 未定（Ahwenu）
 │   └── dist/                        # 生成物。手編集しない
@@ -106,7 +109,8 @@ scavenger-hunt-20261018/
 
 | 競合しやすい箇所 | 取りまとめ担当（初期案） | 更新ルール |
 | --- | --- | --- |
-| ルートpackage.json・lock・ビルド/TS設定・hosting.json・CI | Ahwenu | 必要な依存や設定差分を集めて順番に統合。lockを手編集しない |
+| Sites側のpackage.json・lock・ビルド/TS設定・hosting.json・CI | Sites担当と調整 | API担当が一括変更しない。必要な差分を共有して順番に統合 |
+| apiのpackage.json・lock・起動設定 | Ahwenu | plugin/Sitesの依存へ混ぜない。秘密設定はローカルだけに保持 |
 | pluginのpackage.json・lock・manifest・配布設定 | Ahwenu | 画面担当の依存追加もここで調整。Sitesのlockに混ぜない |
 | contractsとAPIサンプル | Ahwenu | mae さん・さが さん・拡張画面担当と互換性を確認 |
 | DBスキーマ・SQL・生成メタデータ | さが さん | マイグレーション生成を直列化。適用済み履歴を上書きしない |
@@ -122,15 +126,17 @@ scavenger-hunt-20261018/
 - 外部AI：HTTPのcomposition層がバックエンドとintegrationsを組み合わせる。ゲーム層からHTTPルートや画面をimportしない。
 - 拡張：`plugin UI → MCPブリッジ → plugin server → Sites HTTP API`。pluginからD1/R2を直接操作しない。
 - contractsにはDTO・エラーコード・依存なしのスキーマだけを置く。React、Workers、DB、秘密設定をimportしない。ライブラリ依存の実行時バリデーターは各実行環境側に置く。
-- pluginはビルド時にcontractsを取り込めるようにし、配布物へバンドルする。インストール先で `../contracts` やSitesのnode_modulesを必要としないことを検証する。
+- 今回のplugin骨格では `src/shared/contracts.ts` に暫定DTOを置き、親の `contracts/` をimportしない。共有契約が定まったらアダプターで対応し、契約同期時は双方を検証する。ビルド・配布先で `../contracts` やSitesのnode_modulesを必要としない方針を維持する。
 - SitesとpluginのUIコンポーネントは直接共有パッケージ化しない。最初はデザイントークンの仕様を共有し、ビルド間の結合を増やさない。
 
 ## デプロイと配布
 
+現在のSites作業ルートは `apps/cloud/`。下表のSites行は将来の配置案であり、移動済み・配備済みとは扱わない。取り込み元の設定は本環境での接続先・所有権を確認してから利用する。
+
 | 単位 | 作業ルート | 必要な入力 | 成果物・配備先 |
 | --- | --- | --- | --- |
 | Sites | リポジトリ直下 | ルートの依存、app/features/components/server/db/contracts、Sites設定 | Sites公式ビルド/配備フローの出力 |
-| Plugin Extensions | plugin/ | pluginの依存・src・manifest、ビルド時のcontracts | UI/MCPを含む単独で動くプラグイン配布物 |
+| Plugin Extensions | plugin/ | plugin内の依存・src/shared・manifest・設定 | UI/MCPを含む単独のプラグイン配布物。実ホスト登録は別途確認 |
 
 Sitesのチェック・ビルド対象からpluginのソース・dist・node_modulesを除外し、プラグインのインストールやビルドをSitesの前提にしない。配備アーカイブもSitesの対応する除外機構で不要なプラグイン生成物・依存を含めない。マニフェストやスターターの必須ファイルは維持する。具体的な除外方法はスターター導入時に検証する。
 
@@ -157,4 +163,4 @@ CIはSitesとpluginを別ジョブに分ける。contracts変更時は両方を�
 - Workers出力にMCP/Node依存やホスト資格情報が混入しない。
 - DBマイグレーションが所定のSitesフローで適用できる。
 
-これらの実証後に[ADR-0006](adr/0006-deployment-and-folder-boundaries.md)の提案部分の採否を確定する。今はフォルダ案の記述段階であり、ビルド成功とは扱わない。
+plugin骨格のローカル検証と、Sitesを含む上記の構成検証を区別する。Sitesのビルド分離・Workers出力・DB移行は未検証。全体の実証後に[ADR-0006](adr/0006-deployment-and-folder-boundaries.md)の提案部分の採否を確定する。

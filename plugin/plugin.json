@@ -1,0 +1,16 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "karimono-host",
+  "version": "0.1.0",
+  "description": "カリモノの部屋作成・参加状況・ランキングを管理するホスト画面の開発ひな形",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "カリモノ",
+        "shortDescription": "ONE LEASE — 借り物王に俺はなる！",
+        "category": "Productivity",
+        "defaultPrompt": ["カリモノのホスト画面を開いて"]
+      }
+    }
+  }
+}

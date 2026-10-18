@@ -1,0 +1,154 @@
+/* AI接続確認だけに適用し、ホスト画面の共通スタイルから独立させる。 */
+.ai-preview {
+  max-width: 1064px;
+  margin: 0 auto 28px;
+  padding: 24px;
+  color: var(--navy, #142d46);
+  background: #fff;
+  border: 1px solid var(--line, #dfe5e7);
+  border-top: 4px solid var(--orange, #d94c13);
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.ai-preview-heading,
+.ai-preview-actions,
+.ai-preview-result-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ai-preview-kicker {
+  color: var(--muted, #5b6c76);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.ai-preview h2 {
+  margin: 3px 0 0;
+  font-size: 19px;
+  line-height: 1.5;
+}
+.ai-preview-status {
+  border: 1px solid #a6b3bd;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.ai-preview-ready {
+  color: #28604c;
+  background: #eff7f1;
+  border-color: #b3d2bd;
+}
+.ai-preview-description {
+  margin: 14px 0 4px;
+  font-weight: 700;
+}
+.ai-preview-notice {
+  color: var(--muted, #5b6c76);
+}
+.ai-preview-actions {
+  justify-content: flex-start;
+  margin-top: 18px;
+}
+.ai-preview-actions button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #a6b3bd;
+  border-radius: 7px;
+  background: #fff;
+  color: var(--navy, #142d46);
+  font-weight: 800;
+}
+.ai-preview-actions .ai-preview-generate {
+  background: var(--orange, #d94c13);
+  border-color: var(--orange, #d94c13);
+  color: #fff;
+}
+.ai-preview-actions > span {
+  color: var(--muted, #5b6c76);
+  font-size: 12px;
+}
+.ai-preview-error {
+  margin-top: 16px;
+  padding: 10px 14px;
+  background: #fff1ee;
+  border-left: 3px solid #b52b1c;
+  color: #922415;
+}
+.ai-preview-result {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line, #dfe5e7);
+}
+.ai-preview h3 {
+  margin: 5px 0 8px;
+  font-size: 22px;
+  line-height: 1.5;
+}
+.ai-preview-result-meta {
+  margin-top: 18px;
+}
+.ai-preview-result-meta > span {
+  color: var(--muted, #5b6c76);
+  font-variant-numeric: tabular-nums;
+}
+.ai-preview ul {
+  margin: 6px 0 0;
+  padding-left: 22px;
+}
+.ai-preview-reference {
+  margin-top: 18px;
+  padding: 14px;
+  background: #f2f4f4;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.ai-preview-reference-label {
+  font-weight: 800;
+}
+.ai-preview dl {
+  margin: 6px 0;
+}
+.ai-preview dl > div {
+  display: flex;
+  gap: 12px;
+}
+.ai-preview dt {
+  flex: 0 0 72px;
+  color: var(--muted, #5b6c76);
+}
+.ai-preview dd {
+  margin: 0;
+}
+.ai-preview a {
+  color: #126478;
+  text-underline-offset: 3px;
+}
+.ai-preview a:focus-visible {
+  outline: 3px solid #087e91;
+  outline-offset: 3px;
+}
+@media (max-width: 1120px) {
+  .ai-preview {
+    margin-right: 28px;
+    margin-left: 28px;
+  }
+}
+@media (max-width: 540px) {
+  .ai-preview {
+    margin-right: 16px;
+    margin-left: 16px;
+    padding: 18px;
+  }
+  .ai-preview-actions button {
+    width: 100%;
+  }
+  .ai-preview h2 {
+    font-size: 17px;
+  }
+}

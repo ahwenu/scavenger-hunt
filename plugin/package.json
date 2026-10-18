@@ -1,0 +1,36 @@
+{
+  "name": "karimono-host",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "カリモノのPlugin Extensionsホスト画面・MCP開発ひな形",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "start": "node --env-file-if-exists=.env.local dist/server.mjs",
+    "test": "node --import tsx --test tests/server/*.test.ts tests/ui/*.test.ts",
+    "preview": "node --env-file-if-exists=.env.local scripts/preview.mjs",
+    "package": "npm run check && npm run build && node scripts/package.mjs",
+    "test:portable": "node scripts/verify-portability.mjs",
+    "marketplace:prepare": "npm run check && npm run build && node scripts/prepare-local-marketplace.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/ext-apps": "1.7.5",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "@openai/mcp-extensions": "0.2.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "esbuild": "0.28.2",
+    "tsx": "^4.0.0",
+    "typescript": "7.0.2"
+  }
+}
