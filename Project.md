@@ -16,7 +16,9 @@ Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
 
-独立AI API導入時の作業はAhwenuのAPI処理に限定し、独立した `api/` でお題生成・写真判定を提供し、拡張からMCP経由で接続します。Sitesの画面・ゲーム状態・DB・配備設定は他担当が扱います。実AIの確認画面と、サンプルの参加チーム・ランキングを表示するゲームデモは分離します。[11 API連携](docs/11-api-integration.md)を参照してください。
+独立API実装時の作業範囲はAhwenuのAPI処理に限定し、`api/` でお題生成・写真判定を提供して拡張からMCP経由で接続しました。この段階ではSites側を変更せず、実AIの確認画面とゲームデモを分離しています。[11 API連携](docs/11-api-integration.md)に当時の契約・検証を記録しています。現在の新Sites配備・Cloud/Web反映は、下記の追加指示に基づく別フェーズです。
+
+新Sitesのv1・v2本番配備と、ログイン不要のpublic変更が成功しました。CloudをSitesの実行ルート、全ソースを `repository/` の保存用スナップショットへ置いています。インストール済みplugin 0.2.0のsitesモードから実MCP/HTTPで、部屋作成→匿名参加→実AI生成→開始→JPEG提出/実判定→勝利数順位→ラウンド終了を1例確認しました。ネイティブ拡張UIの直接操作、スマホ実機・複数人評価は別途確認します。今回のCloud/Web・pluginの差分も元リポジトリで管理します。Sites専用ソースとGitHub mainのコミットは区別します。[12 新Sitesの配置と接続](docs/12-sites-deployment.md)を参照してください。
 
 通常のお題生成はResponses APIのStructured Outputs、写真判定はDecisions APIを使います。ブラウザプレビューからMCP経由の実お題生成と、JPEG画像の実判定を1例確認しました。Agents APIは参考写真を明示的に有効にしたときだけ使い、このモードの成功は未確認です。標準生成の変更理由と検証結果は[ADR-0010](docs/adr/0010-independent-ai-api.md)に記録しています。
 
@@ -49,6 +51,7 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [09 フォルダ構成・デプロイ](docs/09-repository-structure.md) | 担当別の編集先、独立ビルド、共有ファイルの更新ルール | 全員 |
 | [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
 | [11 API連携](docs/11-api-integration.md) | Ahwenuの独立AI API、拡張との接続、秘密設定、Sitesとの受け渡し | Ahwenu・さが さん・拡張画面担当 |
+| [12 新Sitesの配置と接続](docs/12-sites-deployment.md) | 全ソースの保持、Cloud実行、publicアクセス・部屋認可、拡張の実ゲーム接続 | 全員 |
 | [12 Issue #1バックエンド受け渡し](docs/12-issue1-backend-handoff.md) | 100人・10競技・500点・状態/ヒントAPI、応答例、ローカル検証と未配備の境界 | さが さん・Ahwenu・mae さん |
 | [当日の全体コンテキスト](docs/hackathon/README.md) | ゴールを決める項目、実演の1周、担当間の受け渡し、確認済みの範囲 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |

@@ -280,3 +280,14 @@ test('Issue #1: nullable hint migration preserves existing rounds and schema his
   const row=db.prepare("SELECT * FROM rounds WHERE id='existing'").get();
   assert.equal(row.hint,null);assert.equal(row.challenge,'{}');assert.equal(row.number,1);
 });
+
+/** 最終競技の期限後は、別クライアントのstateポーリングを待たず参加を拒否する。 */
+test('Issue #1: expired final round rejects new joins before a state request closes it', async t => {
+  const h = fixture(); t.after(h.close); const room = await h.room();
+  const now = Date.now();
+  h.sqlite.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId) VALUES ('expired-final',10,'demo','active','{}','{}',?,?,?)")
+    .run(now - 120000, now - 1, room.id);
+  await h.request(`${room.api}/join`, { method: 'POST', json: { name: 'after-finish' }, expected: 409 });
+  assert.equal(h.sqlite.prepare('SELECT COUNT(*) AS n FROM players WHERE roomId=?').get(room.id).n, 0);
+  assert.equal(h.sqlite.prepare("SELECT status FROM rounds WHERE id='expired-final'").get().status, 'active');
+});

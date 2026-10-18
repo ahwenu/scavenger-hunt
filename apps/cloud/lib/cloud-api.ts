@@ -5,7 +5,7 @@ import {recordPass} from './pass-events';
 import {createReferenceTools} from './reference-agent.mjs';
 import { MAX_PLAYERS, PASS_POINTS, TOTAL_ROUNDS } from './game-contract';
 import { gameProjection } from './game-state';
-export type GameEnv = {DB:D1Database;BUCKET:R2Bucket;OPENAI_API_KEY?:string};
+export type GameEnv = {DB:D1Database;BUCKET:R2Bucket;OPENAI_API_KEY?:string;AI_REFERENCE_PHOTOS?:string};
 let expiryAt=0;
 let runningPump:Promise<void>|undefined;
 const snapshotCache=new Map<string,{until:number,rows:any[]}>();
@@ -63,7 +63,7 @@ async function snapshot(req:Request,env:GameEnv,room:any,player:any){
     preparing:room.generationLease>now&&room.preparedMode===room.mode&&!room.preparedChallenge,
     prepared:!!(room.preparedChallenge&&room.preparedMode===room.mode&&now-room.preparedAt<300000),
     preparationError:room.preparationError||null,
-    preparationStage:room.generationLease>now?(room.mode==='ai'?'searching':'generating'):null,
+    preparationStage:room.generationLease>now?(room.mode==='ai'&&env.AI_REFERENCE_PHOTOS==='true'?'searching':'generating'):null,
     lobby:{deadline:room.lobbyDeadline??null,startedAt:room.lobbyStartedAt||round?.startedAt||null,status:room.lobbyStartedAt||round?'started':!room.lobbyDeadline?'empty':room.preparationError?'error':room.generationLease>now?'preparing':'waiting'},
     players,ranks,events,eventCursor:events.at(-1)?.id||0,
     round:round?{id:round.id,number:round.number,mode:round.mode,status:round.status==='active'&&round.endsAt<=now?'closed':round.status,challenge:publicChallenge(JSON.parse(round.challenge),room.id,round.id),startedAt:round.startedAt,endsAt:round.endsAt}:null,
@@ -136,7 +136,7 @@ async function beginPreparation(env:GameEnv,roomId:string,ctx:ExecutionContext,r
   ctx.waitUntil((async()=>{
     let preparedReferenceKey:string|undefined;
     try{
-      const generated=await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context);
+      const generated=await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context,env.AI_REFERENCE_PHOTOS);
       if(!frozen&&JSON.stringify(await generationContext(env,roomId))!==serialized)throw Error('context_changed');
       const challenge=await persistChallenge(env,roomId,generated);
       preparedReferenceKey=challenge.reference?.storageKey;
@@ -186,7 +186,7 @@ async function manualStart(env:GameEnv,roomId:string){
   try{
     const context=await generationContext(env,roomId),serialized=JSON.stringify(context);
     const valid=claimed.preparedChallenge&&claimed.preparedMode===claimed.mode&&now-claimed.preparedAt<300000&&claimed.preparedContext===serialized;
-    const challenge=valid?JSON.parse(claimed.preparedChallenge):await persistChallenge(env,roomId,await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context));
+    const challenge=valid?JSON.parse(claimed.preparedChallenge):await persistChallenge(env,roomId,await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context,env.AI_REFERENCE_PHOTOS));
     const startedAt=Date.now();
     const result=await env.DB.batch([
       env.DB.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId,hint) SELECT ?,COALESCE((SELECT MAX(number) FROM rounds WHERE roomId=?),0)+1,?,'active',?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM rooms WHERE id=? AND generationLease=? AND generationLease>?) AND COALESCE((SELECT MAX(number) FROM rounds WHERE roomId=?),0)<?")
@@ -235,7 +235,8 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
     if(p==='/api/rooms'&&req.method==='POST'){
       const {name}=await req.json() as any;if(typeof name!=='string'||!name.trim()||name.length>48)return json({error:'部屋の名前を1〜48文字で入力してください。'},400);
       const id=crypto.randomUUID().replaceAll('-',''),token=crypto.randomUUID()+crypto.randomUUID();
-      const inserted=await env.DB.prepare("INSERT INTO rooms(id,name,hostHash,mode,createdAt,generationLease) SELECT ?,?,?,'demo',?,0 WHERE (SELECT COUNT(*) FROM rooms)<1000 RETURNING id").bind(id,name.trim(),await hash(token),receivedAt).first();
+      const mode=env.OPENAI_API_KEY?'ai':'demo';
+      const inserted=await env.DB.prepare("INSERT INTO rooms(id,name,hostHash,mode,createdAt,generationLease) SELECT ?,?,?,?,?,0 WHERE (SELECT COUNT(*) FROM rooms)<1000 RETURNING id").bind(id,name.trim(),await hash(token),mode,receivedAt).first();
       if(!inserted)return json({error:'部屋の作成上限に達しました。'},409);
       return json({id,hostUrl:`/rooms/${id}/host`,joinUrl:`${url.origin}/rooms/${id}/join`},201,{'Set-Cookie':`host_${id}=${token}; Path=/api/rooms/${id}; HttpOnly; SameSite=Strict; Secure; Max-Age=2592000`});
     }
@@ -268,7 +269,7 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
     if(action==='join'&&req.method==='POST'){
       const {name,profile=''}=await req.json() as any;if(typeof name!=='string'||!name.trim()||name.length>24||typeof profile!=='string'||profile.length>240)return json({error:'名前は1〜24文字、自己紹介は240文字以内です。'},400);
       const id=crypto.randomUUID(),token=crypto.randomUUID()+crypto.randomUUID();
-      const inserted=await env.DB.prepare('INSERT INTO players(id,token,name,profile,joinedAt,roomId) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM players WHERE roomId=?)<? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=? AND number>=? AND status=\'closed\') RETURNING id').bind(id,token,name.trim(),profile,receivedAt,roomId,roomId,MAX_PLAYERS,roomId,TOTAL_ROUNDS).first();
+      const inserted=await env.DB.prepare('INSERT INTO players(id,token,name,profile,joinedAt,roomId) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM players WHERE roomId=?)<? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=? AND number>=? AND (status=\'closed\' OR endsAt<=?)) RETURNING id').bind(id,token,name.trim(),profile,receivedAt,roomId,roomId,MAX_PLAYERS,roomId,TOTAL_ROUNDS,receivedAt).first();
       if(inserted){
         await env.DB.prepare('UPDATE rooms SET lobbyDeadline=COALESCE(lobbyDeadline,(SELECT MIN(joinedAt)+30000 FROM players WHERE roomId=?)) WHERE id=? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=?)').bind(roomId,roomId,roomId).run();
         await env.DB.prepare('UPDATE rooms SET preparedChallenge=NULL,preparedContext=NULL,preparedMode=CASE WHEN generationLease>? THEN preparedMode ELSE NULL END,preparedAt=NULL,preparationError=NULL WHERE id=? AND EXISTS(SELECT 1 FROM rounds WHERE roomId=?)').bind(Date.now(),roomId,roomId).run();

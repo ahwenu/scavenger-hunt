@@ -75,7 +75,7 @@ function HostController() {
     try {
       const room = current.current.snapshot?.room;
       const name = { create: 'host_create_room', refresh: room ? 'host_get_room' : 'host_open', prepare: 'host_prepare_topics', start: 'host_start', advance: 'host_advance', finish: 'host_finish' }[action];
-      const args: Record<string, unknown> = action === 'create' ? { operationId: crypto.randomUUID() } : action === 'refresh' ? room ? { roomId: room.roomId } : {} : action === 'prepare' ? { roomId: room?.roomId, source: 'preset', operationId: crypto.randomUUID() } : { roomId: room?.roomId, expectedVersion: room?.version, operationId: crypto.randomUUID() };
+      const args: Record<string, unknown> = action === 'create' ? { operationId: crypto.randomUUID() } : action === 'refresh' ? room ? { roomId: room.roomId } : {} : action === 'prepare' ? { roomId: room?.roomId, source: current.current.mode === 'sites' ? 'ai' : 'preset', operationId: crypto.randomUUID() } : { roomId: room?.roomId, expectedVersion: room?.version, operationId: crypto.randomUUID() };
       apply(await bridge.current.call(name, args));
     } catch (cause) { setError(cause instanceof Error ? cause.message : '操作に失敗しました。'); }
     finally { inFlight.current = false; if (active.current) setBusy(false); }

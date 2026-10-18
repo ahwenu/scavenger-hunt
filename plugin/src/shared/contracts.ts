@@ -24,7 +24,10 @@ export interface RoomSnapshot {
   roomCode: string;
   status: RoomStatus;
   version: number;
-  roundCount: number;
+  roundCount: number | null;
+  roomName?: string;
+  joinUrl?: string;
+  scoreUnit?: 'points' | 'wins';
   currentRound: null | {
     roundId: string;
     number: number;
@@ -36,7 +39,7 @@ export interface RoomSnapshot {
     settleUntil: string;
   };
   teams: Array<{ teamId: string; name: string }>;
-  leaderboard: Array<{ teamId: string; name: string; score: number; rank: number }>;
+  leaderboard: Array<{ teamId: string; name: string; score: number; rank: number; totalMs?: number }>;
   me: null | { teamId: string; attemptsUsed: number; passed: boolean; latestSubmissionId: string | null };
 }
 
@@ -46,11 +49,21 @@ export interface HostSnapshot {
   topicsStatus: "empty" | "generating" | "ready" | "failed";
   preparedTopics: Array<{ number: number; title: string; instruction: string }>;
   teams: Array<{ teamId: string; name: string; lastSeenAt: string | null; latestSubmission: Submission | null }>;
+  sites?: {
+    aiAvailable: boolean;
+    gameMode: 'ai' | 'demo';
+    canPrepare: boolean;
+    canStart: boolean;
+    canAdvance: boolean;
+    canEndRound: boolean;
+    pendingJudgments: number;
+    automaticLobbyStart: boolean;
+  };
 }
 
 /** 未接続とデモを明確に区別したUI状態。 */
 export interface HostState {
-  mode: "demo" | "unconfigured";
+  mode: "demo" | "unconfigured" | "sites";
   snapshot: HostSnapshot | null;
   notice: string;
   serverTime?: string;

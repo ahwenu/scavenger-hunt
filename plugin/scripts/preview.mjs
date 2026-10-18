@@ -1,4 +1,4 @@
-/** ループバック限定で、デモMCPを通した開発用UIを配信する。 */
+/** ループバック限定で、明示した接続モードのMCPを通した開発用UIを配信する。 */
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
@@ -6,11 +6,12 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const html = await readFile(new URL('../dist/preview.html', import.meta.url));
-const mcp = new Client({ name: 'karimono-local-preview', version: '0.1.0' });
+const mcp = new Client({ name: 'karimono-local-preview', version: '0.2.0' });
+const mode = process.env.KARIMONO_MODE || 'demo';
 const transport = new StdioClientTransport({
   command: process.execPath,
   args: [fileURLToPath(new URL('../dist/server.mjs', import.meta.url))],
-  env: { ...process.env, KARIMONO_MODE: 'demo' },
+  env: { ...process.env, KARIMONO_MODE: mode },
 });
 await mcp.connect(transport);
 const allowed = new Set(['host_open', 'host_create_room', 'host_get_room', 'host_prepare_topics', 'host_start', 'host_advance', 'host_finish', 'ai_status', 'ai_generate_challenge']);
@@ -35,7 +36,7 @@ const server = createServer(async (req, res) => {
     }
     const input = JSON.parse(body);
     if (!allowed.has(input.name)) throw new Error('未対応の操作です。');
-    const result = await mcp.callTool({ name: input.name, arguments: input.arguments ?? {} });
+    const result = await mcp.callTool({ name: input.name, arguments: input.arguments ?? {} }, undefined, { timeout: 70000 });
     res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
     res.end(JSON.stringify(result));
   } catch {
@@ -44,7 +45,7 @@ const server = createServer(async (req, res) => {
   }
 });
 server.listen(Number(process.env.PORT || 4173), '127.0.0.1', () => {
-  console.log(`開発用デモ: http://127.0.0.1:${server.address().port}/ (Sitesには接続しません)`);
+  console.log(`開発用プレビュー: http://127.0.0.1:${server.address().port}/ (${mode})`);
 });
 /** プレビューと子MCPを終了する。 */
 async function shutdown() {

@@ -92,7 +92,7 @@ export class DemoHostAdapter implements HostAdapter {
           break;
         case 'advance':
           if (snapshot.room.status !== 'playing' || snapshot.room.currentRound?.status !== 'result') this.invalidState();
-          if (snapshot.room.currentRound.number >= snapshot.room.roundCount) {
+          if (snapshot.room.currentRound.number >= (snapshot.room.roundCount ?? 3)) {
             throw new HostOperationError('INVALID_STATE', '最終問の結果です。ゲーム終了操作で最終結果を確定してください。');
           }
           this.beginRound(snapshot.room.currentRound.number + 1);

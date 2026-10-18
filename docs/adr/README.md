@@ -17,6 +17,7 @@ ADR（Architecture Decision Record）には「何を選び、なぜ選び、ど�
 | [0008](0008-portable-plugin-scaffold.md) | Plugin Extensionsの骨格を移動可能な単独フォルダにまとめる | Accepted | 2026-10-18 | 2026-10-18 |
 | [0009](0009-import-demo-sources.md) | デモをローカルクローンから新規ファイルとして取り込む | Accepted | 2026-10-18 | 2026-10-18 |
 | [0010](0010-independent-ai-api.md) | AhwenuのAI APIをSitesから分離し、拡張からサーバー経由で利用する | Accepted | 2026-10-18 | 2026-10-18 |
+| [0011](0011-new-sites-deployment.md) | 新Sitesへ全ソースを保持し、Cloud実行と拡張接続を分ける | Accepted | 2026-10-18 | 2026-10-18 |
 | [0013](0013-issue1-player-game-contract.md) | Issue #1の100人・10競技・初合格500点と状態/ヒントAPI | Accepted | 2026-10-18 | 2026-10-18 |
 
 ## 状態
