@@ -21,7 +21,7 @@ GitHubでこのフォルダを開き、**Add file → Upload files** からフ�
 | 資料 | 内容 |
 | --- | --- |
 | [受領した個別素材集](sports-day-ui-assets-v1/README.md) | 元シート、8画面の原寸画像、キャラクター・背景・UIパーツ、透過と出典矩形。素材集内は生成補完していない |
-| [画像・音声の引き渡し](participant-assets-and-audio.md) | 配信用画像の対応、imagegenによる補完5体、ElevenLabs製の声・効果音・BGM、差し替え手順と確認範囲 |
+| [画像・音声の引き渡し](participant-assets-and-audio.md) | 配信用画像の対応、imagegenによる補完5体、ElevenLabs製の声・効果音、ユーザー指定BGM、差し替え手順と確認範囲 |
 | [Suno用BGMプロンプト](suno-karimono-bgm.md) | 英語Style、日本語の内容確認、インストルメンタル構成。Sunoでの生成は未実施 |
 | [当初の参照シート](2026-10-18-participant-reference.png) | 画像全体の参照用 |
 
