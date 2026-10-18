@@ -9,25 +9,27 @@ import { z } from 'zod';
 import type { HostState } from '../shared/contracts.js';
 import { DemoHostAdapter, HostOperationError, NotConfiguredHostAdapter, type HostAction, type HostInput } from './adapters.js';
 import { AiServiceClient, AiServiceError, type AiServiceOptions } from './ai-client.js';
+import { SitesHostAdapter, type SitesAdapterOptions } from './sites-adapter.js';
 
 export const HOST_RESOURCE_URI = 'ui://scavenger-hunt/host-v1';
 
 export interface ServerOptions {
-  mode?: 'demo' | 'unconfigured';
+  mode?: 'demo' | 'unconfigured' | 'sites';
   htmlPath?: string;
   now?: () => number;
   ai?: AiServiceOptions;
+  sites?: SitesAdapterOptions;
 }
 
 /** Node起動元に依存せず、同じdistディレクトリ内のHTMLを開く。 */
 export function createServer(options: ServerOptions = {}): McpServer {
   const mode = options.mode ?? process.env.KARIMONO_MODE ?? 'unconfigured';
-  if (mode !== 'demo' && mode !== 'unconfigured') {
-    throw new Error('KARIMONO_MODE must be demo or unconfigured.');
+  if (mode !== 'demo' && mode !== 'unconfigured' && mode !== 'sites') {
+    throw new Error('KARIMONO_MODE must be demo, unconfigured or sites.');
   }
-  const adapter = mode === 'demo' ? new DemoHostAdapter(options.now) : new NotConfiguredHostAdapter();
+  const adapter = mode === 'sites' ? new SitesHostAdapter(options.sites) : mode === 'demo' ? new DemoHostAdapter(options.now) : new NotConfiguredHostAdapter();
   const htmlPath = options.htmlPath ?? fileURLToPath(new URL('./widget.html', import.meta.url));
-  const server = new McpServer({ name: 'karimono-host', version: '0.1.0' });
+  const server = new McpServer({ name: 'karimono-host', version: '0.2.0' });
   const ai = new AiServiceClient(options.ai);
 
   registerAppResource(server, 'カリモノ ホスト画面', HOST_RESOURCE_URI, {}, async () => ({
@@ -38,7 +40,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
       _meta: {
         ui: { csp: { connectDomains: [], resourceDomains: [] } },
         'openai/ui': OpenAIUiResourceMetadataSchema.parse({
-          preferredDisplayMode: 'inline', availableDisplayModes: ['inline', 'fullscreen'],
+          preferredDisplayMode: 'fullscreen', availableDisplayModes: ['inline', 'fullscreen'],
         }),
       },
     }],
@@ -65,7 +67,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
   const roomId = z.string().min(1).max(200);
   const operationId = z.string().uuid();
   const expectedVersion = z.number().int().min(1);
-  const mutation = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
+  const mutation = { readOnlyHint: false, destructiveHint: false, openWorldHint: mode === 'sites' };
   const appOnly = { ui: { visibility: ['app'] } } as const;
 
   registerAppTool(server, 'ai_status', {
@@ -97,7 +99,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
   // この画面はUIメタデータだけを利用し、未使用の拡張機能を宣言しない。
   registerAppTool(server, 'host_open', {
     title: 'カリモノを開く',
-    description: 'Plugin Extensions内にホスト画面を開く。未接続とデモを区別して表示する。',
+    description: 'Plugin Extensions内にホスト画面を開く。Sites実接続・未接続・デモを区別する。',
     inputSchema: { roomId: roomId.optional() },
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     _meta: {
@@ -114,7 +116,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
     annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false }, _meta: appOnly,
   }, handle('get_room'));
   registerAppTool(server, 'host_prepare_topics', {
-    title: 'お題を準備', description: 'AIまたはプリセットを指定する。デモではプリセットだけ利用可能。',
+    title: 'お題を準備', description: 'Sites接続ではAI、デモではプリセットだけ利用可能。SitesのAIお題生成は有料APIを呼ぶ。',
     inputSchema: { roomId, operationId, source: z.enum(['ai', 'preset']) }, annotations: mutation, _meta: appOnly,
   }, handle('prepare_topics'));
   for (const [name, action, title] of [
@@ -123,7 +125,9 @@ export function createServer(options: ServerOptions = {}): McpServer {
     ['host_finish', 'finish', 'ゲームを終了'],
   ] as const) {
     registerAppTool(server, name, {
-      title, inputSchema: { roomId, expectedVersion, operationId }, annotations: mutation, _meta: appOnly,
+      title: mode === 'sites' && action === 'finish' ? '現在ラウンドの受付を終了' : title,
+      description: mode === 'sites' ? action === 'finish' ? 'Sitesの現在ラウンドだけ受付を終了する。部屋全体の終了ではない。' : 'Sitesの実AIゲームを進める。お題準備状況によって有料AIの生成を伴う。' : undefined,
+      inputSchema: { roomId, expectedVersion, operationId }, annotations: mutation, _meta: appOnly,
     }, handle(action));
   }
   registerAppTool(server, 'host_purge_images', {

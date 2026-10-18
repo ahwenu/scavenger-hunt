@@ -69,19 +69,21 @@ export function HostDashboard({
   const room = snapshot?.room;
   const round = room?.currentRound;
   const isDemo = state.mode === "demo";
-  const canStart =
+  const isSites = state.mode === "sites";
+  const sites = snapshot?.sites;
+  const canStart = isSites ? sites?.canStart === true :
     room?.status === "lobby" &&
     snapshot?.topicsStatus === "ready" &&
     snapshot.teams.length > 0;
-  const canAdvance =
+  const canAdvance = isSites ? sites?.canAdvance === true :
     room?.status === "playing" &&
     round?.status === "result" &&
-    round.number < room.roundCount;
+    room.roundCount !== null && round.number < room.roundCount;
   const isFinalResult =
     room?.status === "playing" &&
     round?.status === "result" &&
-    round.number >= room.roundCount;
-  const canFinish = room?.status === "playing";
+    room.roundCount !== null && round.number >= room.roundCount;
+  const canFinish = isSites ? sites?.canEndRound === true : room?.status === "playing";
   const readyTeams =
     snapshot?.teams.filter((team) => team.latestSubmission?.outcome === "pass")
       .length ?? 0;
@@ -101,7 +103,7 @@ export function HostDashboard({
           </div>
         </div>
         <span className={`mode-badge ${isDemo ? "mode-demo" : ""}`}>
-          {isDemo ? "GAME DEMO / 見本" : "ゲームAPI 未接続"}
+          {isDemo ? "GAME DEMO / 見本" : isSites ? room ? "SITES / 実接続" : "SITES / 接続モード" : "ゲームAPI 未接続"}
         </span>
       </header>
 
@@ -145,18 +147,19 @@ export function HostDashboard({
           <span className="section-kicker">01 / CREATE A ROOM</span>
           <h2>さあ、ゲームの準備を。</h2>
           <p>
-            部屋を作成すると、参加チームとランキングを
+            部屋を作成すると、{isSites ? "参加者" : "参加チーム"}とランキングを
             <br />
             この画面で確認できます。
           </p>
           <button
             className="button button-primary"
-            disabled={busy || !isDemo}
+            disabled={busy || (!isDemo && !isSites)}
             onClick={() => onAction("create")}
           >
             {busy ? "処理中…" : isDemo ? "デモの部屋を作る" : "部屋を作る"}
             <span aria-hidden="true">↗</span>
           </button>
+          {isSites && <button className="button button-quiet" disabled={busy} onClick={() => onAction("refresh")}>接続状態を再取得</button>}
           <p className="helper">
             {isDemo
               ? "実際の参加・撮影・AI判定には接続しません。"
@@ -167,9 +170,9 @@ export function HostDashboard({
         <>
           <section className="room-bar surface" aria-labelledby="room-heading">
             <div>
-              <span className="section-kicker">ROOM CODE</span>
+              <span className="section-kicker">{isSites ? "ROOM" : "ROOM CODE"}</span>
               <h2 id="room-heading" className="room-code">
-                {room.roomCode}
+                {isSites ? room.roomName : room.roomCode}
               </h2>
             </div>
             <div className="room-summary">
@@ -178,7 +181,7 @@ export function HostDashboard({
                 {roomLabels[room.status]}
               </span>
               <span className="room-detail">
-                {snapshot.teams.length} チーム / 全{room.roundCount}問
+                {snapshot.teams.length} {isSites ? "人" : "チーム"} / {room.roundCount === null ? "問題数の上限なし" : `全${room.roundCount}問`}
               </span>
             </div>
             <button
@@ -189,6 +192,15 @@ export function HostDashboard({
               {busy ? "取得中…" : "最新状態を取得"}
             </button>
           </section>
+          {isSites && (
+            <section className="join-panel surface" aria-labelledby="join-heading">
+              <span className="section-kicker">INVITE PARTICIPANTS</span>
+              <h2 id="join-heading">スマホのブラウザで参加</h2>
+              {room.joinUrl ? <><p>参加URLを共有してください。非公開Sitesでは、参加者にもSitesへのアクセス権が必要です。</p><a className="join-url" href={room.joinUrl} target="_blank" rel="noreferrer">{room.joinUrl}</a></> : <p>実AIの接続準備が完了するまで参加URLを表示しません。Sitesの設定後に新しい部屋を作成してください。</p>}
+              <p className="helper">部屋ID: {room.roomId} / ホスト認証はMCPサーバー内に保持します。再起動後の部屋復帰は未対応です。</p>
+              {sites?.automaticLobbyStart && <p className="helper">参加者が登録されるとSites側で初回のお題準備・開始が自動進行します。</p>}
+            </section>
+          )}
 
           <div className="dashboard-grid">
             <section
@@ -199,8 +211,8 @@ export function HostDashboard({
                 <span className="section-kicker">01 / GAME PROGRESS</span>
                 <span className="small-tag">
                   {round
-                    ? `${round.number} / ${room.roundCount}`
-                    : `全 ${room.roundCount} 問`}
+                    ? room.roundCount === null ? `第 ${round.number} 問` : `${round.number} / ${room.roundCount}`
+                    : room.roundCount === null ? "準備中" : `全 ${room.roundCount} 問`}
                 </span>
               </div>
               <p className="topic-state">
@@ -219,7 +231,7 @@ export function HostDashboard({
                 {room.status === "finished"
                   ? "最終ランキングを確認して、みんなの挑戦をたたえよう。"
                   : (round?.instruction ??
-                    "参加チームとお題の準備を確認して、ゲームを開始してください。")}
+                    (isSites ? "参加者とお題の準備を確認してください。Sites側で初回の開始が自動進行します。" : "参加チームとお題の準備を確認して、ゲームを開始してください。"))}
               </p>
               <div className="topic-metrics">
                 <div>
@@ -227,11 +239,11 @@ export function HostDashboard({
                   <strong>{topicLabels[snapshot.topicsStatus]}</strong>
                 </div>
                 <div>
-                  <span>{round ? "条件クリア" : "参加チーム"}</span>
+                  <span>{isSites && round ? "判定待ち" : round ? "条件クリア" : isSites ? "参加者" : "参加チーム"}</span>
                   <strong>
-                    {round
+                    {isSites && round ? `${sites?.pendingJudgments ?? 0} 件` : round
                       ? `${readyTeams} / ${snapshot.teams.length}`
-                      : `${snapshot.teams.length} チーム`}
+                      : `${snapshot.teams.length} ${isSites ? "人" : "チーム"}`}
                   </strong>
                 </div>
                 {round && (
@@ -242,18 +254,18 @@ export function HostDashboard({
                 )}
               </div>
               <div className="host-actions">
-                {room.status === "lobby" &&
+                {(room.status === "lobby" || isSites && sites?.canPrepare) &&
                   snapshot.topicsStatus !== "ready" && (
                     <button
                       className="button button-secondary"
                       disabled={
                         busy ||
-                        !isDemo ||
+                        (!isDemo && !(isSites && sites?.canPrepare)) ||
                         snapshot.topicsStatus === "generating"
                       }
                       onClick={() => onAction("prepare")}
                     >
-                      お題を準備（デモ）
+                      {isSites ? "AIのお題を準備" : "お題を準備（デモ）"}
                     </button>
                   )}
                 <button
@@ -275,11 +287,11 @@ export function HostDashboard({
                   disabled={busy || !canFinish}
                   onClick={() => onAction("finish")}
                 >
-                  ゲーム終了
+                  {isSites ? "ラウンドの受付を終了" : "ゲーム終了"}
                 </button>
               </div>
               <p className="helper">
-                {canStart
+                {isSites ? !sites?.aiAvailable ? "Sites側のAI設定が必要です。デモへは切り替えません。" : sites?.gameMode !== 'ai' ? "実AIモードへの変更が必要です。" : canAdvance ? "次のお題を生成して開始します。有料のAI呼び出しを伴う場合があります。" : "受付終了は現在ラウンドだけに適用します。部屋全体の終了APIは未実装です。" : canStart
                   ? "全員の準備ができたら開始してください。"
                   : room.status === "lobby"
                     ? "参加チームとお題の準備が必要です。"
@@ -309,11 +321,11 @@ export function HostDashboard({
               <p className="section-description">
                 {isDemo
                   ? "サンプルの得点を表示しています。"
-                  : "サーバーで確定した得点を表示します。"}
+                  : isSites ? "勝数が多い順、同数なら累計回答時間が短い順です。さらに同じ場合は参加順・ID順です。" : "サーバーで確定した得点を表示します。"}
               </p>
               {room.leaderboard.length === 0 ? (
                 <p className="inline-empty">
-                  参加チームがそろうと表示されます。
+                  {isSites ? "参加者が登録されると表示されます。" : "参加チームがそろうと表示されます。"}
                 </p>
               ) : (
                 <ol className="ranking-list">
@@ -329,7 +341,8 @@ export function HostDashboard({
                       <span className="rank-team">{team.name}</span>
                       <span className="rank-score">
                         {team.score}
-                        <small>pt</small>
+                        <small>{room.scoreUnit === 'wins' ? "勝" : "pt"}</small>
+                        {room.scoreUnit === 'wins' && <span className="rank-time">累計 {((team.totalMs ?? 0) / 1000).toFixed(1)}秒</span>}
                       </span>
                     </li>
                   ))}
@@ -346,14 +359,14 @@ export function HostDashboard({
               <div>
                 <span className="section-kicker">03 / PARTICIPANTS</span>
                 <h2 id="teams-heading">
-                  参加チーム
+                  {isSites ? "参加者" : "参加チーム"}
                   <span className="count-label">{snapshot.teams.length}</span>
                 </h2>
               </div>
-              <span className="table-caption">代表端末ごとに1チーム</span>
+              <span className="table-caption">{isSites ? "Sitesの登録参加者" : "代表端末ごとに1チーム"}</span>
             </div>
             {snapshot.teams.length === 0 ? (
-              <p className="inline-empty">参加チームはまだありません。</p>
+              <p className="inline-empty">{isSites ? "参加者はまだいません。" : "参加チームはまだありません。"}</p>
             ) : (
               <ul className="teams-list">
                 {snapshot.teams.map((team, index) => (
@@ -363,19 +376,19 @@ export function HostDashboard({
                     </span>
                     <div className="team-name">
                       <strong>{team.name}</strong>
-                      <span>最終通信 {communicationTime(team.lastSeenAt)}</span>
+                      <span>{isSites ? "参加登録済み" : `最終通信 ${communicationTime(team.lastSeenAt)}`}</span>
                     </div>
                     <span
                       className={`submission-state ${team.latestSubmission?.outcome === "pass" ? "submission-pass" : ""}`}
                     >
-                      {submissionLabel(team.latestSubmission)}
+                      {isSites ? "個別提出状況は未取得" : submissionLabel(team.latestSubmission)}
                     </span>
                   </li>
                 ))}
               </ul>
             )}
             <p className="helper">
-              最終通信は取得した記録です。接続中であることを保証する表示ではありません。
+              {isSites ? "Sitesの集計APIには個別の最終通信・最新提出結果が含まれません。接続中や提出なしとは判定していません。" : "最終通信は取得した記録です。接続中であることを保証する表示ではありません。"}
             </p>
           </section>
           {isDemo && (

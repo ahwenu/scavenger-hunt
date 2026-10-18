@@ -34,7 +34,7 @@ try {
     assert(files.filter(file => !file.endsWith('/')).every(file => allowed.has(file)), '共有用許可リスト外のファイルがあります。');
   }
   for (const mode of ['unconfigured', 'demo']) {
-    const client = new Client({ name: 'karimono-portability-check', version: '0.1.0' });
+    const client = new Client({ name: 'karimono-portability-check', version });
     const transport = new StdioClientTransport({
       command: process.execPath,
       // 実行cwdも元ソースから分離し、空白を含むパスから起動する。

@@ -35,6 +35,8 @@
 
 ## Ahwenuの独立AI API
 
+- この節のSites非変更境界は独立API実装時の範囲。追加指示による新Sites配備・Cloud/Web差分反映・plugin連携ではADR-0011とdocs/12を優先し、今回必要な変更に限って元のapps/cloud・apps/webへ反映する。
+
 - API処理は自己完結した `api/`、拡張の接続処理は `plugin/src/server/` に置く。Sitesの `apps/cloud/` とルートの配備設定は今回のAPI作業で変更しない。ADR-0010とdocs/11を参照する。
 - OpenAIキーはAPIサーバーだけが扱う。`OPENAI_KEY_FILE` は利用者が指定した保存先の参照であり、キーや実際の保存先を文書・UI・Git・ログへ複製しない。`.env.local` とトークンファイルを配布物に入れない。
 - APIのサービス認証とOpenAIキーを分離する。pluginは `KARIMONO_API_TOKEN_FILE` でサービス用トークンだけを読み、OpenAIキーを要求しない。

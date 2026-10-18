@@ -3,7 +3,7 @@ import QRCode from 'qrcode';
 import { generateChallenge,judgePhoto } from './cloud-ai';
 import {recordPass} from './pass-events';
 import {createReferenceTools} from './reference-agent.mjs';
-export type GameEnv = {DB:D1Database;BUCKET:R2Bucket;OPENAI_API_KEY?:string};
+export type GameEnv = {DB:D1Database;BUCKET:R2Bucket;OPENAI_API_KEY?:string;AI_REFERENCE_PHOTOS?:string};
 let expiryAt=0;
 let runningPump:Promise<void>|undefined;
 const snapshotCache=new Map<string,{until:number,rows:any[]}>();
@@ -53,7 +53,7 @@ async function snapshot(req:Request,env:GameEnv,room:any,player:any){
     return {id:e.id,type:'pass',playerId:e.playerId,name:players.find(p=>p.id===e.playerId)?.name,roundId:e.roundId,submissionId:e.submissionId,createdAt:e.createdAt,rank:ordered.findIndex(s=>s.id===e.submissionId)+1,provisional:ahead>0,pendingAhead:ahead};
   });
   const origin=new URL(req.url).origin;
-  return {room:{id:room.id,name:room.name},isHost:await hostOf(req,room),mode:room.mode,aiAvailable:!!env.OPENAI_API_KEY,publicUrl:origin,joinUrl:`${origin}/rooms/${room.id}/join`,serverTime:Date.now(),generating:room.generationLease>Date.now(),preparing:room.generationLease>Date.now()&&room.preparedMode===room.mode&&!room.preparedChallenge,prepared:!!(room.preparedChallenge&&room.preparedMode===room.mode&&Date.now()-room.preparedAt<300000),preparationError:room.preparationError||null,preparationStage:room.generationLease>Date.now()?(room.mode==='ai'?'searching':'generating'):null,lobby:{deadline:room.lobbyDeadline??null,startedAt:room.lobbyStartedAt||round?.startedAt||null,status:room.lobbyStartedAt||round?'started':!room.lobbyDeadline?'empty':room.preparationError?'error':room.generationLease>Date.now()?'preparing':'waiting'},players,ranks,events,eventCursor:events.at(-1)?.id||0,round:round?{id:round.id,number:round.number,mode:round.mode,status:round.status,challenge:publicChallenge(JSON.parse(round.challenge),room.id,round.id),startedAt:round.startedAt,endsAt:round.endsAt}:null,stats:{players:players.length,answered:new Set(currentSubs.map(s=>s.playerId)).size,accepted:new Set(currentSubs.filter(s=>s.status==='accepted').map(s=>s.playerId)).size,pending:currentSubs.filter(s=>['uploading','queued','processing'].includes(s.status)).length,queued:currentSubs.filter(s=>s.status==='queued').length,processing:currentSubs.filter(s=>s.status==='processing').length},finishers:currentSubs.filter(s=>s.status==='accepted').map((s,i)=>({rank:i+1,playerId:s.playerId,submissionId:s.id,name:players.find(p=>p.id===s.playerId)?.name,elapsedMs:s.receivedAt-round.startedAt})),mine:player?subs.filter(s=>s.playerId===player.id).map(s=>({...s,status:s.status,verdict:s.verdict?JSON.parse(s.verdict):null})):[],sync:'polling',queue:{maxConcurrency:8,maxRoomPending:100,maxGlobalPending:200}};
+  return {room:{id:room.id,name:room.name},isHost:await hostOf(req,room),mode:room.mode,aiAvailable:!!env.OPENAI_API_KEY,publicUrl:origin,joinUrl:`${origin}/rooms/${room.id}/join`,serverTime:Date.now(),generating:room.generationLease>Date.now(),preparing:room.generationLease>Date.now()&&room.preparedMode===room.mode&&!room.preparedChallenge,prepared:!!(room.preparedChallenge&&room.preparedMode===room.mode&&Date.now()-room.preparedAt<300000),preparationError:room.preparationError||null,preparationStage:room.generationLease>Date.now()?(room.mode==='ai'&&env.AI_REFERENCE_PHOTOS==='true'?'searching':'generating'):null,lobby:{deadline:room.lobbyDeadline??null,startedAt:room.lobbyStartedAt||round?.startedAt||null,status:room.lobbyStartedAt||round?'started':!room.lobbyDeadline?'empty':room.preparationError?'error':room.generationLease>Date.now()?'preparing':'waiting'},players,ranks,events,eventCursor:events.at(-1)?.id||0,round:round?{id:round.id,number:round.number,mode:round.mode,status:round.status,challenge:publicChallenge(JSON.parse(round.challenge),room.id,round.id),startedAt:round.startedAt,endsAt:round.endsAt}:null,stats:{players:players.length,answered:new Set(currentSubs.map(s=>s.playerId)).size,accepted:new Set(currentSubs.filter(s=>s.status==='accepted').map(s=>s.playerId)).size,pending:currentSubs.filter(s=>['uploading','queued','processing'].includes(s.status)).length,queued:currentSubs.filter(s=>s.status==='queued').length,processing:currentSubs.filter(s=>s.status==='processing').length},finishers:currentSubs.filter(s=>s.status==='accepted').map((s,i)=>({rank:i+1,playerId:s.playerId,submissionId:s.id,name:players.find(p=>p.id===s.playerId)?.name,elapsedMs:s.receivedAt-round.startedAt})),mine:player?subs.filter(s=>s.playerId===player.id).map(s=>({...s,status:s.status,verdict:s.verdict?JSON.parse(s.verdict):null})):[],sync:'polling',queue:{maxConcurrency:8,maxRoomPending:100,maxGlobalPending:200}};
 }
 /** 実際のroom限定参加情報・回答率・正解率・履歴を生成に渡す。 */
 async function generationContext(env:GameEnv,roomId:string){
@@ -117,7 +117,7 @@ async function beginPreparation(env:GameEnv,roomId:string,ctx:ExecutionContext,r
   ctx.waitUntil((async()=>{
     let preparedReferenceKey:string|undefined;
     try{
-      const generated=await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context);
+      const generated=await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context,env.AI_REFERENCE_PHOTOS);
       if(!frozen&&JSON.stringify(await generationContext(env,roomId))!==serialized)throw Error('context_changed');
       const challenge=await persistChallenge(env,roomId,generated);
       preparedReferenceKey=challenge.reference?.storageKey;
@@ -167,7 +167,7 @@ async function manualStart(env:GameEnv,roomId:string){
   try{
     const context=await generationContext(env,roomId),serialized=JSON.stringify(context);
     const valid=claimed.preparedChallenge&&claimed.preparedMode===claimed.mode&&now-claimed.preparedAt<300000&&claimed.preparedContext===serialized;
-    const challenge=valid?JSON.parse(claimed.preparedChallenge):await persistChallenge(env,roomId,await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context));
+    const challenge=valid?JSON.parse(claimed.preparedChallenge):await persistChallenge(env,roomId,await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context,env.AI_REFERENCE_PHOTOS));
     const startedAt=Date.now();
     await env.DB.batch([
       env.DB.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId) SELECT ?,COALESCE((SELECT MAX(number) FROM rounds WHERE roomId=?),0)+1,?,'active',?,?,?,?,?")
@@ -216,7 +216,8 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
     if(p==='/api/rooms'&&req.method==='POST'){
       const {name}=await req.json() as any;if(typeof name!=='string'||!name.trim()||name.length>48)return json({error:'部屋の名前を1〜48文字で入力してください。'},400);
       const id=crypto.randomUUID().replaceAll('-',''),token=crypto.randomUUID()+crypto.randomUUID();
-      const inserted=await env.DB.prepare("INSERT INTO rooms(id,name,hostHash,mode,createdAt,generationLease) SELECT ?,?,?,'demo',?,0 WHERE (SELECT COUNT(*) FROM rooms)<1000 RETURNING id").bind(id,name.trim(),await hash(token),receivedAt).first();
+      const mode=env.OPENAI_API_KEY?'ai':'demo';
+      const inserted=await env.DB.prepare("INSERT INTO rooms(id,name,hostHash,mode,createdAt,generationLease) SELECT ?,?,?,?,?,0 WHERE (SELECT COUNT(*) FROM rooms)<1000 RETURNING id").bind(id,name.trim(),await hash(token),mode,receivedAt).first();
       if(!inserted)return json({error:'部屋の作成上限に達しました。'},409);
       return json({id,hostUrl:`/rooms/${id}/host`,joinUrl:`${url.origin}/rooms/${id}/join`},201,{'Set-Cookie':`host_${id}=${token}; Path=/api/rooms/${id}; HttpOnly; SameSite=Strict; Secure; Max-Age=2592000`});
     }
