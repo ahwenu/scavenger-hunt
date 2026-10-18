@@ -2,13 +2,23 @@
 
 **借り物王に俺はなる！**
 
+Plugin Extensionsを自分の環境へ取り込む方は、[取り込み手順](plugin/INSTALL.md)を参照してください。配布者は `plugin/` の `npm run share` で、ビルド済み共有ファイルと手順をまとめます。
+
 - チーム名：ONE LEASE
 - アプリ名：カリモノ
 - キャッチコピー：借り物王に俺はなる！
 
 会場内でお題に合うものを探して撮影し、AIの判定による得点で競うスマホ向けブラウザゲーム。
 
-2026-10-18作成の以下の文書を初期案として、担当者間の実装契約に使います。デモアプリのコードは取り込み済みで、仕様との相違は[10 デモアプリ取り込み](docs/10-demo-import.md)と[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
+Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能な `plugin/` にまとめています。[起動・移動手順](plugin/README.md)を参照してください。ローカル登録・有効化に加え、ユーザー操作と提供画像により実拡張内の表示・API接続確認・お題生成を確認済みです。また既存のデモ実装を元の配置で取り込んでおり、Sitesは `apps/cloud/`、ローカルデモは `apps/server/`・`apps/web/` にあります（[取り込み記録](docs/10-demo-import.md)）。取り込んだAPI・AI・配備設定の本環境での動作、現在の仕様への適合、拡張とのゲーム結合は未検証です。2026-10-18作成の以下の文書を、担当者間の実装契約に使います。
+
+参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
+
+今回の作業はAhwenuのAPI処理に限定し、独立した `api/` でお題生成・写真判定を提供し、拡張からMCP経由で接続します。Sitesの画面・ゲーム状態・DB・配備設定は他担当が扱い、今回変更しません。実AIの確認画面と、サンプルの参加チーム・ランキングを表示するゲームデモは分離します。[11 API連携](docs/11-api-integration.md)を参照してください。
+
+通常のお題生成はResponses APIのStructured Outputs、写真判定はDecisions APIを使います。ブラウザプレビューからMCP経由の実お題生成と、JPEG画像の実判定を1例確認しました。Agents APIは参考写真を明示的に有効にしたときだけ使い、このモードの成功は未確認です。標準生成の変更理由と検証結果は[ADR-0010](docs/adr/0010-independent-ai-api.md)に記録しています。
+
+その後、ユーザーがWork内の実Plugin Extensionsで「API接続確認」→「AI生成」を操作しました。提供画像2枚により、実拡張内の画面表示・API接続済み表示・「文房具のペンを探そう」の生成表示を1例確認しました。写真判定UI、Sitesの参加者・得点・順位との結合は未検証です。
 
 ## 担当割り振り
 
@@ -36,6 +46,7 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [08 Plugin Extensions](docs/08-plugin-extensions.md) | ホスト管理画面、MCP、Sites接続 | 未定（Ahwenu）・Ahwenu・さが さん |
 | [09 フォルダ構成・デプロイ](docs/09-repository-structure.md) | 担当別の編集先、独立ビルド、共有ファイルの更新ルール | 全員 |
 | [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
+| [11 API連携](docs/11-api-integration.md) | Ahwenuの独立AI API、拡張との接続、秘密設定、Sitesとの受け渡し | Ahwenu・さが さん・拡張画面担当 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
 | [参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |
 | [参加者画面の整合計画](docs/participant-frontend/2026-10-18-参加者画面の整合計画.html) | 実コードの確認結果と整合手順 | 全員 |
@@ -46,6 +57,6 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 
 重要な方針決定・変更時は、[ADR](docs/adr/README.md)を同じ変更内で追加・更新します。確定したユーザー指示はAccepted、未検証の技術やMVP数値はProposedとして記録しています。作業時の継続更新ルールは[AGENTS.md](AGENTS.md)に記載しています。
 
-配置はデプロイの容易さを最優先にし、Sitesはリポジトリ直下、Plugin Extensionsは独立した `plugin/` に置く案とします。担当別フォルダ、共有設定の取りまとめ、ビルド対象の分離は09を参照してください。具体的な構成はスターター導入時に検証します。
+配置はデプロイの容易さを最優先にします。Sitesをリポジトリ直下に置く案は未実現で、現在は取り込み元の `apps/cloud/` を維持しています。Plugin Extensionsは独立した `plugin/` とし、フォルダ単位で移せるよう依存・契約・ビルド設定・起動設定を内部に置きます（[ADR-0008](docs/adr/0008-portable-plugin-scaffold.md)）。実API接続はアダプター境界で追加し、デモ状態と本番のゲーム記録を区別します。担当別フォルダ、共有設定の取りまとめ、Sites側の未検証事項は09を参照してください。
 
 添付された2枚の画像は製品構想の参考資料として扱っています。画像内の数値・サービス構成は実装済みの事実ではありません。文書内で「方針」「提案」「目標」「要検証」を区別しています。

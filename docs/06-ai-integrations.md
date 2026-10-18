@@ -4,15 +4,17 @@
 
 ## 役割と選定
 
-添付図に合わせ、お題生成はAgents API、写真判定はDecisions APIを第一候補とする。両APIは公式資料で確認できたが、このアカウント・配備先での権限、性能、料金、利用上限は実呼び出し前に確認する。
+現在の独立 `api/` の標準実装は、お題生成にResponses APIのStructured Outputs、写真判定にDecisions APIを使う。`AI_REFERENCE_PHOTOS=false` が標準で、文章のお題と条件を生成する。`AI_REFERENCE_PHOTOS=true` を明示したときだけAgents APIとWikimedia Commonsの参考写真を利用する。設定と実際のHTTP契約は[11 API連携](11-api-integration.md)、選定の経緯は[ADR-0010](adr/0010-independent-ai-api.md)を参照。
 
-Agents APIはOpenAI管理の実行環境を使う仕組みである。ゲーム開始前の生成処理に閉じ込め、写真を提出するたびにエージェントを起動しない。[OpenAI: Agents API](https://developers.openai.com/api/docs/guides/agents-api/overview)
+初期案では添付図に合わせAgentsを第一候補にした。参考写真付きの初回実試験は原因未特定の502となり、その後の参考写真なし・旧Agents方式の文章生成でセッション後処理失敗を確認したため、標準生成をResponsesへ変更した。Agents参考写真モードの一連の成功は未確認。Agentsを使う場合も開始前の生成処理に閉じ込め、写真を提出するたびに起動しない。[OpenAI: Agents API](https://developers.openai.com/api/docs/guides/agents-api/overview)
 
-単純な3問生成に対して運用負荷が過大なら、生成アダプターをResponses APIとStructured Outputsへ切り替える。API名の採用よりゲームの成立を優先するが、外部サービス利用条件がイベント側から指定される場合は別途確認する。[OpenAI: Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs)
+標準生成はstrict JSON Schemaと `store: false` を指定し、20秒・自動再試行なしとする。2026-10-18、ブラウザ/MCP経由での実Responses生成と、同じお題IDに対するJPEGの実Decisions判定を1例確認した。判定精度・負荷・Sites結合の評価は継続する（[検証記録](11-api-integration.md#検証状況)）。外部サービス利用条件がイベント側から指定される場合は別途確認する。[OpenAI: Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs)
 
 ## ゲーム内部のインターフェース
 
 これは自分たちのアダプター契約であり、外部SDKのメソッド名やレスポンス形式ではない。
+
+以下はSitesのゲーム結合時の初期契約案。現在の独立APIは1要求につき1題を生成し、HTTPのフィールド名・理由コードは11に記載する。ここにある3問一括生成やゲーム状態の保存はSites担当との結合作業で扱う。
 
 ```ts
 interface TopicDraft {
@@ -75,7 +77,7 @@ Decisions APIでは画像入力と条件判定ができる。画像はインラ�
 
 検索と取得はバックエンドで行い、`ReferenceImage {id, sourcePageUrl, author, licenseName, licenseUrl, storageKey}` を保存する。CommonsのAPIでファイルごとのメタデータを取得し、利用条件が確認できる画像だけ採用する。[Wikimedia: Machine-readable data](https://commons.wikimedia.org/wiki/Commons:Machine-readable_data)
 
-外部メタデータは安全にテキスト化して表示し、任意のHTMLを挿入しない。画像取得先は許可したドメインに限定し、容量・形式を検証する。取得失敗時も文章だけで出題できる。
+外部メタデータは安全にテキスト化して表示し、任意のHTMLを挿入しない。画像取得先は許可したドメインに限定し、容量・形式を検証する。現在の独立APIは参考写真の有無を起動設定で選ぶ。参考写真モードが失敗した場合はエラーを返し、文章やプリセットへの暗黙の切り替えを行わない。
 
 ## 評価・費用
 
