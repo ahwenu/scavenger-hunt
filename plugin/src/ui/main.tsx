@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { HostDashboard } from './App.js';
-import { createHostBridge, type HostBridge } from './bridge.js';
+import { createHostBridge, readInitialConnectionState, type HostBridge } from './bridge.js';
 import type { HostAction, HostState } from '../shared/contracts.js';
 import type { AIStatus, AIChallenge } from '../shared/ai-contracts.js';
 import { AiPreview } from './AiPreview.js';
@@ -79,15 +79,32 @@ function HostController() {
       }
       if (active.current) timer = setTimeout(poll, 2000);
     }
+    setAIBusy(true);
+    aiInFlight.current = true;
     void (async () => {
+      let aiCheckStarted = false;
       try {
         await connection.connect(apply);
-        apply(await connection.call('host_open', {}));
-        try { const status = await connection.checkAI(); if (active.current) setAIStatus(status); } catch { /* 接続確認ボタンでも再取得できる。 */ }
-        timer = setTimeout(poll, 2000);
+        const { host, ai } = readInitialConnectionState(connection);
+        aiCheckStarted = true;
+        void ai.then(result => {
+          if (!active.current) return;
+          if (result.status === 'fulfilled') setAIStatus(result.value);
+          else setAIError(result.reason instanceof Error ? result.reason.message : 'AI APIに接続できませんでした。「API接続を確認」で再試行できます。');
+        }).finally(() => { aiInFlight.current = false; if (active.current) setAIBusy(false); });
+        const result = await host;
+        if (result.status === 'fulfilled') apply(result.value);
+        else if (active.current) setError(result.reason instanceof Error ? result.reason.message : '部屋の接続状態を取得できませんでした。');
       } catch (cause) {
-        if (active.current) setError(cause instanceof Error ? cause.message : 'Plugin Extensionsから開いてください。');
-      } finally { if (active.current) setBusy(false); }
+        if (active.current) {
+          const message = cause instanceof Error ? cause.message : 'Plugin Extensionsから開いてください。';
+          setError(message);
+          setAIError(message);
+        }
+      } finally {
+        if (!aiCheckStarted) { aiInFlight.current = false; if (active.current) setAIBusy(false); }
+        if (active.current) { timer = setTimeout(poll, 2000); setBusy(false); }
+      }
     })();
     return () => { active.current = false; clearTimeout(timer); clearInterval(soundTimer); document.removeEventListener('click', gesture, true); hostSounds.stop(); gameSounds.observe(null); void connection.close(); };
   }, []);
@@ -142,7 +159,7 @@ function HostController() {
     finally { aiInFlight.current = false; if (active.current) setAIBusy(false); }
   }
 
-  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} onOpenAI={() => setToolsPanel('ai')} onOpenCredits={() => setToolsPanel('credits')} />{toolsPanel === 'ai' && <CompactDialog title="独立AIのお題プレビュー" onClose={() => setToolsPanel(null)}><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy || busy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></CompactDialog>}{toolsPanel === 'credits' && <CompactDialog title="効果音の出典" onClose={() => setToolsPanel(null)}><SoundCredits /></CompactDialog>}</>;
+  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} onOpenAI={() => setToolsPanel('ai')} onOpenCredits={() => setToolsPanel('credits')} />{toolsPanel === 'ai' && <CompactDialog title="独立AIのお題プレビュー" onClose={() => setToolsPanel(null)}><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></CompactDialog>}{toolsPanel === 'credits' && <CompactDialog title="効果音の出典" onClose={() => setToolsPanel(null)}><SoundCredits /></CompactDialog>}</>;
 }
 
 createRoot(document.getElementById('root')!).render(<HostController />);

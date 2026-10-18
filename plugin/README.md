@@ -6,8 +6,14 @@ ONE LEASE / **借り物王に俺はなる！**
 
 ホストの部屋作成、参加チーム一覧、ランキング、開始・次問・終了の画面を育てるための独立パッケージです。Sitesの参加者画面・バックエンドとは別にビルドし、`plugin/` ごと別の場所へ移動できます。
 
-元リポジトリには既存デモも取り込まれています（Sitesは `apps/cloud/`、ローカル版は `apps/server/`・`apps/web/`）。このpluginはそれらのソースや依存を参照しません。Ahwenuの独立AI APIへはMCPサーバーからHTTP接続し、SitesのゲームAPI接続は後続作業です。
+元リポジトリには既存デモも取り込まれています（Sitesは `apps/cloud/`、ローカル版は `apps/server/`・`apps/web/`）。このpluginはそれらのソースや依存を参照しません。MCPサーバーから、独立AI APIと公開SitesのゲームAPIへそれぞれHTTP接続します。部屋の管理権限とAIのサービス認証はMCPサーバー側で扱います。
 
+
+## 0.4.1：接続の再試行と部屋作成
+
+初回の部屋状態と独立AIの接続確認を別々に取得し、片方の失敗で両方を止めないようにします。AI確認の失敗は画面で確認し、再試行できます。既存の部屋からも「＋ 新しい部屋」で次の部屋を作成できます。参加者0人でゲーム用AI準備が無効な場合は、招待QRから参加が必要なことを表示します。独立AIのプレビューは参加人数と関係なく利用できます。
+
+更新後は拡張を閉じて開き直してください。インストールされた版と、既に開いている画面・MCPプロセスの版は別です。旧画面が残る場合はプラグインを再読み込みしてください。接続設定4項目の引き継ぎ手順は末尾を参照してください。
 
 ## 0.4.0：一画面の運営本部とランキング演出
 
@@ -32,7 +38,7 @@ ONE LEASE / **借り物王に俺はなる！**
 
 デモの参加チーム・得点はサンプルです。実AIの生成結果をサンプルの部屋・チーム・順位へ反映しません。sitesモードの実ゲーム接続と参加QRは実装済みで、確認範囲は以下に記録しています。ブラウザの検証ホストとネイティブのPlugin Extensions画面の確認は区別します。
 
-0.2.1では、参加URLをローカルでQR化して表示します。外部QRサービスへ通信せず、参加リンクも残します。QRが出ない場合は0.2.1へ更新し、プラグインを再読み込みしてください。CLI一覧のバージョン、更新後の `installedPath` と `.env.local` の接続設定も確認します。
+0.2.1では、参加URLをローカルでQR化して表示します。外部QRサービスへ通信せず、参加リンクも残します。QRが出ない場合は最新の0.4.1へ更新し、プラグインを再読み込みしてください。CLI一覧のバージョン、更新後の `installedPath` と `.env.local` の接続設定も確認します。
 
 ## 開発を始める
 
@@ -123,13 +129,13 @@ npm run package
 npm run test:portable
 ```
 
-`artifacts/karimono-host-0.4.0.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
+`artifacts/karimono-host-0.4.1.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
 
 `test:portable` はアーカイブを空白を含む一時パスに展開し、`node_modules` のない配布物を別の作業ディレクトリから起動して確認します。パッケージ作成後に実行してください。
 
 ## ローカルPlugin Extensionsへ登録する
 
-他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.4.0.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
+他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.4.1.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
 
 この `plugin/` フォルダを作業ルートにし、チェック・テスト・ビルドを済ませてから、ローカルmarketplaceを準備して公式CLIへ登録します。
 

@@ -92,7 +92,8 @@ export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenA
   const currentTeamPage = Math.min(teamPage, teamPages - 1);
   const team = snapshot?.teams.find(item => item.teamId === selectedTeam);
   const showOverview = wide && tab !== 'teams';
-  const gameHelp = isSites ? room?.status === 'finished' ? '全競技が終了しました。最終ランキングを確認してください。' : !sites?.aiAvailable ? 'Sites側のAI設定が必要です。デモへは切り替えません。' : sites?.gameMode !== 'ai' ? '実AIモードへの変更が必要です。' : canAdvance ? '次のお題を生成して開始します。有料のAI呼び出しを伴う場合があります。' : '受付終了は現在ラウンドだけに適用します。部屋全体の終了APIは未実装です。' : canStart ? '全員の準備ができたら開始してください。' : room?.status === 'lobby' ? '参加チームとお題の準備が必要です。' : '写真の受付・判定が終わったら、次のお題へ進めます。';
+  const waitingForPlayers = isSites && room?.status === 'lobby' && snapshot?.teams.length === 0;
+  const gameHelp = isSites ? room?.status === 'finished' ? '全競技が終了しました。最終ランキングを確認してください。' : !sites?.aiAvailable ? 'Sites側のAI設定が必要です。デモへは切り替えません。' : sites?.gameMode !== 'ai' ? '実AIモードへの変更が必要です。' : waitingForPlayers ? '招待タブのQRから1人以上参加すると、AIのお題を準備できます。' : canAdvance ? '次のお題を生成して開始します。有料のAI呼び出しを伴う場合があります。' : '受付終了は現在ラウンドだけに適用します。部屋全体の終了APIは未実装です。' : canStart ? '全員の準備ができたら開始してください。' : room?.status === 'lobby' ? '参加チームとお題の準備が必要です。' : '写真の受付・判定が終わったら、次のお題へ進めます。';
 
   return <main className={`host-app compact-host ${room ? 'has-room' : 'no-room'}`} aria-busy={busy}>
     <header className="masthead">
@@ -109,11 +110,12 @@ export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenA
       <span className="section-kicker">借り物王に俺はなる！</span><h2>運動会、はじめよう！</h2>
       <p>みんなの挑戦を、ここから進めよう。</p>
       <button className="button button-primary" disabled={busy || (!isDemo && !isSites)} onClick={() => onAction('create')}>{busy ? '処理中…' : isDemo ? 'デモの部屋を作る' : '部屋を作る'} ↗</button>
-      {isSites && <button className="button button-quiet" disabled={busy} onClick={() => onAction('refresh')}>接続状態を再取得</button>}
+      {(isSites || error) && <button className="button button-quiet" disabled={busy} onClick={() => onAction('refresh')}>{error ? '接続を再試行' : '接続状態を再取得'}</button>}
       <ol className="welcome-steps" aria-label="開催の流れ"><li><b>1</b>部屋をつくる</li><li><b>2</b>集合</li><li><b>3</b>開始！</li></ol>
     </section> : <>
       <section className="room-bar surface" aria-label="現在の部屋">
         <div className="room-identity"><h2 className="room-code" title={isSites ? room.roomName : room.roomCode}>{isSites ? room.roomName : room.roomCode}</h2><span className="room-detail">{snapshot.teams.length}{isSites ? '人' : 'チーム'} · {roomLabels[room.status]}</span></div>
+        <button className="button button-quiet create-room-button" aria-label={isDemo ? '新しいデモの部屋を作る' : '新しい部屋を作る'} disabled={busy} onClick={() => onAction('create')}>＋ 新しい部屋</button>
         <button className="button button-quiet refresh-button" disabled={busy} onClick={() => onAction('refresh')}>{busy ? '取得中…' : '↻ 更新'}</button>
       </section>
       <nav className="main-tabs" aria-label="ホスト画面の切り替え">
@@ -126,7 +128,7 @@ export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenA
         </section>}
         <section className="topic-panel surface" aria-labelledby="topic-heading" hidden={!showOverview && tab !== 'game'}>
           <div className="section-heading"><span className="section-kicker">{room.status === 'finished' ? 'ゲーム終了' : round ? roundLabels[round.status] : 'ゲームの進行'}</span><button className="small-tag" onClick={() => setPanel('stages')}>{round ? `第${round.number}問` : '準備中'}{room.roundCount !== null && ` / ${room.roundCount}`} ›</button></div>
-          <button className="topic-summary" onClick={() => setPanel('topic')} aria-label="お題と進行案内の全文を開く"><h2 id="topic-heading">{room.status === 'finished' ? 'おつかれさまでした！' : round?.title ?? '次の借り物王は、誰だ。'}</h2><span>お題・案内の全文を見る ›</span></button>
+          <button className="topic-summary" onClick={() => setPanel('topic')} aria-label="お題と進行案内の全文を開く"><h2 id="topic-heading">{room.status === 'finished' ? 'おつかれさまでした！' : round?.title ?? '次の借り物王は、誰だ。'}</h2><span>{waitingForPlayers ? '招待タブのQRから1人以上参加すると、AIのお題を準備できます。' : 'お題・案内の全文を見る ›'}</span></button>
           <div className="topic-metrics"><div><span>お題</span><strong>{topicLabels[snapshot.topicsStatus]}</strong></div><div><span>{isSites && round ? '判定待ち' : round ? '条件クリア' : '参加者'}</span><strong>{isSites && round ? `${sites?.pendingJudgments ?? 0}件` : round ? `${readyTeams} / ${snapshot.teams.length}` : `${snapshot.teams.length}${isSites ? '人' : 'チーム'}`}</strong></div>{round && <div><span>受付締切</span><strong>{communicationTime(round.deadlineAt)}</strong></div>}</div>
           <div className="host-actions">
             {canPrepare && <button className="button button-secondary" disabled={busy || (!isDemo && !(isSites && sites?.canPrepare)) || snapshot.topicsStatus === 'generating'} onClick={() => onAction('prepare')}>{isSites ? 'AIのお題を準備' : 'お題を準備（デモ）'}</button>}

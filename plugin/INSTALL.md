@@ -7,6 +7,12 @@ ONE LEASE / **借り物王に俺はなる！**
 以下のコマンド例はmacOS/Linuxのターミナル向けです。Windowsでの一連の導入は未検証です。
 
 
+## 0.4.1の接続・操作更新
+
+初回の部屋状態取得と独立AI接続確認を別々に行います。「AI確認」では接続エラーを確認・再試行でき、既存部屋からも「＋ 新しい部屋」で部屋を作れます。ゲーム用の「AIのお題を準備」は参加者が1人以上必要です。参加者0人でも独立AIの「AIでお題を生成」は利用できます。
+
+更新後は画面を閉じて開き直し、新しい部屋作成ボタンを確認してください。既に起動した旧MCPプロセスは、再インストールだけでは切り替わらない場合があります。旧画面が残る場合はプラグインを再読み込みしてください。
+
 ## 0.3.0の画面更新
 
 運動会・猫耳キャラクターのデザインを取り入れています。イラストは配布物へ同梱し、外部画像サービスへの接続は不要です。部屋を作ると参加用QRと参加URLが表示されます。更新後は開いている拡張を閉じて開き直してください。旧画面が残る場合は拡張を再読み込みするか、アプリを再起動して新しいUIリソースを読み込んでください。
@@ -16,7 +22,7 @@ ONE LEASE / **借り物王に俺はなる！**
 
 - Node.js 22.13以上。ターミナルで `node --version` を確認します。
 - `codex plugin` に対応したCodex CLIと、ローカルプラグインを利用できるデスクトップ環境。
-- `karimono-host-share-0.4.0.tar.gz` と `karimono-host-share-0.4.0.tar.gz.sha256`。配布者から受け取ってください。
+- `karimono-host-share-0.4.1.tar.gz` と `karimono-host-share-0.4.1.tar.gz.sha256`。配布者から受け取ってください。
 
 Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確認しています。利用できるUIやメニュー名はアプリのバージョンによって異なります。
 
@@ -25,15 +31,15 @@ Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確�
 共有ファイルを置いたフォルダでターミナルを開き、次を実行します。ファイル名を変更した場合は読み替えてください。
 
 ```sh
-shasum -a 256 -c karimono-host-share-0.4.0.tar.gz.sha256
-tar -xzf karimono-host-share-0.4.0.tar.gz
+shasum -a 256 -c karimono-host-share-0.4.1.tar.gz.sha256
+tar -xzf karimono-host-share-0.4.1.tar.gz
 cd karimono-local
 codex plugin marketplace add . --json
 codex plugin add karimono-host@karimono-local --json
 codex plugin list --marketplace karimono-local --json
 ```
 
-最後の結果に `installed: true`、`enabled: true`、`version: 0.4.0` があれば登録できています。`plugin add --json` が返す `installedPath` は、後で接続を設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
+最後の結果に `installed: true`、`enabled: true`、`version: 0.4.1` があれば登録できています。`plugin add --json` が返す `installedPath` は、後で接続を設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
 
 展開したフォルダはmarketplaceの参照元になるため、更新するときまで残してください。公開ディレクトリへの申請、サイトの公開、スマホでの参加は、このローカル登録に必要ありません。
 
@@ -43,9 +49,9 @@ CLIに `plugin` コマンドがない場合は、アプリ側のプラグイン�
 
 アプリのPlugin Extensionsから「カリモノ」を選びます。必要なら新しいチャットを開くか、アプリを再起動して登録内容を読み込みます。
 
-0.2.1から部屋作成後に参加QRを表示します。参加リンクも利用できます。QRが出ない場合は、下記の更新手順で0.2.1を入れ直し、一覧のバージョンと新しい `installedPath` の接続設定を確認してからプラグインを再読み込みしてください。旧版の画面が残る場合はアプリを再起動します。
+0.2.1から部屋作成後に参加QRを表示します。参加リンクも利用できます。QRが出ない場合は、下記の更新手順で最新の0.4.1を入れ直し、一覧のバージョンと新しい `installedPath` の接続設定を確認してからプラグインを再読み込みしてください。旧版の画面が残る場合はアプリを再起動します。
 
-最初はゲームが「未接続」、AIも「未設定」と表示されます。これは標準状態です。サンプルの参加チーム・得点を動かすデモと実AIの確認領域は分かれています。部屋作成・実際のスマホ参加・得点・順位のゲーム結合は開発中です。
+接続設定を入れていない初回は、ゲームが「未接続」、AIも「未設定」と表示されます。公開Sitesへの設定後は実部屋の作成・参加URL発行・ゲーム操作ができます。独立AIプレビューは別設定で、ゲームの部屋へお題を反映しません。
 
 ## 4. 自分のPCで実AIも使う場合
 
@@ -144,7 +150,7 @@ codex plugin list --marketplace karimono-local --json
 
 `marketplace upgrade` はGit由来のmarketplace更新向けなので、このローカルフォルダ配布では上記の再インストールを使います。
 
-更新・再インストール後は `plugin add --json` の `installedPath` を再確認し、控えた `.env.local` を必要に応じて戻して権限を0600に設定します。プラグインを再読み込みまたはアプリを再起動し、「API接続確認」で設定を確認してください。秘密設定は共有ファイルから復元されません。
+更新・再インストール後は `plugin add --json` の `installedPath` を再確認し、控えた `.env.local` を必要に応じて戻して権限を0600に設定します。Sitesと独立AIを両方使う場合は `KARIMONO_MODE`・`SITES_API_BASE_URL`・`KARIMONO_API_URL`・`KARIMONO_API_TOKEN_FILE` の4項目をすべて引き継ぎ、Sitesの2項目だけで上書きしないでください。プラグインを再読み込みまたはアプリを再起動し、「API接続確認」で設定を確認してください。秘密設定は共有ファイルから復元されません。
 
 ## 共有ファイルの中身
 

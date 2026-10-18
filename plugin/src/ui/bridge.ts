@@ -81,6 +81,16 @@ export interface HostBridge {
   generateAI(requestId: string): Promise<AIResult>;
 }
 
+/** 失敗した問い合わせも直ちに処理し、他方の完了待ちで未処理例外にしない。 */
+async function settle<T>(request: Promise<T>): Promise<PromiseSettledResult<T>> {
+  return (await Promise.allSettled([request]))[0]!;
+}
+
+/** 部屋と独立AIを同時に確認し、完了・失敗をそれぞれ画面へ反映できるようにする。 */
+export function readInitialConnectionState(bridge: HostBridge) {
+  return { host: settle(bridge.call('host_open', {})), ai: settle(bridge.checkAI()) };
+}
+
 /** 実ホストではMCP、preview.htmlでのみloopback開発ブリッジを使う。 */
 export function createHostBridge(preview = false): HostBridge {
   if (preview) {
@@ -100,17 +110,37 @@ export function createHostBridge(preview = false): HostBridge {
       async generateAI(requestId) { return readAIResponse(await request('ai_generate_challenge', { requestId }), 'aiResult'); },
     };
   }
-  const app = new App({ name: 'karimono-host-ui', version: '0.4.0' }, {});
+  const app = new App({ name: 'karimono-host-ui', version: '0.4.1' }, {});
+  let ready = false;
+  let closed = false;
+  let connecting: Promise<void> | undefined;
+  app.onclose = () => { ready = false; };
+  /** 初回の失敗後だけhandshakeを再試行し、同時操作は同じ接続を待つ。 */
+  function ensureConnected(): Promise<void> {
+    if (closed) return Promise.reject(new Error('Plugin Extensionsとの接続が終了しています。画面を開き直してください。'));
+    if (ready) return Promise.resolve();
+    if (!connecting) {
+      connecting = app.connect(undefined, { timeout: 10000 }).then(() => {
+        if (closed) throw new Error('Plugin Extensionsとの接続が終了しています。画面を開き直してください。');
+        ready = true;
+      }).catch(async cause => {
+        ready = false;
+        await app.close();
+        throw cause;
+      }).finally(() => { connecting = undefined; });
+    }
+    return connecting;
+  }
   return {
     async connect(onState) {
       app.ontoolresult = result => {
         try { onState(readHostState(result)); } catch { /* 操作呼出側でエラーを表示する。 */ }
       };
-      await app.connect(undefined, { timeout: 10000 });
+      await ensureConnected();
     },
-    async call(name, args) { return readHostState(await app.callServerTool({ name, arguments: args }, { timeout: 70000 })); },
-    async close() { await app.close(); },
-    async checkAI() { return readAIResponse(await app.callServerTool({ name: 'ai_status', arguments: {} }), 'aiStatus'); },
-    async generateAI(requestId) { return readAIResponse(await app.callServerTool({ name: 'ai_generate_challenge', arguments: { requestId } }, { timeout: 40000 }), 'aiResult'); },
+    async call(name, args) { await ensureConnected(); return readHostState(await app.callServerTool({ name, arguments: args }, { timeout: 70000 })); },
+    async close() { closed = true; ready = false; await app.close(); },
+    async checkAI() { await ensureConnected(); return readAIResponse(await app.callServerTool({ name: 'ai_status', arguments: {} }), 'aiStatus'); },
+    async generateAI(requestId) { await ensureConnected(); return readAIResponse(await app.callServerTool({ name: 'ai_generate_challenge', arguments: { requestId } }, { timeout: 40000 }), 'aiResult'); },
   };
 }

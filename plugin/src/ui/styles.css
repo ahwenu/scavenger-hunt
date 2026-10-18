@@ -42,6 +42,8 @@ h1 { font-size:26px; line-height:1.1; letter-spacing:-.07em; font-weight:900; }
 .button-quiet { background:#f1faff; color:#226a95; border-color:#b5dced; box-shadow:0 2px 0 #c7e3ef; font-size:11px; }
 .button-danger { color:#a93446; border-color:#f4d3d9; background:#fff4f5; box-shadow:0 2px 0 #f0d1d8; font-size:11px; }
 .refresh-button { flex:none; margin-left:auto; min-height:35px; padding:6px 12px; }
+.create-room-button { flex:none; margin-left:auto; min-height:35px; padding:6px 9px; }
+.room-bar .refresh-button { margin-left:0; }
 .main-tabs { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:5px; padding:4px; border:1px solid #afd8e9; border-radius:13px; background:#cbeaf6; flex:none; }
 .main-tabs button { min-height:34px; border:1px solid transparent; border-radius:9px; color:#3e6d87; background:transparent; font-size:12px; font-weight:900; }
 .main-tabs button[aria-pressed="true"] { color:#fff; background:#176c9e; border-color:#0e5e91; box-shadow:0 2px 0 #105579; }

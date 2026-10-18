@@ -11,7 +11,7 @@ import { DemoHostAdapter, HostOperationError, NotConfiguredHostAdapter, type Hos
 import { AiServiceClient, AiServiceError, type AiServiceOptions } from './ai-client.js';
 import { SitesHostAdapter, type SitesAdapterOptions } from './sites-adapter.js';
 
-export const HOST_RESOURCE_URI = 'ui://scavenger-hunt/host-v0.4.0';
+export const HOST_RESOURCE_URI = 'ui://scavenger-hunt/host-v0.4.1';
 
 export interface ServerOptions {
   mode?: 'demo' | 'unconfigured' | 'sites';
@@ -29,7 +29,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
   }
   const adapter = mode === 'sites' ? new SitesHostAdapter(options.sites) : mode === 'demo' ? new DemoHostAdapter(options.now) : new NotConfiguredHostAdapter();
   const htmlPath = options.htmlPath ?? fileURLToPath(new URL('./widget.html', import.meta.url));
-  const server = new McpServer({ name: 'karimono-host', version: '0.4.0' });
+  const server = new McpServer({ name: 'karimono-host', version: '0.4.1' });
   const ai = new AiServiceClient(options.ai);
 
   registerAppResource(server, 'カリモノ ホスト画面', HOST_RESOURCE_URI, {}, async () => ({
