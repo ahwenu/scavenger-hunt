@@ -7,6 +7,7 @@ import type { HostAction, HostState } from '../shared/contracts.js';
 import type { AIStatus, AIChallenge } from '../shared/ai-contracts.js';
 import { AiPreview } from './AiPreview.js';
 import { SoundCredits } from './SoundControls.js';
+import { CompactDialog } from './CompactDialog.js';
 import { hostSounds } from './sound-effects.js';
 import { createGameSoundObserver } from './sound-events.js';
 
@@ -30,6 +31,7 @@ function HostController() {
   const [aiError, setAIError] = useState<string | null>(null);
   const aiInFlight = useRef(false);
   const serverOffset = useRef(0);
+  const [toolsPanel, setToolsPanel] = useState<'ai' | 'credits' | null>(null);
 
   /** 同一部屋の古いversionは適用しない。 */
   function apply(next: HostState) {
@@ -95,12 +97,13 @@ function HostController() {
     if (!bridge.current || inFlight.current) return;
     inFlight.current = true;
     setBusy(true);
-    setError(null);
     try {
       const room = current.current.snapshot?.room;
       const name = { create: 'host_create_room', refresh: room ? 'host_get_room' : 'host_open', prepare: 'host_prepare_topics', start: 'host_start', advance: 'host_advance', finish: 'host_finish' }[action];
       const args: Record<string, unknown> = action === 'create' ? { operationId: crypto.randomUUID() } : action === 'refresh' ? room ? { roomId: room.roomId } : {} : action === 'prepare' ? { roomId: room?.roomId, source: current.current.mode === 'sites' ? 'ai' : 'preset', operationId: crypto.randomUUID() } : { roomId: room?.roomId, expectedVersion: room?.version, operationId: crypto.randomUUID() };
       apply(await bridge.current.call(name, args));
+      // 新しい状態を受け取るまでは接続エラーを維持し、復帰時に過去の順位差分を再演しない。
+      setError(null);
       if (action === 'create') void hostSounds.play('join');
     } catch (cause) { void hostSounds.play('retry'); setError(cause instanceof Error ? cause.message : '操作に失敗しました。'); }
     finally { inFlight.current = false; if (active.current) setBusy(false); }
@@ -113,9 +116,9 @@ function HostController() {
     if (current.current.mode !== 'sites' || !room || room.currentRound?.roundId !== roundId) return;
     inFlight.current = true;
     setBusy(true);
-    setError(null);
     try {
       apply(await bridge.current.call('host_set_hint', { roomId: room.roomId, roundId, text, expectedVersion: room.version, operationId: crypto.randomUUID() }));
+      setError(null);
       void hostSounds.play('submit');
     } catch (cause) { if (active.current) setError(cause instanceof Error ? cause.message : '共通ヒントを保存できませんでした。'); }
     finally { inFlight.current = false; if (active.current) setBusy(false); }
@@ -139,7 +142,7 @@ function HostController() {
     finally { aiInFlight.current = false; if (active.current) setAIBusy(false); }
   }
 
-  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} /><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy || busy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /><SoundCredits /></>;
+  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} onOpenAI={() => setToolsPanel('ai')} onOpenCredits={() => setToolsPanel('credits')} />{toolsPanel === 'ai' && <CompactDialog title="独立AIのお題プレビュー" onClose={() => setToolsPanel(null)}><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy || busy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></CompactDialog>}{toolsPanel === 'credits' && <CompactDialog title="効果音の出典" onClose={() => setToolsPanel(null)}><SoundCredits /></CompactDialog>}</>;
 }
 
 createRoot(document.getElementById('root')!).render(<HostController />);

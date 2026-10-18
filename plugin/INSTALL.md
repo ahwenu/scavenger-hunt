@@ -16,7 +16,7 @@ ONE LEASE / **借り物王に俺はなる！**
 
 - Node.js 22.13以上。ターミナルで `node --version` を確認します。
 - `codex plugin` に対応したCodex CLIと、ローカルプラグインを利用できるデスクトップ環境。
-- `karimono-host-share-0.3.1.tar.gz` と `karimono-host-share-0.3.1.tar.gz.sha256`。配布者から受け取ってください。
+- `karimono-host-share-0.4.0.tar.gz` と `karimono-host-share-0.4.0.tar.gz.sha256`。配布者から受け取ってください。
 
 Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確認しています。利用できるUIやメニュー名はアプリのバージョンによって異なります。
 
@@ -25,15 +25,15 @@ Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確�
 共有ファイルを置いたフォルダでターミナルを開き、次を実行します。ファイル名を変更した場合は読み替えてください。
 
 ```sh
-shasum -a 256 -c karimono-host-share-0.3.1.tar.gz.sha256
-tar -xzf karimono-host-share-0.3.1.tar.gz
+shasum -a 256 -c karimono-host-share-0.4.0.tar.gz.sha256
+tar -xzf karimono-host-share-0.4.0.tar.gz
 cd karimono-local
 codex plugin marketplace add . --json
 codex plugin add karimono-host@karimono-local --json
 codex plugin list --marketplace karimono-local --json
 ```
 
-最後の結果に `installed: true`、`enabled: true`、`version: 0.3.1` があれば登録できています。`plugin add --json` が返す `installedPath` は、後で接続を設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
+最後の結果に `installed: true`、`enabled: true`、`version: 0.4.0` があれば登録できています。`plugin add --json` が返す `installedPath` は、後で接続を設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
 
 展開したフォルダはmarketplaceの参照元になるため、更新するときまで残してください。公開ディレクトリへの申請、サイトの公開、スマホでの参加は、このローカル登録に必要ありません。
 

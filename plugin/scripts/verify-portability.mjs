@@ -46,7 +46,7 @@ try {
       await client.connect(transport);
       const tools = await client.listTools();
       assert.equal(tools.tools.length, 11);
-      const resource = await client.readResource({ uri: 'ui://scavenger-hunt/host-v0.3.1' });
+      const resource = await client.readResource({ uri: 'ui://scavenger-hunt/host-v0.4.0' });
       assert.match(resource.contents[0].text, /カリモノ/);
       const opened = await client.callTool({ name: 'host_open', arguments: {} });
       assert.equal(opened.structuredContent.mode, mode);

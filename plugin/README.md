@@ -9,6 +9,12 @@ ONE LEASE / **借り物王に俺はなる！**
 元リポジトリには既存デモも取り込まれています（Sitesは `apps/cloud/`、ローカル版は `apps/server/`・`apps/web/`）。このpluginはそれらのソースや依存を参照しません。Ahwenuの独立AI APIへはMCPサーバーからHTTP接続し、SitesのゲームAPI接続は後続作業です。
 
 
+## 0.4.0：一画面の運営本部とランキング演出
+
+画面の高さに合わせて招待・進行・順位を配置し、狭いパネルではタブで切り替えます。参加者とランキングは人数が増えてもページ切替で確認できます。共通ヒント、独立AIの確認、クレジットは必要なときに開きます。ランキングの追加・加点・順位上昇・首位交代・最終結果を視覚演出し、同じ状態の定期同期では再演出しません。動きを減らす設定に対応します。仕様と検証は元リポジトリの `docs/08-plugin-extensions.md` と `docs/adr/0015-viewport-host-ranking-effects.md` を参照してください。
+
+新しい共有物を生成・インストールした後は、Plugin Extensionsの画面を開き直してください。Sitesと独立AIの接続設定参照は既存インストールから引き継ぎます。秘密設定は共有物に含めません。
+
 ## 0.3.0：運動会テーマのホスト画面
 
 運動会・猫耳キャラクターのスマホ案を参考に、ホスト画面を更新しました。参照素材はリポジトリの `docs/design/sports-day-ui-assets-v1` です。使用するPNGは `src/ui/assets/` に保持してUIへ埋め込むため、配布先で親フォルダや外部画像サービスを必要としません。参加者名・順位・勝数は画像に焼き込まず、取得した値を表示します。
@@ -117,13 +123,13 @@ npm run package
 npm run test:portable
 ```
 
-`artifacts/karimono-host-0.3.1.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
+`artifacts/karimono-host-0.4.0.tar.gz` に `plugin.json`、`mcp.json`、README、`dist/server.mjs`、`dist/widget.html` をまとめます。秘密設定・ソース・依存フォルダ・ブラウザプレビューは含めません。展開してできる `karimono-host/` をプラグインのルートとして扱い、Node.js 22.13以上で `node dist/server.mjs` を起動します。`mcp.json` の `cwd` は `./`、サーバーは `dist/server.mjs` の相対参照です。登録するホストが別の基準ディレクトリを使う場合は、登録時の作業ディレクトリを展開先に合わせてください。
 
 `test:portable` はアーカイブを空白を含む一時パスに展開し、`node_modules` のない配布物を別の作業ディレクトリから起動して確認します。パッケージ作成後に実行してください。
 
 ## ローカルPlugin Extensionsへ登録する
 
-他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.3.1.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
+他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.4.0.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
 
 この `plugin/` フォルダを作業ルートにし、チェック・テスト・ビルドを済ませてから、ローカルmarketplaceを準備して公式CLIへ登録します。
 

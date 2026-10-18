@@ -1,0 +1,66 @@
+/* ランキングの固定枠、ページ表示、差分の速報と短命な視覚演出。 */
+.ranking-panel.ranking-board { position: relative; isolation: isolate; display: flex; flex-direction: column; gap: 9px; min-width: 0; min-height: 0; height: 100%; overflow: hidden; padding: 16px; border-top: 4px solid #ffca30; }
+.ranking-board__header { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
+.ranking-board__header h2 { display: flex; align-items: center; margin: 3px 0 0; font-size: 21px; line-height: 1.2; }
+.ranking-board__header .heading-icon { margin-right: 7px; }
+.ranking-board__header .section-kicker { font-size: 9px; }
+.ranking-board__header .small-tag { font-size: 9px; }
+.ranking-board__news { display: flex; gap: 9px; align-items: center; flex: 0 0 49px; min-width: 0; padding: 7px 11px; border-radius: 12px; background: #ecf7fd; border: 1px solid #cae5f2; color: #255c7d; }
+.ranking-board__news > span:last-child { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.ranking-board__news strong, .ranking-board__news small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ranking-board__news strong { font-size: 14px; line-height: 1.2; font-weight: 900; }
+.ranking-board__news small { font-size: 10px; line-height: 1.2; }
+.ranking-board__news-icon { font-size: 26px; line-height: 1; color: #b16b00; flex-shrink: 0; }
+.ranking-board__news--active { background: linear-gradient(110deg,#ffda50,#fff4ad 55%,#ffe586); border-color: #eebc2d; color: #674100; box-shadow: 0 2px 0 #e8b632; animation: ranking-news-enter .4s cubic-bezier(.2,.8,.2,1); }
+.ranking-board--leader .ranking-board__news--active, .ranking-board--final .ranking-board__news--active { background: linear-gradient(110deg,#e84b60,#b52551); border-color: #b62347; color: #fff; }
+.ranking-board--leader .ranking-board__news-icon,.ranking-board--final .ranking-board__news-icon { color: #ffed84; }
+.ranking-board--update .ranking-board__news--active { background: #e8f3fc; color: #255c7d; border-color: #99c3db; box-shadow: inset 3px 0 #598eac; }
+.ranking-board__body { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.ranking-board__list { display: grid; grid-template-rows: repeat(var(--ranking-rows),minmax(0,1fr)); gap: 5px; height: 100%; min-height: 0; padding: 0; margin: 0; list-style: none; }
+.ranking-board__list li { position: relative; display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 0; padding: 4px 9px; border: 1px solid #d5e7f0; border-radius: 11px; background: #f3f9fe; }
+.ranking-board__list li.ranking-board__first { background: #fff1b5; border-color: #edc743; }
+.ranking-board__list li.ranking-board__changed { background: linear-gradient(100deg,#ffe18a,#fff4c9 60%,#ffe496); border-color: #eeae1a; box-shadow: inset 3px 0 #f1a719; animation: ranking-row-reveal .6s ease-out; }
+.ranking-board--update .ranking-board__list li.ranking-board__changed { background: #e8f3fc; border-color: #99c3db; box-shadow: inset 3px 0 #598eac; animation: none; }
+.ranking-board__list li.ranking-board__lowered { background: #edf3f8; border-color: #b7ccdb; box-shadow: inset 3px 0 #6b91ac; animation: none; }
+.ranking-board__lowered .ranking-board__movement { color: #527691; }
+.ranking-board__number { position: relative; flex: 0 0 28px; text-align: center; color: #506e88; font-size: 21px; font-weight: 900; font-variant-numeric: tabular-nums; }
+.ranking-board__first .ranking-board__number { color: #965e05; }
+.ranking-board__crown { position: absolute; right: -2px; top: -6px; font-size: 12px; color: #c48503; transform: rotate(13deg); }
+.ranking-board__name { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: #224963; font-size: 12px; line-height: 1.35; font-weight: 900; }
+.ranking-board__movement { display: block; color: #a45800; font-size: 9px; line-height: 1.2; font-weight: 900; }
+.ranking-board__score { display: flex; flex-direction: column; align-items: flex-end; flex: 0 0 auto; gap: 2px; font-variant-numeric: tabular-nums; }
+.ranking-board__score strong { display: block; color: #235d86; font-size: 23px; line-height: 1; font-weight: 900; transform-origin: right center; white-space: nowrap; }
+.ranking-board__score strong small { font-size: 9px; margin-left: 3px; }
+.ranking-board__first .ranking-board__score strong { color: #955e00; }
+.ranking-board__score .ranking-board__gain { font-size: 10px; color: #b34c00; line-height: 1; font-weight: 900; }
+.ranking-board__score .ranking-board__time { font-size: 9px; color: #597082; line-height: 1; }
+.ranking-board__score-pop { animation: ranking-score-pop .65s cubic-bezier(.2,.8,.2,1); }
+.ranking-board__pager { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex: 0 0 30px; color: #526e80; font-size: 10px; font-weight: 700; }
+.ranking-board__pager > div { display: flex; align-items: center; gap: 9px; }
+.ranking-board__pager button { display: grid; place-items: center; width: 30px; height: 30px; min-height: 0; padding: 0; border: 1px solid #a8d1e3; border-radius: 9px; background: #edf8ff; color: #245c7f; font: inherit; font-size: 23px; cursor: pointer; line-height: 1; }
+.ranking-board__pager button:disabled { opacity: .35; cursor: default; }
+.ranking-board__pager button:focus-visible { outline: 3px solid #267cae; outline-offset: 2px; }
+.ranking-board__empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 100%; min-height: 0; text-align: center; color: #547082; font-size: 11px; }
+.ranking-board__empty img { object-fit: contain; max-height: 62%; }
+.ranking-board__empty p { margin: 0; }
+.ranking-board__effects { position: absolute; inset: 0; overflow: hidden; z-index: 3; pointer-events: none; border-radius: inherit; }
+.ranking-board__spotlight { position: absolute; inset: -100%; background: conic-gradient(from 0deg,transparent 0deg,#ffe67e4d 15deg,transparent 30deg,transparent 60deg,#fff3b150 75deg,transparent 90deg,transparent 120deg,#ffe67e4d 135deg,transparent 150deg,transparent 180deg,#fff3b150 195deg,transparent 210deg,transparent 240deg,#ffe67e4d 255deg,transparent 270deg,transparent 300deg,#fff3b150 315deg,transparent 330deg); animation: ranking-spotlight 1.8s ease-out forwards; }
+.ranking-board__confetti { position: absolute; top: -18px; width: 7px; height: 13px; background: #f5bf15; border-radius: 1px; opacity: 0; animation: ranking-confetti 1.7s ease-out both; }
+.ranking-board__confetti:nth-child(3n) { background: #e75270; width: 9px; height: 7px; }
+.ranking-board__confetti:nth-child(3n + 1) { background: #26a8d1; }
+.ranking-board__confetti:nth-child(5n) { background: #8c66ce; }
+.ranking-toast { position: fixed; z-index: 1000; top: 92px; right: 16px; display: flex; align-items: center; gap: 11px; width: min(360px,calc(100vw - 32px)); padding: 12px 15px; border: 2px solid #dfb329; border-radius: 16px; background: linear-gradient(110deg,#ffda50,#fff4ad); box-shadow: 0 8px 28px #805b2638; color: #674100; pointer-events: none; animation: ranking-news-enter .4s cubic-bezier(.2,.8,.2,1); }
+.ranking-toast > span:last-child { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.ranking-toast strong { font-size: 19px; line-height: 1.2; font-weight: 900; }
+.ranking-toast small { font-size: 11px; line-height: 1.4; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ranking-toast__icon { font-size: 38px; line-height: 1; color: #ad6c00; }
+.ranking-toast--leader,.ranking-toast--final { background: linear-gradient(110deg,#e84b60,#b52551); border-color: #b62347; color: #fff; }
+.ranking-toast--leader .ranking-toast__icon,.ranking-toast--final .ranking-toast__icon { color: #ffe36d; }
+.ranking-toast--update { background: #e8f3fc; border-color: #99c3db; color: #255c7d; }
+@keyframes ranking-news-enter { from { transform: translateY(-8px) scale(.94); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes ranking-score-pop { 0% { transform: scale(.8); } 35% { transform: scale(1.24); color: #c54100; } 100% { transform: scale(1); } }
+@keyframes ranking-row-reveal { from { box-shadow: inset 8px 0 #f1a719,0 0 0 3px #ffd55c; } to { box-shadow: inset 3px 0 #f1a719; } }
+@keyframes ranking-spotlight { from { transform: rotate(-22deg) scale(.65); opacity: .8; } to { transform: rotate(38deg) scale(1.15); opacity: 0; } }
+@keyframes ranking-confetti { 0% { opacity: 0; transform: translate3d(0,0,0) rotate(0deg); } 10% { opacity: .95; } 80% { opacity: .8; } 100% { opacity: 0; transform: translate3d(var(--drift),560px,0) rotate(calc(var(--piece) * 41deg + 180deg)); } }
+@media (max-height: 700px) { .ranking-panel.ranking-board { padding: 12px; gap: 7px; } .ranking-board__header h2 { font-size: 19px; } .ranking-board__news { flex-basis: 43px; padding: 5px 9px; } }
+@media (prefers-reduced-motion: reduce) { .ranking-board *, .ranking-board *::before, .ranking-board *::after,.ranking-toast { animation: none !important; transition: none !important; } .ranking-board__effects { display: none; } .ranking-board__news--active { box-shadow: inset 4px 0 #c17a00; } }

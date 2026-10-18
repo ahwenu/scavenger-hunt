@@ -100,7 +100,7 @@ export function createHostBridge(preview = false): HostBridge {
       async generateAI(requestId) { return readAIResponse(await request('ai_generate_challenge', { requestId }), 'aiResult'); },
     };
   }
-  const app = new App({ name: 'karimono-host-ui', version: '0.3.1' }, {});
+  const app = new App({ name: 'karimono-host-ui', version: '0.4.0' }, {});
   return {
     async connect(onState) {
       app.ontoolresult = result => {

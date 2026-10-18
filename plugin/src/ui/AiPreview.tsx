@@ -1,7 +1,8 @@
 /** Ahwenu担当のAI APIを、ゲーム状態を変えずに確認する表示。 */
-import type { AIChallenge, AIStatus } from "../shared/ai-contracts.js";
-import robotJudging from "./assets/robot-judging.png";
-import "./AiPreview.css";
+import { useEffect, useState } from 'react';
+import type { AIChallenge, AIStatus } from '../shared/ai-contracts.js';
+import { TextPager } from './CompactDialog.js';
+import './AiPreview.css';
 
 /** 通信と秘密設定は呼び出し元に委譲する。 */
 export interface AiPreviewProps {
@@ -16,127 +17,26 @@ export interface AiPreviewProps {
 /** 外部リンクは認証情報を含まないHTTPS URLに限る。 */
 function safeLink(value: string | undefined): string | null {
   if (!value) return null;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" && !url.username && !url.password
-      ? url.href
-      : null;
-  } catch {
-    return null;
-  }
+  try { const url = new URL(value); return url.protocol === 'https:' && !url.username && !url.password ? url.href : null; }
+  catch { return null; }
 }
 
-/** 参考写真を直接読み込まず、出典とライセンスだけを表示する。 */
-function ReferenceCredits({ reference }: { reference: AIChallenge["reference"] }) {
-  if (!reference) return null;
-  const sourceUrl = safeLink(reference.sourcePageUrl);
-  const licenseUrl = safeLink(reference.licenseUrl);
-
-  return (
-    <aside className="ai-preview-reference" aria-label="参考写真の出典">
-      <p className="ai-preview-reference-label">参考写真はAPI側で保持</p>
-      <dl>
-        <div>
-          <dt>作者</dt>
-          <dd>{reference.author}</dd>
-        </div>
-        <div>
-          <dt>ライセンス</dt>
-          <dd>
-            {licenseUrl ? (
-              <a href={licenseUrl} target="_blank" rel="noopener noreferrer">
-                {reference.licenseName} ↗
-              </a>
-            ) : (
-              reference.licenseName
-            )}
-          </dd>
-        </div>
-      </dl>
-      {sourceUrl && (
-        <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
-          写真の出典を開く ↗
-        </a>
-      )}
-    </aside>
-  );
-}
-
-/** APIの接続状態と実際に返されたお題を表示する。 */
-export function AiPreview({
-  status,
-  challenge,
-  busy,
-  error,
-  onCheck,
-  onGenerate,
-}: AiPreviewProps) {
+/** 接続操作と長い生成結果をページで分け、全内容を小さい画面でも読めるようにする。 */
+export function AiPreview({ status, challenge, busy, error, onCheck, onGenerate }: AiPreviewProps) {
+  const [view, setView] = useState<'connection' | 'result' | 'reference'>('connection');
   const canGenerate = Boolean(status?.configured && status.available);
-
-  return (
-    <section
-      className="ai-preview"
-      aria-labelledby="ai-preview-heading"
-      aria-busy={busy}
-    >
-      <div className="ai-preview-heading">
-        <div className="ai-preview-title"><img src={robotJudging} width="64" height="64" alt="" /><div>
-          <p className="ai-preview-kicker">AI / お題を試してみる</p>
-          <h2 id="ai-preview-heading">お題プレビュー</h2>
-        </div></div>
-        <span className={`ai-preview-status ${canGenerate ? "ai-preview-ready" : ""}`}>
-          {canGenerate ? "API利用可能" : status ? "要接続確認" : "接続未確認"}
-        </span>
-      </div>
-
-      <p className="ai-preview-description">
-        {status?.configured
-          ? "AI APIへ実接続・ゲームの部屋にはまだ反映しません。"
-          : "APIの設定と接続を確認すると、お題生成を試せます。"}
-      </p>
-      <p className="ai-preview-notice" role="status">
-        {status?.notice || "「API接続を確認」で利用可能な状態か確認してください。"}
-      </p>
-
-      <div className="ai-preview-actions">
-        <button type="button" disabled={busy} onClick={onCheck}>
-          API接続を確認
-        </button>
-        <button
-          type="button"
-          className="ai-preview-generate"
-          disabled={busy || !canGenerate}
-          onClick={onGenerate}
-        >
-          AIでお題を生成
-        </button>
-        {busy && <span role="status">API処理中…</span>}
-      </div>
-
-      {error && (
-        <p className="ai-preview-error" role="alert">
-          {error}
-        </p>
-      )}
-
-      {challenge && (
-        <article className="ai-preview-result" aria-label="生成したお題">
-          <p className="ai-preview-kicker">GENERATED CHALLENGE</p>
-          <h3>{challenge.title}</h3>
-          <p>{challenge.description}</p>
-          <p className="ai-preview-kicker">お題ID: {challenge.challengeId}</p>
-          <div className="ai-preview-result-meta">
-            <strong>判定条件</strong>
-            <span>制限時間 {challenge.durationSeconds}秒</span>
-          </div>
-          <ul>
-            {challenge.criteria.map((criterion, index) => (
-              <li key={`${index}-${criterion}`}>{criterion}</li>
-            ))}
-          </ul>
-          <ReferenceCredits reference={challenge.reference} />
-        </article>
-      )}
-    </section>
-  );
+  useEffect(() => { if (challenge) setView('result'); }, [challenge?.challengeId]);
+  const sourceUrl = safeLink(challenge?.reference?.sourcePageUrl);
+  const licenseUrl = safeLink(challenge?.reference?.licenseUrl);
+  return <section className="ai-preview" aria-label="独立AIのお題プレビュー" aria-busy={busy}>
+    <nav className="detail-tabs" aria-label="独立AIの表示"><button aria-pressed={view === 'connection'} onClick={() => setView('connection')}>接続・操作</button><button disabled={!challenge} aria-pressed={view === 'result'} onClick={() => setView('result')}>生成結果</button>{challenge?.reference && <button aria-pressed={view === 'reference'} onClick={() => setView('reference')}>写真の出典</button>}</nav>
+    {view === 'connection' ? <>
+      <span className={`ai-preview-status ${canGenerate ? 'ai-preview-ready' : ''}`}>{canGenerate ? 'API利用可能' : status ? '要接続確認' : '接続未確認'}</span>
+      <TextPager label="独立AIの接続状態" text={[error && `APIエラー：${error}`, status?.notice || '「API接続を確認」で利用可能な状態か確認してください。', status?.configured ? 'AI APIへ実接続します。生成したお題はゲームの部屋には反映しません。' : 'APIの設定と接続を確認すると、お題生成を試せます。'].filter(Boolean).join('\n\n')} />
+      <div className="ai-preview-actions"><button disabled={busy} onClick={onCheck}>API接続を確認</button><button className="ai-preview-generate" disabled={busy || !canGenerate} onClick={onGenerate}>{busy ? 'API処理中…' : 'AIでお題を生成'}</button></div>
+    </> : view === 'result' && challenge ? <TextPager label="生成したお題" text={`${challenge.title}\n\n${challenge.description}\n\n制限時間：${challenge.durationSeconds}秒\n\n判定条件\n${challenge.criteria.map((criterion, index) => `${index + 1}. ${criterion}`).join('\n')}\n\nお題ID：${challenge.challengeId}`} /> : challenge?.reference ? <>
+      <TextPager label="参考写真の出典" text={`参考写真はAPI側で保持しています。\n\n作者：${challenge.reference.author}\nライセンス：${challenge.reference.licenseName}`} />
+      <div className="ai-reference-links">{sourceUrl && <a href={sourceUrl} target="_blank" rel="noopener noreferrer">写真の出典を開く ↗</a>}{licenseUrl && <a href={licenseUrl} target="_blank" rel="noopener noreferrer">ライセンスを開く ↗</a>}</div>
+    </> : null}
+  </section>;
 }

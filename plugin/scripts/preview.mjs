@@ -6,7 +6,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 
 const html = await readFile(new URL('../dist/preview.html', import.meta.url));
-const mcp = new Client({ name: 'karimono-local-preview', version: '0.3.1' });
+const mcp = new Client({ name: 'karimono-local-preview', version: '0.4.0' });
 const mode = process.env.KARIMONO_MODE || 'demo';
 const transport = new StdioClientTransport({
   command: process.execPath,
@@ -14,7 +14,7 @@ const transport = new StdioClientTransport({
   env: { ...process.env, KARIMONO_MODE: mode },
 });
 await mcp.connect(transport);
-const allowed = new Set(['host_open', 'host_create_room', 'host_get_room', 'host_prepare_topics', 'host_start', 'host_advance', 'host_finish', 'ai_status', 'ai_generate_challenge']);
+const allowed = new Set(['host_open', 'host_create_room', 'host_get_room', 'host_prepare_topics', 'host_start', 'host_advance', 'host_finish', 'host_set_hint', 'ai_status', 'ai_generate_challenge']);
 const server = createServer(async (req, res) => {
   // localhost以外のHost/DNS rebindingと、別オリジンからの操作を拒否する。
   const origin = `http://127.0.0.1:${server.address().port}`;
