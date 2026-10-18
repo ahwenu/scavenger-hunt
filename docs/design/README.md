@@ -21,10 +21,12 @@ GitHubでこのフォルダを開き、**Add file → Upload files** からフ�
 | 資料 | 内容 |
 | --- | --- |
 | [受領した個別素材集](sports-day-ui-assets-v1/README.md) | 元シート、8画面の原寸画像、キャラクター・背景・UIパーツ、透過と出典矩形。素材集内は生成補完していない |
-| [画像・音声の引き渡し](participant-assets-and-audio.md) | 配信用画像の対応、imagegenによる補完5体、ElevenLabs製の声・効果音、ユーザー指定BGM、差し替え手順と確認範囲 |
+| [画像・音声の引き渡し](participant-assets-and-audio.md) | 配信用画像の対応、補完5体、ElevenLabsの声、OtoLogic効果音、ユーザー指定BGM、短語9本の採用状況と差し替え手順 |
 | [Suno用BGMプロンプト](suno-karimono-bgm.md) | 英語Style、日本語の内容確認、インストルメンタル構成。Sunoでの生成は未実施 |
 | [当初の参照シート](2026-10-18-participant-reference.png) | 画像全体の参照用 |
 
-配信用の素材は `apps/cloud/public/design/sports-day/`、音は `apps/cloud/public/audio/` に置いています。画面比較はローカルまたは本ブランチを配備した環境の `/design-preview` で開きます。原寸画像と操作できるTypeScript画面を並べ、8画面を切り替えられます。
+配信用の素材は `apps/cloud/public/design/sports-day/`、声とBGMは `apps/cloud/public/audio/` に置いています。OtoLogic効果音は `apps/web/sounds/` を既存Cloud資産へ同期して `/sounds/` から配信します。画面比較はローカルまたは本ブランチを配備した環境の `/design-preview` で開きます。原寸画像と操作できるTypeScript画面を並べ、8画面を切り替えられます。
+
+通常の新トップはサイトの `/` に置き、参加リンク・部屋IDから既存QRと同じ `/rooms/:id/join` へ進みます。入口の追加方針は[ADR-0019](../adr/0019-participant-root-entry.md)。ソースを配備するまでは公開サイトの入口へ反映されません。
 
 原寸画面は高さ313px、幅168〜199pxです。大きく表示したときの画素不足を補うため、スタートのロボットと判定・成功・失敗用の計5体を元ポーズに基づいて再描画し、参加者画面へ組み込みました。遊び方のロボットも補完版を使います。ホームの旗を振るロボットは白い外装が透ける問題も修正しています。補完版は `enhanced/` に分けて保存しており、元画素の復元やピクセル完全一致ではありません。画像がリポジトリにあることと、公開Sitesへの配備・実機確認が済んでいることは区別し、現状は引き渡し文書の確認範囲を参照してください。

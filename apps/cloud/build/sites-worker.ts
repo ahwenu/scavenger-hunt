@@ -8,8 +8,9 @@ export default {
   fetch(request: Request, env: Cloudflare.Env, ctx: ExecutionContext<{ CONNECTORS?: ConnectorBinding }>) {
     const url = new URL(request.url);
     if (url.pathname.startsWith('/api/')) return handleApi(request, env as unknown as GameEnv, ctx);
-    // 参加者はReact画面、既存ホストと静的音声は従来アセットから配信する。
-    const asset = assets[url.pathname] || (url.pathname === '/' || /^\/rooms\/[^/]+\/host$/.test(url.pathname) ? assets['/'] : undefined);
+    // トップと参加者はReact画面。既存の部屋作成は /host に残す。
+    const legacyHost = url.pathname === '/host' || /^\/rooms\/[^/]+\/host$/.test(url.pathname);
+    const asset = legacyHost ? assets['/'] : url.pathname === '/' ? undefined : assets[url.pathname];
     if (asset && ['GET','HEAD'].includes(request.method)) {
       const body = request.method === 'HEAD' ? null : asset.encoding === 'base64' ? Uint8Array.from(atob(asset.body), character => character.charCodeAt(0)) : asset.body;
       return new Response(body, { headers: { 'Content-Type': asset.type, 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'same-origin', 'Content-Security-Policy': "default-src 'self'; img-src 'self' data: blob:; media-src 'self' blob:; style-src 'self'; script-src 'self'; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'" } });

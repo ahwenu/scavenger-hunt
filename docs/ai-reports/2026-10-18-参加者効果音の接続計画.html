@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Codex">
+  <title>参加者画面へ既存効果音を接続する計画</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #24334a; background: #f4f6f9; }
+    * { box-sizing: border-box; } body { margin: 0; line-height: 1.75; }
+    main { max-width: 900px; margin: 32px auto; padding: 36px; background: #fff; border: 1px solid #d8e1eb; border-radius: 12px; }
+    h1 { margin: 0 0 12px; line-height: 1.35; font-size: clamp(1.5rem, 4vw, 2rem); } h2 { font-size: 1.25rem; margin-top: 32px; }
+    .meta { font-size: .9rem; color: #536278; } .intro { padding: 16px 20px; background: #edf6fb; border-left: 4px solid #137caf; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: .95rem; } th, td { padding: 12px; border-bottom: 1px solid #dae3eb; text-align: left; vertical-align: top; overflow-wrap: anywhere; } th { background: #f1f5f9; } th:first-child { width: 24%; } th:nth-child(2) { width: 23%; }
+    a { color: #096b9c; } code { overflow-wrap: anywhere; } li { margin: 7px 0; } footer { margin-top: 30px; font-size: .9rem; color: #536278; }
+    @media (max-width: 600px) { main { margin: 0; padding: 22px 16px; border: 0; border-radius: 0; } th, td { padding: 9px 7px; } table { font-size: .85rem; } }
+  </style>
+</head>
+<body><main>
+  <h1>参加者画面へ既存効果音を接続する計画</h1>
+  <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 日付：2026-10-18<br>確認起点のコミット：<code>f5c2524</code> ／ 対象：SitesのTypeScript参加者画面</p>
+  <p class="intro">リポジトリにあるOtoLogicの11種類を、現在の参加者画面の操作と確定したゲーム結果に結び付けます。ユーザー指定BGMのループを維持し、猫の声は指定の「さっちゃん」で短い9本へ揃えます。</p>
+
+  <h2>確認した現在の状態</h2>
+  <p>従来のモバイル画面とPluginには11種類が接続済みです。現在のTypeScript参加者画面は別の撮影音・成功音だけを使っており、既存の開始・時間切れ・結果発表などは未接続です。画面の配置とゲームの採点処理は今回の対象外です。</p>
+
+  <h2>場面と鳴らす音</h2>
+  <table><thead><tr><th scope="col">場面</th><th scope="col">音</th><th scope="col">再生条件</th></tr></thead><tbody>
+    <tr><td>ボタン操作</td><td>短い操作音</td><td>有効な操作時。撮影や音の切替は専用の扱いにします。</td></tr>
+    <tr><td>参加</td><td>キラキラ</td><td>参加登録がサーバーで成功したとき。</td></tr>
+    <tr><td>撮影・写真選択</td><td>シャッター</td><td>写真を取り込んだとき。</td></tr>
+    <tr><td>写真の受付</td><td>受付音</td><td>サーバーが写真を受け付けたとき。送信開始だけでは鳴らしません。</td></tr>
+    <tr><td>お題の開始</td><td>開始音</td><td>新しい競技が実際に開始したとき。</td></tr>
+    <tr><td>本人の判定結果</td><td>正解・再挑戦</td><td>サーバーで確定した新しい判定に対して1回。通信失敗を不正解音に置き換えません。</td></tr>
+    <tr><td>他の人の合格</td><td>小さいキラキラ</td><td>新しい加点をまとめて通知。本人の結果音を優先します。</td></tr>
+    <tr><td>残り5秒・受付終了</td><td>カウント・時間切れ</td><td>各秒1回。本人の正解後はカウントを止めます。</td></tr>
+    <tr><td>競技の結果・全競技終了</td><td>結果発表・終了ジングル</td><td>新しく終了が確定したとき。</td></tr>
+  </tbody></table>
+
+  <h2>猫の声は短い9本へ</h2>
+  <table><thead><tr><th scope="col">場面</th><th scope="col" colspan="2">猫の案内</th></tr></thead><tbody>
+    <tr><td>スタート画面</td><td colspan="2">「ようこそ！」</td></tr>
+    <tr><td>お題開始</td><td colspan="2">「スタート！」</td></tr>
+    <tr><td>本人の合格</td><td colspan="2">「正解！」</td></tr>
+    <tr><td>本人の不合格</td><td colspan="2">「はずれ！」</td></tr>
+    <tr><td>参加完了</td><td colspan="2">「よろしくね！」</td></tr>
+    <tr><td>ヒント表示</td><td colspan="2">「ヒント！」</td></tr>
+    <tr><td>受付終了</td><td colspan="2">「そこまで！」</td></tr>
+    <tr><td>全競技終了</td><td colspan="2">「おつかれさま！」</td></tr>
+    <tr><td>ランキング</td><td colspan="2">「ランキング！」</td></tr>
+  </tbody></table>
+  <p>短い効果音を先に鳴らし、声は間をあけて再生する想定です。次の場面へ進んだら、前の案内を待ち行列へ残しません。「はずれ！」はサーバーの不合格だけで使い、通信エラーでは鳴らしません。ランキングは画面入口の一言で、順位の数字の読み上げは行いません。</p>
+  <p>指定Voice IDをブラウザで照合して「さっちゃん」・Eleven v4を使います。別の声を代用せず、採用した9本と確認結果は<a href="2026-10-18-参加者効果音と音声の接続.html">作業レポート</a>へ記録しています。</p>
+
+  <h2>再生の始まりと停止</h2>
+  <p>追加指示により音は初期オンにします。以前この端末でオフにした設定は尊重します。ブラウザの自動再生制限があるため、参加や最初のタップをきっかけに再生を始めます。音ボタンでいつでも切り替えられます。</p>
+  <p>オフ操作とタブ非表示で効果音・声・BGMを止めます。タブへ戻った後はBGMを再開し、見ていない間の開始・結果・声をまとめて再生しません。</p>
+  <p>定期同期や写真受付の再確認による同じ音の重複を抑えます。音源の遅い読込による過去の音も破棄します。OtoLogicの作者・ライセンス・加工内容は画面から確認できるようにします。</p>
+  <p>スマホのマナーモードでも鳴らしたいという指示に対し、iOSでメディア再生として扱われるHTMLAudioの経路を使う予定です。端末のメディア音量・ブラウザ設定に左右されるため、マナーモードでの実再生は実機未確認として扱います。</p>
+
+  <h2>実装後に確かめること</h2>
+  <ul>
+    <li>11音源と出典の保持、TypeScriptの型検査とCloudビルド。</li>
+    <li>新しい開始・本人結果・カウント・終了に対応し、同じ同期では重複しないこと。</li>
+    <li>初期オンと保存済みオフの反映、初回・復帰・音オフでの過去音抑制、BGMのループ維持。</li>
+    <li>ブラウザで音切替とクレジットを確認。実機試聴・公開再配備とは区別して記録すること。</li>
+  </ul>
+  <h2>追加指示：サイトの入口も新トップへ</h2>
+  <p>サイトURLを開くと新しい猫とロボットのトップが見えるよう、リポジトリのルート配信を変更します。ゲームスタートから参加リンク・部屋IDを入力し、既存の参加画面へ進みます。部屋作成はPlugin Extensionsで行います。</p>
+  <table><thead><tr><th scope="col">URL</th><th scope="col" colspan="2">表示</th></tr></thead><tbody>
+    <tr><td><code>/</code></td><td colspan="2">新トップと参加先の入力</td></tr>
+    <tr><td><code>/rooms/:id/join</code></td><td colspan="2">既存QRの参加画面を継続</td></tr>
+    <tr><td><code>/host</code></td><td colspan="2">従来の部屋作成ページを互換用に配置</td></tr>
+    <tr><td><code>/rooms/:id/host</code></td><td colspan="2">既存のブラウザホストを継続</td></tr>
+    <tr><td><code>/design-preview</code></td><td colspan="2">8画面の比較を継続</td></tr>
+  </tbody></table>
+  <p>公開サイトへの入口変更は再配備時に反映します。判断の履歴は<a href="../adr/0019-participant-root-entry.md">ADR-0019</a>へ記録し、旧ルートを維持したADR-0015から引き継ぎます。</p>
+  <footer>根拠：<a href="../15-sound-effects.md">効果音の仕様と出典</a> ／ <a href="../adr/0014-game-sound-effects.md">ADR-0014</a> ／ <a href="../adr/0018-participant-media-audio.md">ADR-0018</a>。既存素材の適用に加え、初期オンとメディア再生経路の追加指示を記録します。実装・検証の結果は別の報告に記録します。</footer>
+</main></body>
+</html>

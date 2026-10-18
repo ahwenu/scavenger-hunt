@@ -1,12 +1,12 @@
 # ADR-0015: 参加者の画像準拠UIを現行SitesのTypeScript画面に置く
 
-- 状態：Accepted
+- 状態：Superseded
 - 作成日：2026-10-18
 - 最終更新：2026-10-18
 - 関係担当：mae（参加者画面）、Akibako（デザイン）、さが（ゲーム状態）、Ahwenu（HTTP API）
 - 決定の根拠：ユーザーの画像準拠・TypeScript・Sitesへ配備可能な形という指示、現行 `apps/cloud/` のビルド確認
 - 置き換えるADR：なし
-- 後継ADR：なし
+- 後継ADR：[0019](0019-participant-root-entry.md)。TypeScript参加者画面とAPI境界を継承し、ルート入口を変更
 
 ## 背景と決定
 
@@ -37,3 +37,4 @@
 - 2026-10-18：参加者画面のTypeScript化と現行Sitesでの配信境界を記録。
 - 2026-10-18：mainのADR-0012〜0014との番号衝突を避け0015へ改番。mainの実装済みゲーム契約と、新UIの確認範囲を反映。
 - 2026-10-18：Sites実行ルートへ新画面を同期し、公開v6と匿名参加を確認。画面配置・APIの決定は継続する。
+- 2026-10-18：新トップをルートへ置く追加指示を[ADR-0019](0019-participant-root-entry.md)へ記録し、本ADRをSupersededへ変更。元のルート維持判断と検証履歴は残す。

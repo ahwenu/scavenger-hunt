@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Codex">
+  <title>参加者の効果音と音声の接続</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #24334a; background: #f4f6f9; }
+    * { box-sizing: border-box; } body { margin: 0; line-height: 1.75; }
+    main { max-width: 900px; margin: 32px auto; padding: 36px; background: #fff; border: 1px solid #d8e1eb; border-radius: 12px; }
+    h1 { margin: 0 0 12px; line-height: 1.35; font-size: clamp(1.5rem, 4vw, 2rem); } h2 { font-size: 1.25rem; margin-top: 30px; }
+    .meta, footer { font-size: .9rem; color: #536278; } .intro { padding: 16px 20px; background: #edf6fb; border-left: 4px solid #137caf; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: .95rem; } th, td { padding: 12px; border-bottom: 1px solid #dae3eb; text-align: left; vertical-align: top; overflow-wrap: anywhere; } th { background: #f1f5f9; } th:first-child { width: 28%; }
+    a { color: #096b9c; } code { overflow-wrap: anywhere; } li { margin: 7px 0; } footer { margin-top: 30px; }
+    @media (max-width: 600px) { main { margin: 0; padding: 22px 16px; border: 0; border-radius: 0; } th, td { padding: 9px 7px; } table { font-size: .85rem; } }
+  </style>
+</head>
+<body><main>
+  <h1>参加者の効果音と音声の接続</h1>
+  <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 日付：2026-10-18<br>対象：<code>f5c2524</code> を起点にした参加者画面の変更</p>
+  <p class="intro">従来のモバイル画面とPluginにあったOtoLogicの11種類を、現在のTypeScript参加者画面へ接続しました。音は初期オンにし、最初の操作から再生を始めます。保存済みのオフ設定は維持します。</p>
+
+  <h2>画面で何が変わるか</h2>
+  <table><thead><tr><th scope="col">場面</th><th scope="col">音の扱い</th></tr></thead><tbody>
+    <tr><td>操作・参加・撮影</td><td>短い操作音、参加成功のキラキラ、シャッター音。写真受付音はサーバーが受け付けた後に鳴ります。</td></tr>
+    <tr><td>お題・判定</td><td>新しいお題の開始音と、本人の合格・不合格音。他の人の合格は小さい通知へまとめます。技術エラーを「はずれ」と案内しません。</td></tr>
+    <tr><td>締切・結果</td><td>残り5秒の各秒、受付終了、競技結果、全競技終了に対応します。本人の合格後はカウントを止めます。</td></tr>
+    <tr><td>同期・復帰</td><td>同じ受付や結果を繰り返し鳴らさず、初回・復帰時の過去の音を抑えます。タブ非表示で全停止し、復帰時はBGMを再開します。</td></tr>
+    <tr><td>BGM・音ボタン</td><td>指定の約69.74秒のBGMをループ。声の間はBGMを小さくし、右下の音ボタンでまとめて停止できます。</td></tr>
+  </tbody></table>
+
+  <h2>サイトの入口</h2>
+  <p>追加指示により、新しい猫とロボットのトップをルート <code>/</code> へ配置しました。ゲームスタートから参加リンクまたは部屋IDを入力し、同じサイトの <code>/rooms/:id/join</code> へ進みます。発行済みQRの参加先は継続します。</p>
+  <p>部屋作成の正式な入口はPlugin Extensionsです。従来のブラウザ用部屋作成は <code>/host</code>、部屋ホストは <code>/rooms/:id/host</code>、原画との比較は <code>/design-preview</code> に残します。入口の仕様は<a href="../adr/0019-participant-root-entry.md">ADR-0019</a>へ記録しました。公開サイトの入口へは再配備時に反映します。</p>
+
+  <h2>猫の声は短く</h2>
+  <p>指定の「さっちゃん」・Eleven v4で、ようこそ／スタート／正解／はずれ／よろしくね／ヒント／そこまで／おつかれさま／ランキング、の9本を生成し、配信用フォルダへ配置しました。ランキングは画面入口の一言で、変動する順位の数字は読み上げません。</p>
+  <p>猫9本は各0.914〜1.149秒のMP3で、復号・無音でないこと・クリップがないことを確認しました。猫とロボットの声は再生速度0.85倍・音程保持で、ゆっくり再生する設定です。<a href="../design/participant-assets-and-audio.md">素材ガイド</a>に台詞と確認範囲を記録しています。</p>
+
+  <h2>確認したことと残る確認</h2>
+  <table><thead><tr><th scope="col">確認対象</th><th scope="col">状態・範囲</th></tr></thead><tbody>
+    <tr><td>自動確認</td><td>既存音8件・イベント監視12件・HTMLAudio境界11件の計31件と、参加先の入力検証4件が成功。再生の呼出、設定、停止、重複抑制を模擬環境で確認しました。</td></tr>
+    <tr><td>型検査・ビルド</td><td>新トップと声9本の反映後にTypeScript型検査・Cloudビルドが成功。ビルド版のローカル配信で <code>/</code> の新トップ、<code>/host</code> の旧部屋作成HTMLを確認しました。</td></tr>
+    <tr><td>音声の配信</td><td>ローカルの操作音と採用した「正解！」MP3はHTTP 200、元ファイルとのSHA-256一致を確認しました。</td></tr>
+    <tr><td>ブラウザ</td><td>Chromeで新トップ→ゲームスタート→参加先入力、外部URLの拒否、音の初期オン・オフ設定の再読込後保持・再オン、遊び方のクレジットを確認しました。トップとヒントの確認時にコンソールのエラー・警告はありませんでした。</td></tr>
+    <tr><td>マナーモード</td><td>HTMLAudioのメディア経路と対応環境の音声セッション設定を採用。iPhone/Android実機のマナーモードでの試聴は未確認です。</td></tr>
+    <tr><td>公開環境・会場</td><td>今回の参加者画面・声の公開再配備と、100台での確認は未実施。旧画面のSites v5配備記録とは区別します。</td></tr>
+  </tbody></table>
+  <p>マナーモードへの対応方針は<a href="https://bugs.webkit.org/show_bug.cgi?id=237322">WebKitの音声経路に関する記録</a>を参照しました。端末のメディア音量・ブラウザの再生許可に依存します。</p>
+  <footer><a href="../15-sound-effects.md">出典・再生条件・検証</a> ／ <a href="../adr/0018-participant-media-audio.md">ADR-0018</a> ／ <a href="2026-10-18-参加者効果音の接続計画.html">接続計画</a></footer>
+</main></body>
+</html>

@@ -4,6 +4,10 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEv
 import { ArrowLeft, BookOpen, Camera, ChevronRight, Clock3, Flag, Home, ImagePlus, Lightbulb, LockKeyhole, RotateCcw, Sparkles, Trophy, Volume2, VolumeX } from 'lucide-react';
 import { ApiError, getHint, getState, joinRoom, safeReferenceUrl, submitPhoto, toSubmissionJpeg, type GameState } from './api';
 import { LiveCount, LiveStandings, positionOf } from './LiveStandings';
+import { createParticipantAudio } from './audio/media-audio';
+import { createParticipantSoundObserver } from './audio/participant-sound-observer';
+import type { ParticipantSoundName } from './audio/sound-clips';
+import { resolveParticipantPath } from './entry-link';
 
 export type View = 'home' | 'challenge' | 'judging' | 'success' | 'failure' | 'stages' | 'ranking' | 'rules';
 export const views: { key: View; label: string }[] = [
@@ -24,6 +28,16 @@ const terminalStatuses = new Set(['accepted', 'rejected', 'error', 'failed']);
 const voice: Partial<Record<View, string>> = {
   home: '/audio/welcome-ja.mp3', challenge: '/audio/challenge-ja.mp3',
   judging: '/audio/judging-ja.mp3', success: '/audio/success-ja.mp3', failure: '/audio/retry-ja.mp3',
+};
+const eventVoice: Partial<Record<ParticipantSoundName, { path: string; delay: number }>> = {
+  join: { path: '/audio/joined-ja.mp3', delay: 950 },
+  start: { path: '/audio/challenge-ja.mp3', delay: 1000 },
+  submit: { path: '/audio/judging-ja.mp3', delay: 450 },
+  success: { path: '/audio/success-ja.mp3', delay: 1300 },
+  retry: { path: '/audio/retry-ja.mp3', delay: 400 },
+  result: { path: '/audio/ranking-ja.mp3', delay: 2700 },
+  timeup: { path: '/audio/timeup-ja.mp3', delay: 800 },
+  victory: { path: '/audio/finished-ja.mp3', delay: 3200 },
 };
 const fixture: GameState = {
   room: { id: 'preview', name: '秋の大運動会' }, mode: 'ai', serverTime: Date.now(),
@@ -51,7 +65,9 @@ function GameButton({ children, onClick, tone = 'pink', disabled = false, classN
   return <button type="button" className={`game-button game-button--${tone} ${className}`} onClick={onClick} disabled={disabled}>{children}</button>;
 }
 
-export function ParticipantGame({ preview = false, previewView, onPreviewViewChange }: { preview?: boolean; previewView?: View; onPreviewViewChange?: (view: View) => void }) {
+export function ParticipantGame({ preview = false, landing = false, previewView, onPreviewViewChange }: { preview?: boolean; landing?: boolean; previewView?: View; onPreviewViewChange?: (view: View) => void }) {
+  const [entryOpen, setEntryOpen] = useState(false);
+  const [entryLink, setEntryLink] = useState('');
   const [roomId, setRoomId] = useState('');
   const [token, setToken] = useState('');
   const [playerId, setPlayerId] = useState('');
@@ -73,11 +89,11 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
   const [hintBusy, setHintBusy] = useState(false);
   const [now, setNow] = useState(0);
   const [serverOffset, setServerOffset] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraStarting, setCameraStarting] = useState(false);
-  const playing = useRef<HTMLAudioElement | null>(null);
-  const bgmRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<ReturnType<typeof createParticipantAudio> | null>(null);
+  const soundObserver = useRef<ReturnType<typeof createParticipantSoundObserver> | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -95,6 +111,48 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
   sessionRef.current = sessionKey;
   const screenRef = useRef<View>('home');
   const previewTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const soundPlayerId = useRef(playerId);
+  soundPlayerId.current = playerId;
+
+  function playGameSound(name: ParticipantSoundName) {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const line = eventVoice[name];
+    void audio.playEffect(name).then(played => {
+      // 優先度や遅延で採用されなかった音に付随する台詞も再生しない。
+      if (played && line) audio.speak(line.path, line.delay);
+    });
+  }
+
+  useEffect(() => {
+    const audio = createParticipantAudio();
+    audioRef.current = audio;
+    const observer = createParticipantSoundObserver(playGameSound);
+    soundObserver.current = observer;
+    const sync = () => setSoundEnabled(audio.getState().enabled);
+    sync();
+    const unsubscribe = audio.subscribe(sync);
+    const resetSounds = () => { observer.reset(); audio.pause(); };
+    const visibility = () => { observer.reset(); };
+    document.addEventListener('visibilitychange', visibility);
+    window.addEventListener('pagehide', resetSounds);
+    return () => {
+      unsubscribe(); audio.dispose(); observer.reset();
+      document.removeEventListener('visibilitychange', visibility);
+      window.removeEventListener('pagehide', resetSounds);
+      audioRef.current = null; soundObserver.current = null;
+    };
+  }, []);
+
+  useEffect(() => { soundObserver.current?.reset(); }, [sessionKey]);
+
+  useEffect(() => {
+    if (!preview && !document.hidden) soundObserver.current?.observe(state, playerId);
+  }, [state, playerId, preview]);
+
+  useEffect(() => {
+    if (!preview && !document.hidden) soundObserver.current?.tick(state, playerId, now + serverOffset);
+  }, [state, playerId, now, serverOffset, preview]);
 
   const stopCamera = useCallback(() => {
     mediaEpoch.current += 1;
@@ -110,7 +168,7 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
   }, []);
 
   useEffect(() => {
-    if (preview) return;
+    if (preview || landing) return;
     const match = location.pathname.match(/^\/rooms\/([a-zA-Z0-9-]+)\/join\/?$/);
     queueMicrotask(() => {
       if (!match) { setError('参加リンクを確認してください。'); return; }
@@ -119,7 +177,7 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
       setToken(localStorage.getItem(`karimono:${id}:token`) ?? '');
       setPlayerId(localStorage.getItem(`karimono:${id}:id`) ?? '');
     });
-  }, [preview]);
+  }, [preview, landing]);
 
   const refresh = useCallback((): Promise<GameState | null> => {
     if (preview || !roomId || sessionRef.current !== `${roomId}:${token}`) return Promise.resolve(null);
@@ -218,8 +276,16 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
       localStorage.setItem(`karimono:${roomId}:id`, joinedPlayer.id);
       setToken(joinedPlayer.token); setPlayerId(joinedPlayer.id);
       setView('home');
+      playGameSound('join');
     } catch (cause) { setError(cause instanceof Error ? cause.message : '参加できませんでした。'); }
     finally { setBusy(false); }
+  }
+
+  function handleEntry(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const path = resolveParticipantPath(entryLink, location.origin);
+    if (!path) { setError('このサイトの参加リンク、または部屋IDを入力してください。'); return; }
+    location.assign(path);
   }
 
   async function handlePhoto(event: ChangeEvent<HTMLInputElement>) {
@@ -232,7 +298,7 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
   async function preparePhoto(selected: File, capturedRound = round?.id) {
     if (!canCapture || !capturedRound || latestState.current?.round?.id !== capturedRound) return;
     const operation = ++operationEpoch.current;
-    playEffect('/audio/camera-click.mp3');
+    void audioRef.current?.playEffect('shutter');
     setBusy(true); setError('');
     try {
       const jpeg = await toSubmissionJpeg(selected);
@@ -266,6 +332,7 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
     try {
       const receipt = await submitPhoto(roomId, token, submittedRound, photo, requestId);
       if (operation !== operationEpoch.current || sessionRef.current !== submittedSession || latestState.current?.round?.id !== submittedRound) return;
+      soundObserver.current?.receipt(submittedRound, receipt);
       setUploadUncertain(false);
       if (pendingAttempt.current) pendingAttempt.current.receiptId = receipt.id;
       if (terminalStatuses.has(receipt.status)) {
@@ -300,14 +367,14 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
 
   async function handleHint() {
     if (!round || hintBusy || !joined) return;
-    if (preview) { setHint('赤い果物を探してみよう！'); setHintVisible(true); return; }
-    if (hint) { setHintVisible(true); return; }
+    if (preview) { setHint('赤い果物を探してみよう！'); setHintVisible(true); audioRef.current?.speak('/audio/hint-ja.mp3', 180); return; }
+    if (hint) { setHintVisible(true); audioRef.current?.speak('/audio/hint-ja.mp3', 180); return; }
     const requestedRound = round.id;
     setHintBusy(true); setHintError('');
     try {
       const result = await getHint(roomId, token, round.id);
       if (latestState.current?.round?.id !== requestedRound) return;
-      if (result.available && result.text) { setHint(result.text); setHintVisible(true); }
+      if (result.available && result.text) { setHint(result.text); setHintVisible(true); audioRef.current?.speak('/audio/hint-ja.mp3', 180); }
       else setHintError('このお題のヒントはまだありません。');
     } catch { if (latestState.current?.round?.id === requestedRound) setHintError('ヒントはまだ利用できません。'); }
     finally { setHintBusy(false); }
@@ -331,18 +398,43 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
       if (previewTimer.current) clearTimeout(previewTimer.current);
     };
   }, [stopCamera]);
-  useEffect(() => () => { bgmRef.current?.pause(); playing.current?.pause(); }, []);
   function toggleSound() {
-    if (soundEnabled) {
-      bgmRef.current?.pause(); playing.current?.pause(); setSoundEnabled(false); return;
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.setEnabled(!audio.getState().enabled);
+    soundObserver.current?.reset();
+    if (!preview) soundObserver.current?.observe(latestState.current, soundPlayerId.current);
+    if (audio.getState().enabled) audio.activate(entryVoice());
+  }
+
+  function entryVoice() {
+    // 再読込・再ON・初回操作から、既に確定している合否を読み直さない。
+    if (!preview && (screen === 'success' || screen === 'failure')) return voice.home;
+    return voice[screen];
+  }
+
+  function handleSoundGesture(event: React.MouseEvent<HTMLElement>) {
+    const target = event.target instanceof Element ? event.target.closest('button,summary') : null;
+    if (target?.matches(':disabled,.sound-toggle')) return;
+    const audio = audioRef.current;
+    if (!audio?.getState().enabled) return;
+    if (!audio.getState().activated) {
+      soundObserver.current?.reset();
+      if (!preview) soundObserver.current?.observe(latestState.current, soundPlayerId.current);
     }
-    if (!bgmRef.current) {
-      const bgm = new Audio('/audio/game-loop.mp3');
-      bgm.loop = true; bgm.volume = 0.16;
-      bgmRef.current = bgm;
-    }
-    void bgmRef.current.play().catch(() => {});
-    setSoundEnabled(true);
+    audio.activate(entryVoice());
+    if (target && !target.matches('[data-shutter="true"]')) void audio.playEffect('tap');
+  }
+
+  function openRanking() {
+    setView('ranking');
+    if (!preview) audioRef.current?.speak('/audio/ranking-ja.mp3', 200);
+  }
+
+  function startPlaying() {
+    if (state?.game?.status === 'finished') { openRanking(); return; }
+    setView('challenge');
+    if (!preview) audioRef.current?.speak('/audio/challenge-ja.mp3', 200);
   }
   async function openCamera() {
     if (!canCapture || cameraRequestPending.current || streamRef.current) return;
@@ -386,39 +478,30 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
     await preparePhoto(new File([blob], 'camera.jpg', { type: 'image/jpeg' }), capturedRound);
   }
   useEffect(() => {
-    playing.current?.pause();
-    if (!soundEnabled || !voice[screen]) return;
-    if (screen === 'success') {
-      const chime = new Audio('/audio/success-chime.mp3');
-      chime.volume = 0.5;
-      void chime.play().catch(() => {});
-    }
-    const audio = new Audio(voice[screen]);
-    audio.volume = 0.78;
-    playing.current = audio;
-    void audio.play().catch(() => {});
-    return () => { audio.pause(); };
-  }, [screen, soundEnabled]);
-  function playEffect(path: string) {
-    if (!soundEnabled) return;
-    const audio = new Audio(path);
-    audio.volume = 0.55;
-    void audio.play().catch(() => {});
-  }
+    // 見本だけ画面遷移を音へ変換する。実ゲームの合否はAPIイベントで1度だけ再生する。
+    if (!preview) return;
+    if (screen === 'challenge') playGameSound('start');
+    else if (screen === 'judging') playGameSound('submit');
+    else if (screen === 'success') playGameSound('success');
+    else if (screen === 'failure') playGameSound('retry');
+    else if (screen === 'ranking') playGameSound('result');
+    else if (voice[screen]) audioRef.current?.speak(voice[screen]);
+    else audioRef.current?.stopVoice();
+  }, [screen, preview]);
   return <div className="karimono-page">
     {preview && !previewView && <div className="preview-switch" aria-label="画面見本を選択">{views.map(item => <button key={item.key} type="button" aria-pressed={view === item.key} onClick={() => { setView(item.key); setError(''); }}>{item.label}</button>)}</div>}
-    <main className={`game-shell game-shell--${screen} game-shell--live`}>
+    <main className={`game-shell game-shell--${screen} game-shell--live`} onClickCapture={handleSoundGesture}>
       <div className="sky-glow" aria-hidden="true" />
       <div className="game-topline">
         <button type="button" className="small-mark" onClick={() => setView('home')} aria-label="ホーム">カリモノ</button>
-        <span className="room-label">{state?.room.name || '読み込み中…'}</span>
+        <span className="room-label">{state?.room.name || (landing ? 'みんなで借り物競争' : '読み込み中…')}</span>
         {state && <LiveCount count={state.stats.players} connected={!connectionError} />}
-        <span className="mode-label">{state?.mode === 'ai' ? 'AI' : 'DEMO'}</span>
+        {(state || !landing) && <span className="mode-label">{state?.mode === 'ai' ? 'AI' : 'DEMO'}</span>}
       </div>
       {connectionError && <p className="connection-message" role="status">再接続中です。画面の情報は前回取得時のものです。</p>}
       {screen !== 'home' && <nav className="game-nav" aria-label="ゲーム内の移動">
         <button type="button" onClick={() => setView('home')} aria-label="ホーム"><Home size={21} /></button>
-        <button type="button" onClick={() => setView('ranking')} aria-label="ランキング"><Trophy size={21} /></button>
+        <button type="button" onClick={openRanking} aria-label="ランキング"><Trophy size={21} /></button>
         <button type="button" onClick={() => setView('rules')} aria-label="遊び方"><BookOpen size={21} /></button>
       </nav>}
       <button type="button" className="sound-toggle" onClick={toggleSound} aria-label={soundEnabled ? '音声をオフにする' : '音声をオンにする'} aria-pressed={soundEnabled}>{soundEnabled ? <Volume2 size={19}/> : <VolumeX size={19}/>}</button>
@@ -427,11 +510,16 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
         <div className="wood-sign"><span>カリモノ</span><small>借り物王に俺はなる！</small></div>
         <p className="home-subtitle">AI借り物競争</p>
         <div className="home-characters"><img src={sprite('girl-flag')} alt="旗を振る猫耳のキャラクター" /><img src={character('robot-flag')} alt="応援するロボット" /></div>
-        {!joined && !preview ? <form className="join-form" onSubmit={handleJoin}>
+        {landing ? entryOpen ? <form className="join-form" onSubmit={handleEntry}>
+          <label htmlFor="participant-entry">参加リンク・部屋ID</label>
+          <input id="participant-entry" value={entryLink} onChange={event => setEntryLink(event.target.value)} placeholder="ホストから届いたリンクを貼り付け" maxLength={2048} autoComplete="off" autoCapitalize="none" spellCheck={false} required />
+          <button type="submit" className="game-button game-button--pink">参加画面へ <ChevronRight size={19}/></button>
+          <button type="button" className="text-link" onClick={() => { setEntryOpen(false); setError(''); }}>戻る</button>
+        </form> : <div className="home-actions"><GameButton onClick={() => setEntryOpen(true)}>▶ ゲームスタート！</GameButton><p className="waiting-copy">会場のQR・参加リンクからも参加できます</p></div> : !joined && !preview ? <form className="join-form" onSubmit={handleJoin}>
           <label htmlFor="participant-name">ニックネーム</label>
           <input id="participant-name" value={name} maxLength={24} autoComplete="nickname" onChange={event => setName(event.target.value)} placeholder="お名前を入力" required />
           <button type="submit" className="game-button game-button--pink" disabled={busy || !roomId}>▶ 参加する</button>
-        </form> : <div className="home-actions"><GameButton onClick={() => setView(state?.game?.status === 'finished' ? 'ranking' : 'challenge')} disabled={!round && !preview && state?.game?.status !== 'finished'}>{state?.game?.status === 'finished' ? '結果を見る' : '▶ ゲームスタート！'}</GameButton>{!round && state?.game?.status !== 'finished' && <p className="waiting-copy">参加しました。お題の公開を待っています。</p>}</div>}
+        </form> : <div className="home-actions"><GameButton onClick={startPlaying} disabled={!round && !preview && state?.game?.status !== 'finished'}>{state?.game?.status === 'finished' ? '結果を見る' : '▶ ゲームスタート！'}</GameButton>{!round && state?.game?.status !== 'finished' && <p className="waiting-copy">参加しました。お題の公開を待っています。</p>}</div>}
         <button type="button" className="text-link" onClick={() => setView('rules')}>遊び方を見る <ChevronRight size={16}/></button>
       </section>}
 
@@ -444,7 +532,7 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
           <span className="camera-corner camera-corner--tl"/><span className="camera-corner camera-corner--tr"/><span className="camera-corner camera-corner--bl"/><span className="camera-corner camera-corner--br"/>
         </div>
         <div className={`camera-actions${photo ? ' camera-actions--review' : ''}`}>
-          {photo ? <><GameButton tone="white" onClick={retake} disabled={!canCapture}><RotateCcw size={19}/> 撮り直す</GameButton><GameButton onClick={() => void handleSubmit()} disabled={!canSubmit}>{uploadUncertain ? '同じ写真で再確認' : '写真を送る'} <ChevronRight size={19}/></GameButton></> : <><button type="button" className="gallery-button" onClick={() => fileInput.current?.click()} disabled={!canCapture || cameraStarting} aria-label="写真を選ぶ"><ImagePlus size={23} strokeWidth={1.8}/></button><button type="button" className="game-button game-button--pink camera-main-button" onClick={() => void (cameraOpen ? captureCamera() : openCamera())} disabled={!canCapture || cameraStarting} aria-label={cameraStarting ? 'カメラを準備中' : cameraOpen ? '撮影' : 'カメラを開く'}><Camera size={32} strokeWidth={1.8} aria-hidden="true" /></button><span aria-hidden="true" className="camera-action-spacer" /></>}
+          {photo ? <><GameButton tone="white" onClick={retake} disabled={!canCapture}><RotateCcw size={19}/> 撮り直す</GameButton><GameButton onClick={() => void handleSubmit()} disabled={!canSubmit}>{uploadUncertain ? '同じ写真で再確認' : '写真を送る'} <ChevronRight size={19}/></GameButton></> : <><button type="button" className="gallery-button" onClick={() => fileInput.current?.click()} disabled={!canCapture || cameraStarting} aria-label="写真を選ぶ"><ImagePlus size={23} strokeWidth={1.8}/></button><button type="button" className="game-button game-button--pink camera-main-button" data-shutter={cameraOpen} onClick={() => void (cameraOpen ? captureCamera() : openCamera())} disabled={!canCapture || cameraStarting} aria-label={cameraStarting ? 'カメラを準備中' : cameraOpen ? '撮影' : 'カメラを開く'}><Camera size={32} strokeWidth={1.8} aria-hidden="true" /></button><span aria-hidden="true" className="camera-action-spacer" /></>}
         </div>
         {!photo && <p className="camera-caption">{cameraStarting ? 'カメラを準備しています…' : cameraOpen ? '枠の中に収めて、シャッターをタップ' : 'カメラを開いて、見つけたものを撮ろう'}</p>}
         <button type="button" className="hint-link" onClick={() => void handleHint()} disabled={!joined || !round || hintBusy}><Lightbulb size={18}/> {hintBusy ? '読み込み中…' : 'ヒントを見る'}</button>
@@ -503,6 +591,7 @@ export function ParticipantGame({ preview = false, previewView, onPreviewViewCha
         <div className="rule-grid"><div><b>1</b><span>お題を確認</span><Flag size={30}/></div><div><b>2</b><span>見つけて撮る</span><Camera size={30}/></div><div><b>3</b><span>AIが判定</span><img src={character('robot-guide')} alt=""/></div><div><b>4</b><span>結果を確認</span><Sparkles size={31}/></div></div>
         <div className="rules-invitation"><p>制限時間内にお題のものを見つけて、撮影しよう！</p><img src={character('robot-guide')} alt="" /></div>
         <GameButton tone="blue" onClick={() => setView(round ? 'challenge' : 'home')}><ArrowLeft size={19}/> 戻る</GameButton>
+        <details className="participant-sound-credits"><summary>音について・クレジット</summary><p>音量は端末のメディア音量で調整できます。右下の音ボタンでオン・オフを切り替えられます。</p><p>効果音：<a href="https://otologic.jp/" target="_blank" rel="noreferrer">OtoLogic</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>）。短縮・フェード・音量調整を行っています。</p></details>
       </section>}
       <input ref={fileInput} type="file" accept="image/*" className="visually-hidden" onChange={event => void handlePhoto(event)} aria-label="撮影または写真を選択" />
       {error && screen !== 'failure' && <p className="screen-error" role="alert">{error}</p>}

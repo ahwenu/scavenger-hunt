@@ -1,0 +1,44 @@
+{
+  "id": "gtfXIliWeqMqucovjv8M",
+  "name": "さっちゃん",
+  "model": "eleven_v4",
+  "locale": "ja",
+  "lines": [
+    {
+      "text": "ようこそ！",
+      "file": "welcome-ja.mp3"
+    },
+    {
+      "text": "スタート！",
+      "file": "challenge-ja.mp3"
+    },
+    {
+      "text": "正解！",
+      "file": "success-ja.mp3"
+    },
+    {
+      "text": "はずれ！",
+      "file": "retry-ja.mp3"
+    },
+    {
+      "text": "よろしくね！",
+      "file": "joined-ja.mp3"
+    },
+    {
+      "text": "ヒント！",
+      "file": "hint-ja.mp3"
+    },
+    {
+      "text": "そこまで！",
+      "file": "timeup-ja.mp3"
+    },
+    {
+      "text": "おつかれさま！",
+      "file": "finished-ja.mp3"
+    },
+    {
+      "text": "ランキング！",
+      "file": "ranking-ja.mp3"
+    }
+  ]
+}

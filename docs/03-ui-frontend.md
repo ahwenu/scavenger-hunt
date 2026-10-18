@@ -1,6 +1,6 @@
 # 画面仕様・デザインとフロントエンドの境界
 
-> 2026-10-18追記：提供デザイン画像の8画面をTypeScript/Reactで現行Sitesの参加者URLへ組み込んだ。画面見本は `/design-preview`、配信境界は[ADR-0015](adr/0015-participant-typescript-ui.md)、起動・引き渡しは[参加者README](participant-frontend/README.md)を参照。
+> 2026-10-18追記：提供デザイン画像の8画面をTypeScript/Reactで現行Sitesへ組み込んだ。新トップの入口は `/`、既存QRの参加先は `/rooms/:id/join`、比較画面は `/design-preview`。従来の部屋作成ページは `/host` へ置く。配信境界は[ADR-0019](adr/0019-participant-root-entry.md)、起動・引き渡しは[参加者README](participant-frontend/README.md)を参照。公開サイトへの反映には再配備が必要。
 
 ## Issue #1対応の現在の受け渡し
 

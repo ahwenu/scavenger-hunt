@@ -26,7 +26,7 @@ Plugin Extensionsのホスト画面とMCPサーバーを、移動可能な `plug
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
 
-参加者向け画面は提供デザインをもとにTypeScriptで実装する方針です。このブランチの参加URLと画面見本の扱いは[ADR-0015](docs/adr/0015-participant-typescript-ui.md)を参照してください。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。10競技・500点・共通ヒントのAPIはmainへ実装済みで、参加者画面はサーバーの確定値を表示します。Supabaseと人数/順位更新の追加契約は[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)の残依頼です。
+参加者向け画面は提供デザインをもとにTypeScriptで実装しています。追加指示により新しいトップを `/` へ置き、参加リンク・部屋IDから既存の `/rooms/:id/join` へ入る構成とします。発行済みQRと部屋ホストは維持し、従来の部屋作成ページは `/host` へ置きます。入口と画面見本の扱いは[ADR-0019](docs/adr/0019-participant-root-entry.md)を参照してください。リポジトリの変更と公開サイトへの再配備は区別します。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。10競技・500点・共通ヒントのAPIはmainへ実装済みで、参加者画面はサーバーの確定値を表示します。Supabaseと人数/順位更新の追加契約は[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)の残依頼です。
 
 本番ゲーム記録の保存先は、ユーザー指示により**Supabase**とします（[ADR-0016](docs/adr/0016-supabase-game-persistence.md)）。参加人数と順位の変化を画面へ自動反映することも実演の要件です。現行コードと既存Sites v3はD1/R2であり、Supabaseの接続・スキーマ・Supabaseでの100人同時利用は未確認です。D1の公開100HTTP試験記録は上記14へ分けています。参加者の同一オリジン `/api/rooms/:id` 境界を保つ引き渡しと設定項目は[16 Supabase統合](docs/16-supabase-integration.md)を参照してください。
 
@@ -41,6 +41,8 @@ Plugin Extensionsのホスト画面とMCPサーバーを、移動可能な `plug
 独立API実装時には、ユーザーのWork内実Plugin Extensionsでの「API接続確認」→「AI生成」操作と提供画像2枚から、接続済みと「文房具のペンを探そう」の表示を確認しました。当時未検証だったSitesの参加・得点・順位の結合は後続作業で検証し、現在の範囲と限界を14に記録しています。
 
 モバイルとPlugin UIにOtoLogicの無料効果音11種類を同梱し、操作・参加・撮影・受付・開始・正解/不正解・残り5秒・結果発表で再生します。端末別ON/OFFとクレジットを追加し、初回/定期同期の重複再生を抑制します。出典・加工内容・検証範囲は[15 効果音仕様](docs/15-sound-effects.md)、方針は[ADR-0014](docs/adr/0014-game-sound-effects.md)を参照。公開Sitesへは後続指示により2026-10-18 16:35 JSTにv5を配備済み。匿名トップ200・全11 MP3の配信と元バイト一致を確認しました。インストール済みPluginへの更新・実機試聴は今回のSites配備に含めていません。
+
+TypeScript参加者画面にも同じ効果音を接続しました。追加指示により初期オン（保存済みオフは尊重）とし、最初の操作からメディア再生を始めます。マナーモード中の再生に向けたHTMLAudio経路と対応環境の音声セッション設定は[ADR-0018](docs/adr/0018-participant-media-audio.md)に記録しています。ユーザー指定BGMのループを維持し、猫の案内は指定の「さっちゃん」・Eleven v4で短い9本へ統一しました。猫とロボットの声は0.85倍で再生します。実装・音声の採用・実機での試聴は[効果音仕様](docs/15-sound-effects.md)と[音声素材の引き渡し](docs/design/participant-assets-and-audio.md)の確認範囲で区別します。
 
 ## 担当割り振り
 
