@@ -1,6 +1,6 @@
 # Plugin Extensions：ホスト管理画面
 
-Issue #1の追加対応：新しいSites応答の `game.status/totalRounds` と `score/rank` を優先して、500点・10競技・finishedと終了後の操作停止をホストへ反映する。共通ヒント登録・公開v3・実結合の結果は[14 Ahwenu受け渡し](14-issue1-ahwenu-handoff.md)へ記録する。以下のwinsだけの公開版や初期デモの記録とは区別する。
+Issue #1の追加対応：Plugin 0.3.1で確定500点/順位・全10ステージ・finishedと終了後の操作停止、`host_set_hint` による共通ヒント保存/削除を実装。27件・型チェック・ビルドと11ツールの両可搬性が成功し、公開v3/0003を適用、0.3.1もインストール済み。公開100HTTPデモの500点/finished/ヒントと、実AIの不合格0点・順位・再送・ヒント保存/削除を確認。実AI合格500点、実機100台、ネイティブパネル直接操作は未検証。[14 Ahwenu受け渡し](14-issue1-ahwenu-handoff.md)に全結果と限界を記録し、以下のwinsだけの過去版や初期デモとは区別する。
 
 ## 運動会テーマのホストUI
 

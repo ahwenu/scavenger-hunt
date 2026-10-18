@@ -6,7 +6,7 @@
 
 `GET /api/rooms/:id/hint?roundId=...` は参加者の現在競技の保存済みヒントだけを返す。未用意は200のnull/false、未来・終了競技は409。登録はホストCookie付き `POST /api/rooms/:id/host/hint` の `{roundId,text}`（1〜500文字、nullで削除）。GET時のAI生成はない。
 
-入力・出力・待機状態・エラー・全10ステージの応答例は[12 Issue #1受け渡し](12-issue1-backend-handoff.md)、環境非依存の追加型は[game-contract.ts](../apps/cloud/lib/game-contract.ts)、判断は[ADR-0013](adr/0013-issue1-player-game-contract.md)。公開環境には未配備。Pluginのデモ用DTOや独立AI APIとは別契約で、結合済みとは扱わない。
+入力・出力・待機状態・エラー・全10ステージの応答例は[12 Issue #1受け渡し](12-issue1-backend-handoff.md)、環境非依存の追加型は[game-contract.ts](../apps/cloud/lib/game-contract.ts)、判断は[ADR-0013](adr/0013-issue1-player-game-contract.md)。後続作業で公開v3と0003を適用し、Plugin 0.3.1をインストール済み。公開100HTTPデモで500点/順位/finished/ヒント、実AIで条件不一致の不合格0点・MCP順位・再送・ヒント保存/削除を確認。実AIの合格500点と実機100台は未検証で、独立デモDTOや独立AI APIとも区別する。
 
 後続のAhwenu担当によるHTTP/MCP対応・公開配備の状況と、mae さん向けの最終応答例/配備版は[14](14-issue1-ahwenu-handoff.md)に記録する。元PRの検証履歴と新しい公開結果を分ける。
 

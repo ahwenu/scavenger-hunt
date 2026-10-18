@@ -1,6 +1,6 @@
 # Issue #1：バックエンドからHTTP/API・参加者画面への受け渡し
 
-2026-10-18。対象：[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)、[ADR-0013](adr/0013-issue1-player-game-contract.md)。**ローカル実装・検証済み、未配備**。既存 `/api/rooms/:id` への追加契約であり、04の `/api/v1` 初期提案やPluginデモのDTOへ変更済みという意味ではない。
+2026-10-18。対象：[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)、[ADR-0013](adr/0013-issue1-player-game-contract.md)。本書はさが さんの**初期ローカル実装・未配備時点の受け渡し記録**を保持する。後続作業でmain統合と公開v3/0003適用・Plugin 0.3.1インストールを完了し、公開デモ500点/finishedと実AI陰性経路を確認した。最終結果と残る未検証範囲は[14 Ahwenu受け渡し](14-issue1-ahwenu-handoff.md)を参照。既存 `/api/rooms/:id` への追加契約であり、04の `/api/v1` 初期提案やPluginデモのDTOとは別。
 
 ## 使う契約
 

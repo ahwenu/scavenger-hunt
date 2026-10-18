@@ -17,11 +17,13 @@ assert.equal(origin.protocol, 'https:');
 assert.equal(origin.pathname, '/');
 assert.equal(origin.username + origin.password + origin.search + origin.hash, '');
 const sharp = createRequire(path.join(root, 'api/package.json'))('sharp');
-const concurrency = 16;
+const playerCount = Number(option('--players') || 100);
+assert.ok(Number.isInteger(playerCount) && playerCount >= 1 && playerCount <= 100);
+const concurrency = Math.min(16, playerCount);
 const report = {
   testedAt: new Date().toISOString(), environment: 'public Sites / independent HTTP clients',
   baseUrl: origin.origin, mode: 'demo', realAI: false, realBrowsers: false,
-  participants: 100, concurrency, httpStatuses: {}, expectedRejections: {}, errors: [], success: false,
+  participants: playerCount, concurrency, httpStatuses: {}, expectedRejections: {}, transportFailures: [], errors: [], success: false,
 };
 const latency = { join: [], state: [], submit: [], result: [] };
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -53,6 +55,10 @@ async function request(route, { method = 'GET', json, form, token, host = false,
       ...(host ? { Cookie: cookie } : {}),
     },
     ...(json ? { body: JSON.stringify(json) } : form ? { body: form } : {}),
+  }).catch(error => {
+    const code = error.cause?.code || error.name || 'unknown';
+    report.transportFailures.push({ method, route, code });
+    throw Error(`HTTP transport failure: ${method} ${route} (${code})`);
   });
   report.httpStatuses[response.status] = (report.httpStatuses[response.status] || 0) + 1;
   if (phase) latency[phase].push(Math.round((performance.now() - start) * 100) / 100);
@@ -109,12 +115,12 @@ try {
   const initial = (await request(`${roomApi}/state`, { host: true })).data;
   assert.equal(initial.mode, 'demo'); assert.equal(initial.round, null);
   assert.equal(initial.game.totalRounds, 10); assert.equal(initial.stages.length, 10);
-  const players = await pool(Array.from({ length: 100 }, (_, i) => i), async i =>
+  const players = await pool(Array.from({ length: playerCount }, (_, i) => i), async i =>
     (await request(`${roomApi}/join`, { method: 'POST', json: { name: `http-fixture-${i + 1}` }, expected: 201, phase: 'join' })).data);
-  assert.equal(new Set(players.map(player => player.id)).size, 100);
+  assert.equal(new Set(players.map(player => player.id)).size, playerCount);
   report.joinedPlayers = players.length;
-  await request(`${roomApi}/join`, { method: 'POST', json: { name: 'over-cap' }, expected: 409, label: 'participant101' });
-  console.log('100 independent HTTP participants joined; 101st rejected; explicit demo mode.');
+  if (playerCount === 100) await request(`${roomApi}/join`, { method: 'POST', json: { name: 'over-cap' }, expected: 409, label: 'participant101' });
+  console.log(`${playerCount} independent HTTP participants joined; explicit demo mode.`);
   let active = await waitFor(players[0], state => state.prepared || state.round?.status === 'active', 'initial preparation');
   if (!active.round) {
     await request(`${roomApi}/host/start-now`, { method: 'POST', host: true });
@@ -127,17 +133,17 @@ try {
   await request(`${roomApi}/host/hint`, { method: 'POST', token: players[0].token, json: { roundId, text: 'forbidden' }, expected: 403, label: 'participantCannotWriteHint' });
   await pool(players, async player => {
     const state = (await request(`${roomApi}/state`, { token: player.token, phase: 'state' })).data;
-    assert.equal(state.ranks.length, 100); assert.equal(state.stages.length, 10); assert.equal(state.mine.length, 0);
+    assert.equal(state.ranks.length, playerCount); assert.equal(state.stages.length, 10); assert.equal(state.mine.length, 0);
     const hint = (await request(`${roomApi}/hint?roundId=${roundId}`, { token: player.token })).data;
     assert.equal(hint.available, true); assert.equal(hint.text, '全員共通の検証用ヒント');
   });
-  report.sharedHintReads = 100;
+  report.sharedHintReads = playerCount;
   const photos = await Promise.all(players.map(photo));
   report.photoBytes = { count: photos.length, total: photos.reduce((sum, bytes) => sum + bytes.length, 0), width: 64, height: 64 };
   const submittedAt = performance.now();
   const receipts = await pool(players, async (player, i) =>
     (await request(`${roomApi}/submit`, { method: 'POST', token: player.token, form: submission(roundId, photos[i]), expected: 202, phase: 'submit' })).data);
-  await waitFor(players[0], state => state.stats.accepted === 100 && state.stats.pending === 0, '100 judgments');
+  await waitFor(players[0], state => state.stats.accepted === playerCount && state.stats.pending === 0, `${playerCount} judgments`);
   report.burstToSettledMs = Math.round(performance.now() - submittedAt);
   const results = await pool(players, player => request(`${roomApi}/state`, { token: player.token, phase: 'result' }));
   const eventIds = new Set();
@@ -147,19 +153,19 @@ try {
     assert.equal(data.mine[0].awardedPoints, 500); assert.ok(data.mine[0].passEventId);
     eventIds.add(data.mine[0].passEventId);
     assert.ok(data.ranks.every(rank => rank.score === 500 && rank.wins === 1));
-    assert.deepEqual(data.ranks.map(rank => rank.rank), Array.from({ length: 100 }, (_, j) => j + 1));
-    assert.equal(data.stats.accepted, 100); assert.equal(data.stats.pending, 0);
+    assert.deepEqual(data.ranks.map(rank => rank.rank), Array.from({ length: playerCount }, (_, j) => j + 1));
+    assert.equal(data.stats.accepted, playerCount); assert.equal(data.stats.pending, 0);
   });
-  assert.equal(eventIds.size, 100);
-  report.completedPlayersRound1 = 100; report.distinctOwnPassEventIdsRound1 = eventIds.size;
+  assert.equal(eventIds.size, playerCount);
+  report.completedPlayersRound1 = playerCount; report.distinctOwnPassEventIdsRound1 = eventIds.size;
   report.publicEventWindow = results[0].data.events.length;
   report.burstToAllResultsMs = Math.round(performance.now() - submittedAt);
-  console.log('100 JPEGs accepted; all own results +500 and stable ranks; 100 distinct own pass-event IDs.');
+  console.log(`${playerCount} JPEGs accepted; all own results +500 and stable ranks; ${playerCount} distinct own pass-event IDs.`);
   await request(`${roomApi}/host/end`, { method: 'POST', host: true });
   await waitFor(players[0], state => state.round?.status === 'closed', 'round 1 closed');
   await request(`${roomApi}/submit`, { method: 'POST', token: players[0].token, form: submission(roundId, await photo()), expected: 409, label: 'newPhotoAfterHostClosedReception' });
   await request(`${roomApi}/hint?roundId=${roundId}`, { token: players[0].token, expected: 409, label: 'closedRoundHint' });
-  report.rounds = [{ number: 1, accepted: 100 }];
+  report.rounds = [{ number: 1, accepted: playerCount }];
   for (let number = 2; number <= 10; number++) {
     await request(`${roomApi}/host/start`, { method: 'POST', host: true });
     active = await waitFor(players[0], state => state.round?.number === number && state.round.status === 'active', `round ${number}`);
@@ -203,7 +209,7 @@ try {
   report.unexpected429 = report.httpStatuses[429] || 0;
   report.serverErrors = Object.entries(report.httpStatuses).filter(([code]) => Number(code) >= 500).reduce((sum, [, count]) => sum + count, 0);
   report.elapsedMs = Math.round(performance.now() - began);
-  const out = path.join(root, 'plugin/artifacts/issue1-public-http-verification.json');
+  const out = path.join(root, playerCount === 100 ? 'plugin/artifacts/issue1-public-http-verification.json' : 'plugin/artifacts/issue1-public-ten-round-verification.json');
   await mkdir(path.dirname(out), { recursive: true });
   await writeFile(out, JSON.stringify(report, null, 2) + '\n');
   cookie = undefined;

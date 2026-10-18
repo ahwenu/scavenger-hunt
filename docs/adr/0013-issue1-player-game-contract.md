@@ -61,4 +61,10 @@ SQLとDrizzleメタデータは `0003_issue1_round_hint` として追加生成�
 
 ## 後続のAhwenu担当作業
 
-ユーザーの追加指示により、Issueコメントの5項目（main統合、新MCP契約、共通ヒント登録、公開配備/試験、mae さんへの最終受け渡し）を進める。PR #2のmain統合は `1278769`。元のさが さんの実装・ローカル検証記録は保持し、[14 Ahwenu受け渡し](../14-issue1-ahwenu-handoff.md)に公開版の結果を追記する。現時点では新公開版の配備/100クライアント/実AI結合は結果待ちであり、Issue全完了とは扱わない。
+ユーザーの追加指示により、Issueコメントの5項目（main統合、新MCP契約、共通ヒント登録、公開配備/試験、mae さんへの最終受け渡し）を進める。PR #2のmain統合は `1278769`。元のさが さんの実装・ローカル検証記録は保持し、[14 Ahwenu受け渡し](../14-issue1-ahwenu-handoff.md)に公開版の結果を追記する。
+
+main `669731c6715a59a6236eae29e323d2977816a7d0` をahwenu名義でcommit/pushし、v3を本番配備（16:08 JST）。`0003_issue1_round_hint`、D1/R2を適用しpublicを維持。SitesソースSHA `df6813631353211b2ff52d1a89df22dd36b951f1`、deployment `appgdep_6ad4705c8e088191a7709d630c552030`。Plugin 0.3.1の確定score/rank・全10stages・finished・共通ヒント登録、11ツールの通常/共有可搬性とインストールを確認した。依存導入後にルート47件・Cloud9件・Plugin27件と型チェック/ビルドが成功。実装・配備と下記検証を完了し、Issueを閉じる操作は行っていない。
+
+後続の公開デモ試験では100HTTPクライアント全員の参加201・写真受付202・初合格500点・本人結果分離・distinct通知ID100・共通ヒント100GETを確認。64×64 JPEG計290,648 bytes、concurrency 16、429/5xxは0、submit P95 925.98ms。終盤のtransport失敗1件による元レポートsuccess:falseは保持し、後続GETで第10競技finished/全completed/首位5000点を確認した。別1人の正規ホスト操作10競技はsuccess:true、11競技目409、36.012秒、transport/429/5xxは0。インストール済み0.3.1の公式ブリッジ検証ホストで10競技/ヒント欄/ポイント表示とQRを確認し、画面画像のQR読取が参加URLと完全一致した。
+
+最終実AI試験は、実Responsesが生成した「紙コップを探そう」（紙コップ・白/淡色）に赤い実物写真を提出し、実Decisionsのrejected/0点・MCP score 0/順位1、同requestIdの同ID再送、ヒント保存/削除、受付終了を確認した。レポートは `issue1-public-real-ai-final-negative.json`、`positiveScoringVerified:false`。実AIの陽性500点・100実端末・ネイティブパネル直接操作は未検証と確定する。条件が合うまで有料生成を繰り返さず、デモ500点と実AI陰性経路を分けた。詳細・全指標・写真出典・失敗範囲は14を参照。
