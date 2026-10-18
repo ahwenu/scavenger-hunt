@@ -1,5 +1,15 @@
 # API契約：Sites・モバイル・Plugin Extensions
 
+## 現在のSites実装：Issue #1
+
+現在実装するゲームAPIは `/api/rooms/:id` 系であり、以下の `/api/v1` は初期提案として残す。Issue #1では参加者Bearerと部屋別ホストCookieを維持し、参加成功201、最大100人、10競技、初合格500点と連番順位を採用する。stateにはgame/stagesとscore/rank/awardedPointsを追加し、既存フィールドを保持する。写真は1MiB以下、multipartのrequestIdで再送を識別する。
+
+`GET /api/rooms/:id/hint?roundId=...` は参加者の現在競技の保存済みヒントだけを返す。未用意は200のnull/false、未来・終了競技は409。登録はホストCookie付き `POST /api/rooms/:id/host/hint` の `{roundId,text}`（1〜500文字、nullで削除）。GET時のAI生成はない。
+
+入力・出力・待機状態・エラー・全10ステージの応答例は[12 Issue #1受け渡し](12-issue1-backend-handoff.md)、環境非依存の追加型は[game-contract.ts](../apps/cloud/lib/game-contract.ts)、判断は[ADR-0013](adr/0013-issue1-player-game-contract.md)。公開環境には未配備。Pluginのデモ用DTOや独立AI APIとは別契約で、結合済みとは扱わない。
+
+## 以下は初期API案（Issue #1の実装契約ではない）
+
 API契約・HTTPルート・外部API接続・MCPサーバーはAhwenuが担当する。ルートから呼ぶゲーム処理・DB/R2・認証/認可サービスはさが さん、モバイルからのAPI利用はmae さん、拡張画面からのMCP利用は未定（Ahwenu）が担当する。責務の詳細は[07 分担](07-delivery-plan.md)を参照。
 
 ## 共通規約

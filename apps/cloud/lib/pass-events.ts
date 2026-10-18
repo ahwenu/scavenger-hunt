@@ -10,7 +10,7 @@ ON CONFLICT(submissionId) DO NOTHING`;
 export async function recordPass(db:D1Database,subId:string,verdict:{pass:boolean;[key:string]:unknown}):Promise<PassEvent|undefined>{
   if(verdict?.pass!==true)throw Error('pass_verdict_required');
   const results=await db.batch([
-    db.prepare("UPDATE submissions SET status='accepted',verdict=?,leaseUntil=0 WHERE id=? AND status='processing'").bind(JSON.stringify(verdict),subId),
+    db.prepare("UPDATE submissions SET status='accepted',verdict=?,leaseUntil=0 WHERE id=? AND status='processing' AND leaseUntil>? AND EXISTS(SELECT 1 FROM rounds r JOIN players p ON p.id=submissions.playerId AND p.roomId=r.roomId WHERE r.id=submissions.roundId AND r.roomId=submissions.roomId AND r.number<=10 AND p.joinedAt<=r.startedAt AND submissions.receivedAt>=r.startedAt AND submissions.receivedAt<r.endsAt)").bind(JSON.stringify(verdict),subId,Date.now()),
     db.prepare(INSERT_EVENT).bind(Date.now(),subId),
     db.prepare('SELECT * FROM pass_events WHERE submissionId=?').bind(subId),
   ]);

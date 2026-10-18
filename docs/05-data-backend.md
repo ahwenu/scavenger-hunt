@@ -1,5 +1,15 @@
 # データモデル・バックエンド処理
 
+## Issue #1の現在の実装
+
+既存D1のrooms/players/rounds/submissions/pass_eventsを正本とする。100人・10競技・初合格500点は[ADR-0013](adr/0013-issue1-player-game-contract.md)。永続したaccepted提出の初合格だけを集計し、wins・score・totalMs・rankを返す。既存の(playerId,roundId)部分一意インデックスと合格/通知の原子的batchで重複確定を防ぐ。合格確定時には部屋/所属/受付時刻と処理リースを再検証する。
+
+ヒントはnullableなrounds.hintとして追加し、`0003_issue1_round_hint` を生成した。既存行は未用意、GETでAIを呼ばず、ホストが現競技へ設定できる。得点用テーブルは追加しない。10競技目の受付終了後も未確定提出がある間はplaying、全件確定後にfinished。競技間は直前roundをclosedとして保持する。既存のuploading/queuedは120秒、processingは65秒リースで中断を復旧し、失効したAI結果を加点しない。
+
+API例・検証・適用手順は[12](12-issue1-backend-handoff.md)。ローカルD1/R2で100人のデモ処理を確認したが、本番DBにはまだ適用していない。以下のteams/score_events・10点・v1契約・24時間画像保持などは初期提案の履歴であり、今回採用済みとは扱わない。既存Sitesは提出写真を判定後に削除する。
+
+## 以下は初期バックエンド案
+
 主担当はさが さん。DB/R2、ゲームルール、認可、加点・順位確定を実装する。HTTP受付・外部AI呼出・APIレスポンス化はAhwenuが担当し、本書のサービスを呼び出す。写真判定フローのうち外部AI通信はAhwenu、受付制限と保存・判定結果の確定はさが さんが受け持つ。
 
 ## D1のテーブル案

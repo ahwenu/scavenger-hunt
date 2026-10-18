@@ -6,7 +6,7 @@ import { webcrypto } from 'node:crypto';
 
 /** Execute the actual application pipeline with HTTP and camera rendering as boundary doubles. */
 async function appHarness() {
-  const source = (await readFile(new URL('../apps/web/app.js', import.meta.url), 'utf8')).replace(/^import .*live-camera.*\n/, '').replace(/if\(isLanding\)\{landing\(\);\}else\{skeleton\(\);[\s\S]*$/, '');
+  const source = (await readFile(new URL('../apps/web/app.js', import.meta.url), 'utf8')).replace(/^import .*live-camera.*\r?\n/, '').replace(/if\(isLanding\)\{landing\(\);\}else\{skeleton\(\);[\s\S]*$/, '');
   const nodes = new Map(), updates = [], posts = [];
   const node = key => { if (!nodes.has(key)) nodes.set(key, { textContent: '', hidden: false, value: 'pass', classList: { add() {}, remove() {}, toggle() {} } }); return nodes.get(key); };
   let current = { room: { id: 'test-room', name: 'Test' }, round: null, players: [{ id: 'me', name: 'Me', joinedAt: Date.now() - 60000 }], mine: [], stats: { pending: 0 }, lobby: { status: 'waiting', deadline: Date.now() + 30000 }, sync: 'polling', serverTime: Date.now() };

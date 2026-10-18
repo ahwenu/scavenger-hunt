@@ -3,6 +3,8 @@ import QRCode from 'qrcode';
 import { generateChallenge,judgePhoto } from './cloud-ai';
 import {recordPass} from './pass-events';
 import {createReferenceTools} from './reference-agent.mjs';
+import { MAX_PLAYERS, PASS_POINTS, TOTAL_ROUNDS } from './game-contract';
+import { gameProjection } from './game-state';
 export type GameEnv = {DB:D1Database;BUCKET:R2Bucket;OPENAI_API_KEY?:string};
 let expiryAt=0;
 let runningPump:Promise<void>|undefined;
@@ -27,11 +29,12 @@ async function current(db:D1Database,id:string){return db.prepare('SELECT * FROM
 /** HttpOnlyの部屋別ホストCookieを検証する。 */
 async function hostOf(req:Request,room:any){const name=`host_${room.id}=`;const token=(req.headers.get('cookie')||'').split(';').map(x=>x.trim()).find(x=>x.startsWith(name))?.slice(name.length);return !!token&&await hash(token)===room.hostHash;}
 /** 期限切れラウンドと中断した判定を回復する。 */
-async function expire(env:GameEnv){const now=Date.now();if(now<expiryAt)return;expiryAt=now+1000;await env.DB.batch([
+async function expire(env:GameEnv){const now=Date.now();if(now<expiryAt)return;expiryAt=now+1000;const changes=await env.DB.batch([
   env.DB.prepare("UPDATE rounds SET status='closed' WHERE status='active' AND endsAt<=?").bind(now),
   env.DB.prepare("UPDATE rooms SET generationLease=0,preparedMode=NULL,preparationError=? WHERE generationLease>0 AND generationLease<? AND preparedChallenge IS NULL").bind('準備処理が中断しました。ホストがもう一度準備してください。',now),
-  env.DB.prepare(`UPDATE submissions SET status='error',hash=NULL,verdict=? WHERE (status='processing' AND leaseUntil<?) OR (status='uploading' AND receivedAt<?)`).bind(JSON.stringify({reason:'判定処理が中断しました。再投稿してください。'}),now,now-90000),
+  env.DB.prepare(`UPDATE submissions SET status='error',hash=NULL,leaseUntil=0,verdict=? WHERE (status='processing' AND leaseUntil<=?) OR (status IN ('uploading','queued') AND receivedAt<?)`).bind(JSON.stringify({reason:'判定処理が中断しました。再投稿してください。'}),now,now-120000),
 ]);
+  if(changes.some(result=>result.meta.changes>0))snapshotCache.clear();
   const stale=await all(env.DB,"SELECT id,objectKey FROM submissions WHERE status IN ('accepted','rejected','error') AND objectKey!='' LIMIT 20");
   await Promise.all(stale.map(async sub=>{try{await env.BUCKET.delete(sub.objectKey);await env.DB.prepare("UPDATE submissions SET objectKey='' WHERE id=?").bind(sub.id).run();}catch{ /* 次の同期で削除を再試行する。 */ }}));
 }
@@ -44,16 +47,31 @@ async function snapshot(req:Request,env:GameEnv,room:any,player:any){
     env.DB.prepare('SELECT s.seq,s.id,s.playerId,s.roundId,s.receivedAt,s.status,s.verdict,e.id AS passEventId FROM submissions s LEFT JOIN pass_events e ON e.submissionId=s.id WHERE s.roomId=? ORDER BY s.receivedAt,s.seq').bind(room.id),
     env.DB.prepare('SELECT * FROM pass_events WHERE roomId=? ORDER BY id DESC LIMIT 40').bind(room.id),
   ]);snapshotCache.set(room.id,{until:Date.now()+500,rows:out});if(snapshotCache.size>1000)snapshotCache.delete(snapshotCache.keys().next().value!);}
-  const players=out[0].results as any[],rounds=out[1].results as any[],subs=out[2].results as any[],round=rounds.at(-1),currentSubs=subs.filter(s=>s.roundId===round?.id),accepted=subs.filter(s=>s.status==='accepted');
-  const starts=new Map(rounds.map(r=>[r.id,r.startedAt]));
-  const ranks=players.map(p=>{const wins=accepted.filter(s=>s.playerId===p.id);return {...p,wins:wins.length,totalMs:wins.reduce((sum,s)=>sum+s.receivedAt-starts.get(s.roundId),0)};}).sort((a,b)=>b.wins-a.wins||a.totalMs-b.totalMs||a.joinedAt-b.joinedAt||a.id.localeCompare(b.id));
+  const players=out[0].results as any[],rounds=out[1].results as any[],subs=out[2].results as any[],round=rounds.at(-1),currentSubs=subs.filter(s=>s.roundId===round?.id);
+  const now=Date.now(),progress=gameProjection(players,rounds,subs,now),ranks=progress.ranks;
   const events=(out[3].results as any[]).slice().reverse().map(e=>{
     const own=subs.find(s=>s.id===e.submissionId),ordered=subs.filter(s=>s.roundId===e.roundId&&s.status==='accepted');
     const ahead=subs.filter(s=>s.roundId===e.roundId&&['queued','processing','uploading','retrying','pending'].includes(s.status)&&own&&(s.receivedAt<own.receivedAt||s.receivedAt===own.receivedAt&&s.seq<own.seq)).length;
     return {id:e.id,type:'pass',playerId:e.playerId,name:players.find(p=>p.id===e.playerId)?.name,roundId:e.roundId,submissionId:e.submissionId,createdAt:e.createdAt,rank:ordered.findIndex(s=>s.id===e.submissionId)+1,provisional:ahead>0,pendingAhead:ahead};
   });
   const origin=new URL(req.url).origin;
-  return {room:{id:room.id,name:room.name},isHost:await hostOf(req,room),mode:room.mode,aiAvailable:!!env.OPENAI_API_KEY,publicUrl:origin,joinUrl:`${origin}/rooms/${room.id}/join`,serverTime:Date.now(),generating:room.generationLease>Date.now(),preparing:room.generationLease>Date.now()&&room.preparedMode===room.mode&&!room.preparedChallenge,prepared:!!(room.preparedChallenge&&room.preparedMode===room.mode&&Date.now()-room.preparedAt<300000),preparationError:room.preparationError||null,preparationStage:room.generationLease>Date.now()?(room.mode==='ai'?'searching':'generating'):null,lobby:{deadline:room.lobbyDeadline??null,startedAt:room.lobbyStartedAt||round?.startedAt||null,status:room.lobbyStartedAt||round?'started':!room.lobbyDeadline?'empty':room.preparationError?'error':room.generationLease>Date.now()?'preparing':'waiting'},players,ranks,events,eventCursor:events.at(-1)?.id||0,round:round?{id:round.id,number:round.number,mode:round.mode,status:round.status,challenge:publicChallenge(JSON.parse(round.challenge),room.id,round.id),startedAt:round.startedAt,endsAt:round.endsAt}:null,stats:{players:players.length,answered:new Set(currentSubs.map(s=>s.playerId)).size,accepted:new Set(currentSubs.filter(s=>s.status==='accepted').map(s=>s.playerId)).size,pending:currentSubs.filter(s=>['uploading','queued','processing'].includes(s.status)).length,queued:currentSubs.filter(s=>s.status==='queued').length,processing:currentSubs.filter(s=>s.status==='processing').length},finishers:currentSubs.filter(s=>s.status==='accepted').map((s,i)=>({rank:i+1,playerId:s.playerId,submissionId:s.id,name:players.find(p=>p.id===s.playerId)?.name,elapsedMs:s.receivedAt-round.startedAt})),mine:player?subs.filter(s=>s.playerId===player.id).map(s=>({...s,status:s.status,verdict:s.verdict?JSON.parse(s.verdict):null})):[],sync:'polling',queue:{maxConcurrency:8,maxRoomPending:100,maxGlobalPending:200}};
+  return {
+    room:{id:room.id,name:room.name}, game:progress.game, stages:progress.stages,
+    isHost:await hostOf(req,room),mode:room.mode,aiAvailable:!!env.OPENAI_API_KEY,
+    publicUrl:origin,joinUrl:`${origin}/rooms/${room.id}/join`,serverTime:now,
+    generating:room.generationLease>now,
+    preparing:room.generationLease>now&&room.preparedMode===room.mode&&!room.preparedChallenge,
+    prepared:!!(room.preparedChallenge&&room.preparedMode===room.mode&&now-room.preparedAt<300000),
+    preparationError:room.preparationError||null,
+    preparationStage:room.generationLease>now?(room.mode==='ai'?'searching':'generating'):null,
+    lobby:{deadline:room.lobbyDeadline??null,startedAt:room.lobbyStartedAt||round?.startedAt||null,status:room.lobbyStartedAt||round?'started':!room.lobbyDeadline?'empty':room.preparationError?'error':room.generationLease>now?'preparing':'waiting'},
+    players,ranks,events,eventCursor:events.at(-1)?.id||0,
+    round:round?{id:round.id,number:round.number,mode:round.mode,status:round.status==='active'&&round.endsAt<=now?'closed':round.status,challenge:publicChallenge(JSON.parse(round.challenge),room.id,round.id),startedAt:round.startedAt,endsAt:round.endsAt}:null,
+    stats:{players:players.length,answered:new Set(currentSubs.map(s=>s.playerId)).size,accepted:new Set(currentSubs.filter(s=>progress.awardedIds.has(s.id)).map(s=>s.playerId)).size,pending:currentSubs.filter(s=>['uploading','queued','processing'].includes(s.status)).length,queued:currentSubs.filter(s=>s.status==='queued').length,processing:currentSubs.filter(s=>s.status==='processing').length},
+    finishers:currentSubs.filter(s=>progress.awardedIds.has(s.id)).map((s,i)=>({rank:i+1,playerId:s.playerId,submissionId:s.id,name:players.find(p=>p.id===s.playerId)?.name,elapsedMs:s.receivedAt-round.startedAt})),
+    mine:player?subs.filter(s=>s.playerId===player.id).map(s=>({...s,status:s.status==='uploading'?'queued':s.status,awardedPoints:progress.awardedIds.has(s.id)?PASS_POINTS:0,verdict:s.verdict?JSON.parse(s.verdict):null})):[],
+    sync:'polling',queue:{maxConcurrency:8,maxRoomPending:100,maxGlobalPending:200},
+  };
 }
 /** 実際のroom限定参加情報・回答率・正解率・履歴を生成に渡す。 */
 async function generationContext(env:GameEnv,roomId:string){
@@ -79,7 +97,7 @@ async function persistChallenge(env:GameEnv,roomId:string,value:any){
 }
 /** Prepared bytes and tool traces are never disclosed by public snapshots. */
 function publicChallenge(challenge:any,roomId:string,roundId:string){
-  const {referenceAsset,referenceTrace,...out}=challenge;
+  const {referenceAsset,referenceTrace,hint,...out}=challenge;
   if(out.reference){const {storageKey,sha256,canonicalHash,canonicalHashes,...reference}=out.reference;out.reference={...reference,url:`/api/rooms/${roomId}/reference/${roundId}`};}
   return out;
 }
@@ -103,6 +121,7 @@ async function beginPreparation(env:GameEnv,roomId:string,ctx:ExecutionContext,r
   if(!room)return false;
   if(room.generationLease>now)return false;
   const round=await current(env.DB,roomId);
+  if(round&&round.number>=TOTAL_ROUNDS)return false;
   if(round?.status==='active'||await env.DB.prepare(`SELECT id FROM submissions WHERE roomId=? AND status IN ${pending} LIMIT 1`).bind(roomId).first())return false;
   const context=await generationContext(env,roomId);if(!context.participantCount)return false;
   const frozen=!round&&room.lobbyDeadline!==null;
@@ -146,8 +165,8 @@ async function startInitialIfReady(env:GameEnv,roomId:string){
   const challenge=JSON.parse(room.preparedChallenge);
   try{
     const result=await env.DB.batch([
-      env.DB.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId) SELECT ?,1,?,'active',?,?,?,?,? WHERE NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=?)")
-        .bind(crypto.randomUUID(),room.mode,room.preparedChallenge,room.preparedContext,now,now+challenge.durationSeconds*1000,roomId,roomId),
+      env.DB.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId,hint) SELECT ?,1,?,'active',?,?,?,?,?,? WHERE NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=?) AND EXISTS(SELECT 1 FROM rooms WHERE id=? AND generationLease=?)")
+        .bind(crypto.randomUUID(),room.mode,room.preparedChallenge,room.preparedContext,now,now+challenge.durationSeconds*1000,roomId,typeof challenge.hint==='string'?challenge.hint.slice(0,500):null,roomId,roomId,lease),
       env.DB.prepare('UPDATE rooms SET lobbyStartedAt=(SELECT MIN(startedAt) FROM rounds WHERE roomId=?),preparedChallenge=NULL,preparedContext=NULL,preparedMode=NULL,preparedAt=NULL,preparationError=NULL,generationLease=0 WHERE id=? AND generationLease=?').bind(roomId,roomId,lease),
     ]);snapshotCache.delete(roomId);return result[0].meta.changes>0;
   }finally{await env.DB.prepare('UPDATE rooms SET generationLease=0 WHERE id=? AND generationLease=?').bind(roomId,lease).run();}
@@ -162,18 +181,18 @@ async function driveLobby(env:GameEnv,roomId:string,ctx:ExecutionContext){
 /** Later rounds remain an explicit host action, sharing the same generation CAS guard. */
 async function manualStart(env:GameEnv,roomId:string){
   const now=Date.now(),lease=now+45000;
-  const claimed=await env.DB.prepare("UPDATE rooms SET generationLease=? WHERE id=? AND generationLease<=? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=? AND status='active') AND NOT EXISTS(SELECT 1 FROM submissions WHERE roomId=? AND status IN ('uploading','queued','processing')) RETURNING *").bind(lease,roomId,now,roomId,roomId).first<any>();
-  if(!claimed)return {error:'ラウンドと準備・判定の終了を待ってください。',status:409};
+  const claimed=await env.DB.prepare("UPDATE rooms SET generationLease=? WHERE id=? AND generationLease<=? AND COALESCE((SELECT MAX(number) FROM rounds WHERE roomId=?),0)<? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=? AND status='active') AND NOT EXISTS(SELECT 1 FROM submissions WHERE roomId=? AND status IN ('uploading','queued','processing')) RETURNING *").bind(lease,roomId,now,roomId,TOTAL_ROUNDS,roomId,roomId).first<any>();
+  if(!claimed)return {error:'全競技が終了したか、ラウンド・準備・判定の終了待ちです。',status:409};
   try{
     const context=await generationContext(env,roomId),serialized=JSON.stringify(context);
     const valid=claimed.preparedChallenge&&claimed.preparedMode===claimed.mode&&now-claimed.preparedAt<300000&&claimed.preparedContext===serialized;
     const challenge=valid?JSON.parse(claimed.preparedChallenge):await persistChallenge(env,roomId,await generateChallenge(env.OPENAI_API_KEY,claimed.mode,context));
     const startedAt=Date.now();
-    await env.DB.batch([
-      env.DB.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId) SELECT ?,COALESCE((SELECT MAX(number) FROM rounds WHERE roomId=?),0)+1,?,'active',?,?,?,?,?")
-        .bind(crypto.randomUUID(),roomId,claimed.mode,JSON.stringify(challenge),serialized,startedAt,startedAt+challenge.durationSeconds*1000,roomId),
-      env.DB.prepare('UPDATE rooms SET preparedChallenge=NULL,preparedContext=NULL,preparedMode=NULL,preparedAt=NULL,preparationError=NULL WHERE id=?').bind(roomId),
-    ]);return {ok:true,usedPrepared:!!valid,status:200};
+    const result=await env.DB.batch([
+      env.DB.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId,hint) SELECT ?,COALESCE((SELECT MAX(number) FROM rounds WHERE roomId=?),0)+1,?,'active',?,?,?,?,?,? WHERE EXISTS(SELECT 1 FROM rooms WHERE id=? AND generationLease=? AND generationLease>?) AND COALESCE((SELECT MAX(number) FROM rounds WHERE roomId=?),0)<?")
+        .bind(crypto.randomUUID(),roomId,claimed.mode,JSON.stringify(challenge),serialized,startedAt,startedAt+challenge.durationSeconds*1000,roomId,typeof challenge.hint==='string'?challenge.hint.slice(0,500):null,roomId,lease,startedAt,roomId,TOTAL_ROUNDS),
+      env.DB.prepare('UPDATE rooms SET preparedChallenge=NULL,preparedContext=NULL,preparedMode=NULL,preparedAt=NULL,preparationError=NULL WHERE id=? AND generationLease=?').bind(roomId,lease),
+    ]);return result[0].meta.changes>0?{ok:true,usedPrepared:!!valid,status:200}:{error:'開始処理が失効しました。状態を再取得してください。',status:409};
   }catch{return {error:'お題と参考写真の準備に失敗しました。もう一度準備してください。',status:502};}
   finally{await env.DB.prepare('UPDATE rooms SET generationLease=0 WHERE id=? AND generationLease=?').bind(roomId,lease).run();snapshotCache.delete(roomId);}
 }
@@ -226,6 +245,13 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
     const token=req.headers.get('authorization')?.replace(/^Bearer /,'');let player:any;
     if(token){player=await env.DB.prepare('SELECT * FROM players WHERE roomId=? AND token=?').bind(roomId,token).first();if(!player)return json({error:'この部屋の参加登録が見つかりません。'},401);}
     if(action==='state'&&req.method==='GET'){await expire(env);if(!room.lobbyStartedAt){await driveLobby(env,roomId,ctx);room=await env.DB.prepare('SELECT * FROM rooms WHERE id=?').bind(roomId).first<any>();}const state=await snapshot(req,env,room,player);if(state.stats.pending>0)ctx.waitUntil(pump(env));return json(state);}
+    if(action==='hint'&&req.method==='GET'){
+      if(!player)return json({error:'この部屋に参加登録してください。'},401);
+      const roundId=url.searchParams.get('roundId');
+      const round=await current(env.DB,roomId);
+      if(!round||round.id!==roundId||round.status!=='active'||round.endsAt<=Date.now()||player.joinedAt>round.startedAt)return json({error:'現在参加できる競技のヒントだけ取得できます。'},409);
+      return json({roundId:round.id,text:round.hint||null,available:!!round.hint});
+    }
     if(action.startsWith('reference/')&&req.method==='GET'){
       const roundId=action.slice('reference/'.length);const r=await env.DB.prepare('SELECT challenge FROM rounds WHERE id=? AND roomId=?').bind(roundId,roomId).first<any>();
       if(!r)return json({error:'参考写真はゲーム開始後に表示されます。'},404);
@@ -242,13 +268,13 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
     if(action==='join'&&req.method==='POST'){
       const {name,profile=''}=await req.json() as any;if(typeof name!=='string'||!name.trim()||name.length>24||typeof profile!=='string'||profile.length>240)return json({error:'名前は1〜24文字、自己紹介は240文字以内です。'},400);
       const id=crypto.randomUUID(),token=crypto.randomUUID()+crypto.randomUUID();
-      const inserted=await env.DB.prepare('INSERT INTO players(id,token,name,profile,joinedAt,roomId) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM players WHERE roomId=?)<200 RETURNING id').bind(id,token,name.trim(),profile,receivedAt,roomId,roomId).first();
+      const inserted=await env.DB.prepare('INSERT INTO players(id,token,name,profile,joinedAt,roomId) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM players WHERE roomId=?)<? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=? AND number>=? AND status=\'closed\') RETURNING id').bind(id,token,name.trim(),profile,receivedAt,roomId,roomId,MAX_PLAYERS,roomId,TOTAL_ROUNDS).first();
       if(inserted){
         await env.DB.prepare('UPDATE rooms SET lobbyDeadline=COALESCE(lobbyDeadline,(SELECT MIN(joinedAt)+30000 FROM players WHERE roomId=?)) WHERE id=? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=?)').bind(roomId,roomId,roomId).run();
         await env.DB.prepare('UPDATE rooms SET preparedChallenge=NULL,preparedContext=NULL,preparedMode=CASE WHEN generationLease>? THEN preparedMode ELSE NULL END,preparedAt=NULL,preparationError=NULL WHERE id=? AND EXISTS(SELECT 1 FROM rounds WHERE roomId=?)').bind(Date.now(),roomId,roomId).run();
         ctx.waitUntil(driveLobby(env,roomId,ctx));
       }
-      return inserted?json({id,token}):json({error:'この部屋の参加上限に達しました。'},409);
+      return inserted?json({id,token},201):json({error:'この部屋は満員、または全競技が終了しています。'},409);
     }
     if(action.startsWith('host/')){
       if(!await hostOf(req,room))return json({error:'この部屋を作成したブラウザーで操作してください。'},403);
@@ -258,6 +284,12 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
       }
       if(action==='host/reference-trace'&&req.method==='GET'){const r=await current(env.DB,roomId);return r?json({referenceTrace:JSON.parse(r.challenge).referenceTrace||null}):json({error:'開始後に確認できます。'},404);}
       await expire(env);const round=await current(env.DB,roomId);
+      if(action==='host/hint'&&req.method==='POST'){
+        const {roundId,text}=await req.json() as any;
+        if(typeof roundId!=='string'||(text!==null&&(typeof text!=='string'||!text.trim()||text.length>500)))return json({error:'ヒントは1〜500文字、削除時はnullを指定してください。'},400);
+        const saved=await env.DB.prepare("UPDATE rounds SET hint=? WHERE id=? AND roomId=? AND status='active' AND endsAt>? AND number=(SELECT MAX(number) FROM rounds WHERE roomId=?) RETURNING id").bind(text===null?null:text.trim(),roundId,roomId,Date.now(),roomId).first();
+        return saved?json({roundId,text:text===null?null:text.trim(),available:text!==null}):json({error:'現在の競技だけヒントを設定できます。'},409);
+      }
       if(action==='host/end'&&req.method==='POST'){if(round)await env.DB.prepare("UPDATE rounds SET status='closed' WHERE id=? AND roomId=?").bind(round.id,roomId).run();return json({ok:true});}
       if(action==='host/extend-lobby'&&req.method==='POST'){
         const changed=await env.DB.prepare('UPDATE rooms SET lobbyDeadline=lobbyDeadline+10000 WHERE id=? AND lobbyDeadline IS NOT NULL AND lobbyStartedAt IS NULL AND (generationLease<=? OR preparedChallenge IS NULL) AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=?) RETURNING lobbyDeadline').bind(roomId,Date.now(),roomId).first<any>();
@@ -271,6 +303,7 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
         return json({ok:true,usedPrepared:started,preparing:!started},started?200:202);
       }
       if(action==='host/start-now'&&req.method==='POST')return json({error:'初回のゲームは開始済みです。'},409);
+      if(round&&round.number>=TOTAL_ROUNDS&&['host/start','host/prepare','host/mode'].includes(action))return json({error:'最終競技です。次の競技は作成できません。'},409);
       const waiting=await env.DB.prepare(`SELECT id FROM submissions WHERE roomId=? AND status IN ${pending} LIMIT 1`).bind(roomId).first();
       if(round?.status==='active'||waiting)return json({error:'ラウンドと判定の終了を待ってください。'},409);
       if(action==='host/mode'&&req.method==='POST'){
@@ -290,19 +323,28 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
       if(Number(req.headers.get('content-length')||0)>1100000)return json({error:'写真を1MB以内に圧縮してください。'},413);
       let form:FormData;try{form=await boundedForm(req);}catch{return json({error:'写真を1MB以内に圧縮して送信してください。'},413);}receivedAt=Date.now();const photo=form.get('photo'),requestId=form.get('requestId'),roundId=form.get('roundId');
       if(typeof requestId!=='string'||!requestId||requestId.length>80||typeof roundId!=='string')return json({error:'投稿情報を確認してください。'},400);
-      const prior=await env.DB.prepare('SELECT id,status,receivedAt FROM submissions WHERE roomId=? AND playerId=? AND roundId=? AND requestId=?').bind(roomId,player.id,roundId,requestId).first<any>();if(prior)return json({...prior,duplicate:true},['uploading','queued','processing'].includes(prior.status)?202:200);
+      const prior=await env.DB.prepare('SELECT id,status,receivedAt FROM submissions WHERE roomId=? AND playerId=? AND roundId=? AND requestId=?').bind(roomId,player.id,roundId,requestId).first<any>();if(prior)return json({...prior,status:prior.status==='uploading'?'queued':prior.status,duplicate:true},['uploading','queued','processing'].includes(prior.status)?202:200);
       const round=await current(env.DB,roomId);if(!round||round.id!==roundId)return json({error:'お題が切り替わりました。'},409);if(round.status!=='active'||receivedAt>=round.endsAt)return json({error:'受付時間が終了しました。'},409);if(player.joinedAt>round.startedAt)return json({error:'次のお題から挑戦できます。'},409);
       if(!(photo instanceof File)||photo.size===0||photo.size>1048576)return json({error:'写真は1MB以内にしてください。'},413);
       const bytes=await photo.arrayBuffer(),b=new Uint8Array(bytes);let mime:string;
       if(b[0]===255&&b[1]===216&&b[2]===255)mime='image/jpeg';else if(b[0]===137&&b[1]===80&&b[2]===78&&b[3]===71)mime='image/png';else if(new TextDecoder().decode(b.subarray(0,4))==='RIFF'&&new TextDecoder().decode(b.subarray(8,12))==='WEBP')mime='image/webp';else return json({error:'JPEG・PNG・WebPの写真を使ってください。'},400);
-      const submittedHash=await hash(bytes);const challenge=JSON.parse(round.challenge);if(challenge.reference?.sha256===submittedHash)return json({error:'参考写真そのものは送信できません。実物を撮影してください。'},409);
+      const submittedHash=await hash(bytes);receivedAt=Date.now();const challenge=JSON.parse(round.challenge);if(challenge.reference?.sha256===submittedHash)return json({error:'参考写真そのものは送信できません。実物を撮影してください。'},409);
+      if(receivedAt>=round.endsAt)return json({error:'受付時間が終了しました。'},409);
       const id=crypto.randomUUID(),objectKey=`pending/${roomId}/${id}`,digest=submittedHash,demoResult=form.get('demoResult')==='reject'?'reject':'pass';
       let inserted;
-      try{inserted=await env.DB.prepare(`INSERT INTO submissions(id,playerId,roundId,requestId,hash,receivedAt,status,roomId,objectKey,mime,demoResult,leaseUntil) SELECT ?,?,?,?,?,?,'uploading',?,?,?,?,0 WHERE (SELECT COUNT(*) FROM submissions WHERE status IN ${pending})<200 AND (SELECT COUNT(*) FROM submissions WHERE roomId=? AND status IN ${pending})<100 AND (SELECT COUNT(*) FROM submissions WHERE roomId=? AND playerId=? AND roundId=?)<8 AND EXISTS(SELECT 1 FROM rounds WHERE id=? AND roomId=? AND number=(SELECT MAX(number) FROM rounds WHERE roomId=?)) RETURNING id`).bind(id,player.id,roundId,requestId,digest,receivedAt,roomId,objectKey,mime,demoResult,roomId,roomId,player.id,roundId,roundId,roomId,roomId).first();}
-      catch{return json({error:'判定中・合格済みか、同じ写真をすでに受け付けています。'},409);}
-      if(!inserted)return json({error:'判定キューまたは投稿回数の上限です。少し待ってください。'},429);
+      try{inserted=await env.DB.prepare(`INSERT INTO submissions(id,playerId,roundId,requestId,hash,receivedAt,status,roomId,objectKey,mime,demoResult,leaseUntil) SELECT ?,?,?,?,?,?,'uploading',?,?,?,?,0 WHERE (SELECT COUNT(*) FROM submissions WHERE status IN ${pending})<200 AND (SELECT COUNT(*) FROM submissions WHERE roomId=? AND status IN ${pending})<100 AND (SELECT COUNT(*) FROM submissions WHERE roomId=? AND playerId=? AND roundId=?)<8 AND EXISTS(SELECT 1 FROM rounds WHERE id=? AND roomId=? AND status='active' AND endsAt>? AND startedAt>=? AND number<=? AND number=(SELECT MAX(number) FROM rounds WHERE roomId=?)) RETURNING id`).bind(id,player.id,roundId,requestId,digest,receivedAt,roomId,objectKey,mime,demoResult,roomId,roomId,player.id,roundId,roundId,roomId,receivedAt,player.joinedAt,TOTAL_ROUNDS,roomId).first();}
+      catch{
+        const repeated=await env.DB.prepare('SELECT id,status,receivedAt FROM submissions WHERE roomId=? AND playerId=? AND roundId=? AND requestId=?').bind(roomId,player.id,roundId,requestId).first<any>();
+        if(repeated)return json({...repeated,status:repeated.status==='uploading'?'queued':repeated.status,duplicate:true},['uploading','queued','processing'].includes(repeated.status)?202:200);
+        return json({error:'判定中・合格済みか、同じ写真をすでに受け付けています。'},409);
+      }
+      if(!inserted){
+        const latest=await current(env.DB,roomId);
+        if(!latest||latest.id!==roundId||latest.status!=='active'||latest.endsAt<=Date.now())return json({error:'お題の受付が終了しました。'},409);
+        return json({error:'判定キューまたは投稿回数の上限です。少し待ってください。'},429);
+      }
       try{await env.BUCKET.put(objectKey,bytes,{httpMetadata:{contentType:mime},customMetadata:{roomId}});await env.DB.prepare("UPDATE submissions SET status='queued' WHERE id=? AND status='uploading'").bind(id).run();}
-      catch{await env.DB.prepare("UPDATE submissions SET status='error',hash=NULL WHERE id=?").bind(id).run();return json({error:'写真を受け付けられませんでした。再投稿してください。'},503);}
+      catch{await env.DB.prepare("UPDATE submissions SET status='error',hash=NULL,verdict=? WHERE id=?").bind(JSON.stringify({reason:'写真を保存できませんでした。再投稿してください。'}),id).run();return json({error:'写真を受け付けられませんでした。再投稿してください。'},503);}
       ctx.waitUntil(pump(env));return json({id,status:'queued',queued:true,receivedAt},202);
     }
     return json({error:'APIが見つかりません。'},404);

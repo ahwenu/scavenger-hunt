@@ -1,5 +1,11 @@
 # 画面仕様・デザインとフロントエンドの境界
 
+## Issue #1対応の現在の受け渡し
+
+100人全員が個人プレイヤーとして参加し、最大10競技・各競技の初合格500点をサーバーが確定する。`game`、全10件の`stages`、`ranks[].score/rank`、`mine[].awardedPoints`、共通ヒントのGETは[12の応答例](12-issue1-backend-handoff.md)と[ADR-0013](adr/0013-issue1-player-game-contract.md)を基準とする。点数やステージ解放を端末で仮計算しない。開始前はround=null、競技間は直前roundのclosedを表示し、ホストが次競技を開始するまで待機する。ヒント未用意はavailable=false、写真の処理状態はqueued/processing/accepted/rejected/error。順位は連番で、同点同順位の初期案は使わない。
+
+今回の変更はバックエンドのみで、下記の画面構成・React部品・Cookie契約などの初期案をUIへ実装したものではない。既存参加者はBearerで接続し、写真は1MiB以下。新しい画面への組み込みとスマホ実機確認はmae・Akibako担当への後続受け渡し。公開先には未配備。
+
 デザインはAkibako さん、Sitesの参加者向けフロントエンド開発はmae さん。Plugin Extensionsのホスト画面開発は未定（Ahwenu）とし、mae さんの担当には含めない。API処理はAhwenu、バックエンドはさが さんが担当する。
 
 ## デザイン方針
