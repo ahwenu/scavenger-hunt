@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Codex">
+  <title>参加者画面とチーム方針の整合計画</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, sans-serif; color: #172434; background: #f5f7f9; }
+    body { margin: 0; line-height: 1.65; }
+    main { max-width: 960px; margin: auto; padding: 28px 22px 64px; }
+    header { border-bottom: 3px solid #2d6a8a; padding-bottom: 18px; }
+    h1 { font-size: clamp(1.55rem, 4vw, 2.25rem); line-height: 1.3; margin: 0 0 10px; }
+    h2 { margin-top: 34px; border-bottom: 1px solid #cbd6de; padding-bottom: 5px; font-size: 1.3rem; }
+    p, li { max-width: 75ch; }
+    .meta { color: #526579; font-size: .9rem; margin: 0; }
+    .lead { font-size: 1.08rem; }
+    .note { background: #eaf2f6; border-left: 4px solid #2d6a8a; padding: 12px 16px; }
+    table { border-collapse: collapse; width: 100%; background: white; }
+    th, td { border: 1px solid #cbd6de; padding: 9px 11px; text-align: left; vertical-align: top; }
+    th { background: #eaf2f6; }
+    figure { margin: 20px 0; padding: 18px; background: white; border: 1px solid #cbd6de; overflow-x: auto; }
+    figcaption { color: #526579; margin-top: 10px; font-size: .9rem; }
+    svg { display: block; min-width: 700px; max-width: 100%; height: auto; }
+    .steps { padding-left: 1.4em; }
+    .steps li { margin-bottom: 10px; }
+    @media (max-width: 600px) { main { padding: 20px 14px 48px; } table { font-size: .9rem; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>参加者画面とチーム方針の整合計画</h1>
+    <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 日付：2026-10-18 ／ 対象コミット：64d509a ／ 作業ブランチ：feat/mae-context-alignment</p>
+    <p class="lead">まえ担当の参加者向け実装を、現在の仕様とチームのメモ、公開中の画面に照らして整理する計画。プロトタイプのコードは今後コミット・プッシュされる見込みで、実装の中身は未確認。</p>
+    <p>AIが参照しやすい作業コンテキストは <a href="../mobile-frontend-context.md">参加者向けフロントエンドの作業コンテキスト</a> にまとめた。</p>
+  </header>
+
+  <section aria-labelledby="basis"><h2 id="basis">前提と差分</h2>
+    <p>現行のProject.mdとAcceptedのADR-0001・0002では、参加者はスマホのブラウザでSitesを利用し、ホスト画面はPlugin Extensionsに置く。まえ担当は参加者画面の処理である。10月17日の議事録には、参加者側をPlugin Extensionsとする古い案が残る。</p>
+    <table><thead><tr><th>論点</th><th>現行文書</th><th>追加メモ</th><th>この作業での扱い</th></tr></thead><tbody>
+      <tr><td>参加者画面</td><td>SitesのスマホWeb</td><td>議事録とさがさんメモにExtensionの記述</td><td>新しいAccepted方針を基準とし、相違をコンテキストに明記</td></tr>
+      <tr><td>お題の進行</td><td>共通3問を準備し、ホストが次問へ進める案</td><td>最初の正解で次のお題を増やす案</td><td>採用判断は保留。画面はAPIの状態で表示できる境界を保つ</td></tr>
+      <tr><td>得点と演出</td><td>1問1チーム10点、同点同順位の案</td><td>先着特典、クリア通知、紙吹雪の希望</td><td>希望を受け渡し事項に記録。確定値以外は画面で先出ししない</td></tr>
+      <tr><td>提出時刻</td><td>共有画像では17:15締切</td><td>議事録では17:45目安</td><td>新しい共有画像の17:15を作業上の締切として扱う</td></tr>
+    </tbody></table>
+  </section>
+
+  <section aria-labelledby="live"><h2 id="live">公開プロトタイプで見えたこと</h2>
+    <p><a href="https://ai-karimono-race.ahwenu.chatgpt.site/">公開された入口画面</a>には「AI借り物競争 / FIND IT. SNAP IT.」と表示され、Sites上に部屋作成フォームがある。QR参加、デモ・実AIモード、参考写真、写真受付時刻順のランキングも画面の説明に現れる。部屋作成や写真投稿はこの作業では行っていない。</p>
+    <p><a href="https://ai-karimono-race.ahwenu.chatgpt.site/verification.html">公開検証ページ</a>には、初回参加から30秒での自動開始、合格通知、実画像を使ったAI判定、70接続のデモ負荷の記録がある。これらはページの記載であり、こちらで再試験した結果ではない。</p>
+    <p class="note">現行文書との主な差は、Sites上のホスト操作、アプリの表示名、30秒自動開始、参考写真のMVP利用、画像縮小の上限。コードが届いてから実際の画面遷移とAPIを読み、どの差を実装へ反映するか確認する。</p>
+  </section>
+
+  <section aria-labelledby="scope"><h2 id="scope">何を作るか</h2>
+    <ol class="steps">
+      <li><strong>コンテキスト文書：</strong><code>docs/mobile-frontend-context.md</code> に、参加者の体験、画面状態、まえ担当の境界、他担当から必要な契約、メモとの相違、未決事項を記す。詳細仕様は既存の03・04・07とADRへリンクし、別の正本を増やさない。</li>
+      <li><strong>実装の確認：</strong>プロトタイプの保存先を特定して画面遷移・カメラ・送信・結果・ランキング・復帰を読み、文書と違う点を事実として整理する。</li>
+      <li><strong>参加者画面の整合：</strong>実装が見つかったら、入口→待機→お題→撮影→送信・判定→結果・順位の流れを、APIから来る状態に合わせる。読み込み・通信失敗・カメラ拒否も画面状態として扱う。</li>
+      <li><strong>結合確認：</strong>API契約がまだ仮の場合はモックで画面を確認し、実APIがある範囲で接続する。実機や実AIを試していない部分は未確認と記録する。</li>
+    </ol>
+    <p class="note">現在のリポジトリには文書と参考画像だけがある。公開画面は見られるが、プロトタイプがプッシュされた後にコードを読み、実装の変更範囲を確定する。</p>
+  </section>
+
+  <section aria-labelledby="structure"><h2 id="structure">境界とデータの流れ</h2>
+    <figure>
+      <svg viewBox="0 0 930 310" role="img" aria-labelledby="diagram-title diagram-desc" xmlns="http://www.w3.org/2000/svg">
+        <title id="diagram-title">参加者画面とホスト画面の接続</title>
+        <desc id="diagram-desc">参加者のスマホはSitesの参加者画面、画面状態と操作、API契約、Sites APIへ進む。APIはゲームと保存、AI判定につながる。ホストのPlugin ExtensionsはMCP接続を経て同じAPIにつながる。</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#41637a"/></marker></defs>
+        <g fill="#eaf2f6" stroke="#41637a" stroke-width="2">
+          <rect x="15" y="40" width="125" height="58" rx="9"/><rect x="177" y="40" width="145" height="58" rx="9"/><rect x="360" y="40" width="135" height="58" rx="9"/><rect x="533" y="40" width="115" height="58" rx="9"/><rect x="670" y="40" width="110" height="58" rx="9"/>
+          <rect x="800" y="40" width="120" height="58" rx="9"/><rect x="800" y="153" width="120" height="58" rx="9"/><rect x="15" y="210" width="165" height="58" rx="9"/><rect x="230" y="210" width="145" height="58" rx="9"/>
+        </g>
+        <g fill="none" stroke="#41637a" stroke-width="2.2" marker-end="url(#arrow)"><path d="M140 69 H177"/><path d="M322 69 H360"/><path d="M495 69 H533"/><path d="M648 69 H670"/><path d="M780 69 H800"/><path d="M725 98 V182 H800"/><path d="M180 239 H230"/><path d="M375 239 H470 V135 H660 V95 H670"/></g>
+        <g fill="#172434" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle"><text x="77" y="75">参加者のスマホ</text><text x="249" y="75">Sitesの参加者画面</text><text x="427" y="75">画面状態と操作</text><text x="590" y="75">API契約</text><text x="725" y="75">SitesのAPI</text><text x="860" y="75">ゲームと保存</text><text x="860" y="187">AI判定</text><text x="97" y="245">ホストの拡張画面</text><text x="302" y="245">MCP接続</text></g>
+      </svg>
+      <figcaption>同じ構造をdraw.ioのMermaid図でも開いて確認した。まえ担当の主な変更範囲は「Sitesの参加者画面」と「画面状態と操作」。</figcaption>
+    </figure>
+    <p>表示部品はAkibakoさんの設計を受け、参加者画面の状態管理・撮影・API接続をまえ担当が持つ。得点や締切の確定はサーバー側、HTTP契約はAhwenu、ゲームと保存はさがさんの領域として扱う。</p>
+  </section>
+
+  <section aria-labelledby="verify"><h2 id="verify">確認できたと言える条件</h2>
+    <ul><li>コンテキスト文書が現行ADR、画面仕様、API契約と矛盾せず、相違する案は未決として明示されている。</li><li>プロトタイプの画面と状態を実コードで確認し、必要な変更だけを行ったことが差分で追える。</li><li>参加、撮影、送信、判定中、合否、順位、通信失敗の各状態を確認できる。実機・実APIを使ったかどうかを区別して記録する。</li><li>ファイル変更とテスト結果を作業ブランチ上で確認し、他担当の領域には無断で仕様変更を広げない。</li></ul>
+  </section>
+
+  <section aria-labelledby="decision"><h2 id="decision">作業前に確かめる事項</h2>
+    <p>プロトタイプのコードがプッシュされたら、現行の動作を先に読む。お題を「ホストが進める共通3問」から「初正解で追加生成」に変えるか、先着特典・クリア通知をMVPに含めるかは、現行文書と追加メモで一致していない。画面の構造はどちらにも対応できるよう保ち、ゲームルールの変更は合意後に関係ADR・API契約と一緒に扱う。</p>
+  </section>
+</main>
+</body>
+</html>

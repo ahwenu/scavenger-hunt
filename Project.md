@@ -36,6 +36,8 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [08 Plugin Extensions](docs/08-plugin-extensions.md) | ホスト管理画面、MCP、Sites接続 | 未定（Ahwenu）・Ahwenu・さが さん |
 | [09 フォルダ構成・デプロイ](docs/09-repository-structure.md) | 担当別の編集先、独立ビルド、共有ファイルの更新ルール | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
+| [参加者画面の作業コンテキスト](docs/mobile-frontend-context.md) | 現行仕様と追加メモ・公開画面の差、まえ担当の受け渡し | まえ さん・連携担当 |
+| [参加者画面の整合計画](docs/ai-reports/2026-10-18-参加者画面の整合計画.html) | 実装コード到着後の確認・整合手順 | 全員 |
 
 構成：**ホスト画面＝Plugin Extensions／参加者スマホ画面とバックエンド＝Sites**。追加指示に従い、添付図からホスト画面の配置を変更しています。
 
