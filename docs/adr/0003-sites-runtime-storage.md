@@ -1,14 +1,16 @@
 # ADR-0003: Sitesスターター・Workers・D1・R2を採用する案
 
-- 状態：Proposed
+- 状態：Superseded
 - 作成日：2026-10-18
 - 最終更新：2026-10-18
 - 関係担当：mae さん、さが さん、Ahwenu
 - 決定の根拠：既存の技術構成案。実環境での採否は未確定
 - 置き換えるADR：なし
-- 後継ADR：なし
+- 後継ADR：[ADR-0016](0016-supabase-game-persistence.md)。本番ゲーム記録はSupabaseへ変更。Sites/Cloud実行の現行方針は[ADR-0011](0011-new-sites-deployment.md)を参照
 
 ## 背景と提案
+
+以下は当初の構成案の履歴。D1を本番の正本とする案はユーザーのSupabase指示により置き換えられた。現在のコード・既存配備にD1/R2が残っていることとは区別する。
 
 Sitesに画面とバックエンドを置く確定方針に対し、Vinext/React/TypeScript、Workers、D1、R2を第一候補とする。サーバー側をゲーム状態の正本とし、ブラウザやMCPプロセスのメモリに永続性を依存させない。
 
@@ -31,3 +33,4 @@ Sitesと外部HTTPバックエンドを分離する案は、Sitesで必要な処
 ## 変更履歴
 
 - 2026-10-18：既存案をProposedとして記録。実装・検証は未実施。
+- 2026-10-18：Supabase採用のADR-0016によりSuperseded。写真保存先の変更は確定していない。

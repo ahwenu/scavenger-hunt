@@ -1,0 +1,207 @@
+*{box-sizing:border-box}
+.karimono-page{min-height:100dvh;background:linear-gradient(135deg,#e8f6ff,#ffe9f3 54%,#dbf7ec);color:#17305e;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;padding:16px}
+.karimono-page button,.karimono-page input{font:inherit}
+.preview-switch{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;max-width:900px;margin-bottom:14px}
+.preview-switch button{border:1px solid #8cb2df;background:#fff;color:#1c4c87;border-radius:99px;padding:5px 10px;cursor:pointer;font-weight:800;font-size:12px}
+.preview-switch button[aria-pressed="true"]{background:#f74f86;color:white;border-color:#e5316c}
+.game-shell{--deep:#173b7b;--sky:#269ff0;--pink:#fb397a;--yellow:#ffcf3f;position:relative;isolation:isolate;overflow:hidden;width:min(100%,430px);min-height:min(100dvh,860px);border:7px solid #f9fcff;border-radius:28px;background:#9ad8fa url('/design/sports-field.png') center center/cover no-repeat;box-shadow:0 22px 55px #18407845,0 0 0 1px #a8c6e8;display:flex;flex-direction:column}
+.game-shell::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,#65c9ff5e 0%,#ffffff05 34%,#5b9bc615 63%,#8ec64e44 100%)}
+.sky-glow{position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(circle at 25% 10%,#fff9 0,transparent 33%)}
+.game-topline{height:42px;display:flex;align-items:center;gap:7px;padding:6px 11px;z-index:4;background:linear-gradient(#ffffffbc,#ffffff16);font-size:11px;font-weight:900}
+.small-mark{border:0;background:#ffffffd8;color:#ef2e70;border-radius:9px;box-shadow:0 2px 0 #ffffff88;padding:2px 7px;white-space:nowrap;font-weight:1000!important;cursor:pointer}
+.room-label{min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;flex:1;text-shadow:0 1px white}
+.mode-label{border-radius:50px;background:#166aca;color:white;padding:2px 6px;font-size:10px;letter-spacing:.04em}
+.game-nav{position:absolute;right:9px;top:48px;display:flex;gap:5px;z-index:5}
+.game-nav button{width:33px;height:33px;border:1px solid #ffffffbb;border-radius:10px;background:#fffde9e6;color:#1b4c88;display:grid;place-items:center;box-shadow:0 3px 0 #2f7ac690;cursor:pointer}
+.screen{position:relative;flex:1;display:flex;flex-direction:column;align-items:center;width:100%;padding:12px 18px 18px;z-index:1}
+.game-footer{position:relative;height:25px;display:flex;justify-content:space-between;align-items:center;padding:0 12px;background:#177acaad;color:#fff;font-size:9px;font-weight:900;letter-spacing:.05em;text-shadow:0 1px #1559a1;z-index:2}
+.game-button{min-height:52px;border-radius:99px;border:3px solid #fff;box-shadow:0 4px 0 #bd2a62,0 6px 12px #17477f55,inset 0 3px 0 #ffffffa8;display:inline-flex;align-items:center;justify-content:center;gap:7px;color:white;font-weight:1000!important;letter-spacing:.02em;text-shadow:0 2px 1px #9b2350;cursor:pointer;transition:transform .13s,filter .13s;padding:5px 18px;text-align:center}
+.game-button:active{transform:translateY(3px);box-shadow:0 1px 0 #bd2a62,0 2px 7px #17477f55}
+.game-button:focus-visible,.game-nav button:focus-visible,.preview-switch button:focus-visible,.stage-grid button:focus-visible{outline:3px solid #092b7a;outline-offset:3px}
+.game-button:disabled{filter:grayscale(.5);opacity:.68;cursor:not-allowed}
+.game-button--pink{background:linear-gradient(#ff83ad 0%,#ff3c78 43%,#ed1d60 100%)}
+.game-button--blue{background:linear-gradient(#81d8ff,#12aeff 48%,#0883dc);box-shadow:0 4px 0 #166dba,0 6px 12px #17477f55,inset 0 3px 0 #ffffffa8;text-shadow:0 2px 1px #236cae}
+.game-button--yellow{background:linear-gradient(#fff58f,#ffd63a 50%,#ffae20);color:#284873;box-shadow:0 4px 0 #d98316,0 6px 12px #17477f55,inset 0 3px 0 #ffffffa8;text-shadow:0 1px #fff}
+.game-button--white{background:linear-gradient(#fff,#dcefff);color:#1c4b84;box-shadow:0 4px 0 #2882d0,0 6px 12px #17477f55,inset 0 3px 0 #ffffffa8;text-shadow:0 1px white}
+.connection-message{position:absolute;top:44px;left:10px;right:10px;z-index:6;background:#fff6d1;border:2px solid #f3b63b;border-radius:9px;margin:0;padding:4px;font-size:11px;text-align:center}
+.screen-error{position:absolute;bottom:36px;left:12px;right:12px;z-index:8;background:#fff1f4;color:#9d1242;border:2px solid #ec5f83;border-radius:12px;box-shadow:0 3px 12px #41334355;padding:8px 10px;margin:0;font-size:13px;font-weight:800}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+/* ① スタート */
+.home-screen{justify-content:flex-start;padding-top:32px}
+.wood-sign{position:relative;width:96%;min-height:150px;transform:rotate(-2deg);border-radius:18px 18px 24px 24px;border:7px solid #94512e;background:linear-gradient(105deg,#ad6c37,#f3bf64 24%,#ce863f 70%,#985324);box-shadow:0 8px 0 #7a432b,0 16px 22px #123d754a,inset 0 0 0 5px #ffdf88;text-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center}
+.wood-sign::before,.wood-sign::after{content:"★";position:absolute;top:-21px;color:#ffc536;font-size:37px;-webkit-text-stroke:2px #94551e;text-shadow:0 3px white}.wood-sign::before{left:28px}.wood-sign::after{right:25px}
+.wood-sign span{font-size:clamp(49px,14vw,67px);line-height:1.05;color:#2788e8;font-weight:1000;letter-spacing:-.08em;padding-right:.08em;-webkit-text-stroke:5px white;paint-order:stroke fill;text-shadow:3px 5px 0 #07549c,5px 7px 0 #3b393c}
+.wood-sign small{margin-top:7px;background:#fff8ca;border-radius:30px;padding:1px 14px;color:#56381d;font-weight:1000;font-size:15px;box-shadow:0 2px #935d37}
+.home-subtitle{margin:12px 0 0;border-radius:20px;background:#fff9e9d9;padding:2px 16px;color:#2b5d9c;font-weight:1000;font-size:14px}
+.home-characters{position:relative;width:100%;height:clamp(220px,38vh,340px);margin-top:auto;display:flex;align-items:end;justify-content:center}
+.home-characters::before{content:"";position:absolute;inset:auto -20px 0;height:39%;background:linear-gradient(transparent,#8ed65699);z-index:-1}
+.home-characters img{width:64%;max-height:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 9px 7px #31577878)}
+.home-characters img:first-child{margin-right:-25%;z-index:1;transform:rotate(-3deg)}
+.home-characters img:last-child{width:51%;transform:rotate(7deg)}
+.home-actions,.join-form{display:flex;flex-direction:column;gap:9px;width:100%;max-width:320px;margin:auto 0 0;z-index:2}
+.home-actions .game-button,.join-form .game-button{width:100%;font-size:22px;min-height:62px}
+.join-form{background:#fffdf1ec;border:3px solid #fff;border-radius:18px;box-shadow:0 5px 13px #255a8d59;padding:10px}
+.join-form label{font-weight:900;font-size:13px}.join-form input{width:100%;border:2px solid #6eb5e8;border-radius:10px;background:#fff;color:#17305e;padding:8px 10px;font-size:16px}
+.join-form .game-button{min-height:48px;font-size:19px}
+.waiting-copy{margin:0;background:#fffdf1d9;border-radius:12px;padding:5px;text-align:center;font-size:12px;font-weight:800}
+.text-link{display:inline-flex;align-items:center;gap:2px;margin:12px 0 0;border:0;border-radius:50px;background:#fffde6dc;color:#21568d;padding:5px 10px;font-weight:900;cursor:pointer}
+
+/* ② お題と撮影 */
+.round-meta{align-self:stretch;display:flex;justify-content:space-between;gap:8px;margin:38px 0 10px;font-size:13px;font-weight:1000}.round-meta span,.round-meta strong{background:#d9f2ffe9;border:2px solid #fff;border-radius:9px;padding:5px 10px;box-shadow:0 3px #5da7d4}.round-meta strong{background:#174c91e7;color:#fff}
+.challenge-ticket{width:100%;min-height:126px;padding:23px 14px 12px;position:relative;border:4px solid #fff;background:#fffdeaeb;border-radius:16px;text-align:center;box-shadow:0 6px 0 #e5b861,0 10px 15px #355e8b52}
+.ticket-ribbon{position:absolute;top:-16px;left:50%;transform:translateX(-50%) rotate(-3deg);background:#fb4171;color:white;border:2px solid #fff;border-radius:5px;padding:0 15px;box-shadow:0 3px #c22b53;font-weight:1000;white-space:nowrap}
+.challenge-ticket h1{margin:0;color:#1d427c;font-size:clamp(19px,5.6vw,26px);line-height:1.35;font-weight:1000}.challenge-ticket p{margin:3px 0 0;font-size:12px;font-weight:750}
+.timer-pill{display:flex;align-items:center;gap:8px;border:3px solid #fff;background:#fffdf7;border-radius:50px;margin:12px 0 9px;padding:1px 18px;color:#f02c65;box-shadow:0 3px #70bde5}.timer-pill svg{color:#1973cb}.timer-pill strong{font-size:27px;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+.camera-frame{position:relative;overflow:hidden;width:100%;aspect-ratio:1.05;border:5px solid white;border-radius:18px;background:#6db9e9 url('/design/sports-field.png') center 68%/cover;box-shadow:0 6px 0 #428ccc,0 10px 20px #22528070}
+.captured-photo{width:100%;height:100%;object-fit:cover;display:block}.camera-placeholder{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:white;text-shadow:0 2px #155491;font-size:17px;font-weight:1000;background:#3289c455}.camera-placeholder svg{filter:drop-shadow(0 3px 2px #285080)}
+.camera-corner{position:absolute;width:30px;height:30px;border-color:white;border-style:solid;filter:drop-shadow(0 2px 2px #193e76)}.camera-corner--tl{top:12px;left:12px;border-width:4px 0 0 4px;border-radius:8px 0 0 0}.camera-corner--tr{top:12px;right:12px;border-width:4px 4px 0 0;border-radius:0 8px 0 0}.camera-corner--bl{bottom:12px;left:12px;border-width:0 0 4px 4px;border-radius:0 0 0 8px}.camera-corner--br{bottom:12px;right:12px;border-width:0 4px 4px 0;border-radius:0 0 8px 0}
+.camera-actions{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:16px}.camera-actions .game-button{flex:1;min-width:0;font-size:14px}.camera-actions .camera-main-button{flex:none;width:76px;height:76px;border-radius:50%;font-size:0;padding:0}.camera-main-button svg{width:32px;height:32px}
+.hint-link{margin-top:13px;display:flex;align-items:center;gap:5px;border:0;background:#fffad7db;color:#254c70;border-radius:30px;padding:6px 12px;font-weight:900}.hint-link:disabled{opacity:.75}.state-note{background:#fffde6dd;border-radius:8px;padding:5px 8px;font-size:12px;font-weight:800}
+.hint-card{position:relative;width:100%;margin-top:7px;border:3px solid #fff7d2;border-radius:14px;background:#fffde7f2;box-shadow:0 4px 0 #e4b93e;color:#284873;padding:8px 34px 8px 12px;text-align:center;font-size:14px}.hint-card strong{color:#d78905}.hint-card p{margin:4px 0 0}.hint-card button{position:absolute;top:4px;right:8px;border:0;background:none;color:#386494;font-size:23px;cursor:pointer}
+
+/* ③ 判定 */
+.judging-screen{justify-content:center;background:linear-gradient(#16476d70,#142e57b8);color:white;text-shadow:0 2px #0f2e58;text-align:center}.judging-bubble{background:#fff;border:3px solid #d7eaff;border-radius:40px;color:#1c3d7a;text-shadow:none;box-shadow:0 6px 0 #7cbbea;padding:12px 25px;font-weight:1000;font-size:25px}.judging-robot{width:90%;max-height:44vh;object-fit:contain;filter:drop-shadow(0 10px 10px #0b244b9c);animation:float 2.2s ease-in-out infinite}.progress-track{width:90%;height:25px;padding:4px;border:3px solid #fff;background:#e6f4ff;border-radius:30px;box-shadow:0 4px #174d83}.progress-track span{display:block;height:100%;width:65%;border-radius:20px;background:linear-gradient(90deg,#68e6f1,#10a9ef);animation:progress 2.5s ease-in-out infinite alternate}.judging-screen p{font-weight:1000;font-size:18px}.judging-screen small{max-width:285px;line-height:1.6;font-weight:750}
+
+/* ④⑤ 結果 */
+.result-screen{justify-content:flex-start;text-align:center}.success-screen{background:radial-gradient(circle at 50% 24%,#fff38eee,#fee45a8c 36%,transparent 66%)}.clear-burst{margin-top:35px;color:#ffb900;font-size:28px;letter-spacing:20px;text-shadow:2px 3px #fff}.success-screen h1{font:1000 clamp(63px,17vw,86px)/1 system-ui,sans-serif;transform:rotate(-4deg);letter-spacing:-.08em;margin:4px 0;color:#f7ab13;-webkit-text-stroke:4px white;paint-order:stroke fill;text-shadow:3px 5px 0 #cc5d11,5px 7px 0 #844331,0 8px 20px #ea8508}.result-character{width:94%;max-height:38vh;object-fit:contain;filter:drop-shadow(0 7px 6px #91542f70);margin-top:1vh}.result-reward{z-index:1;transform:rotate(-3deg);width:74%;padding:4px;border:3px solid #fff;border-radius:10px;background:linear-gradient(#ffe472,#ffc324);box-shadow:0 5px #d68116;color:#68421d;font-size:29px;font-weight:1000}.result-stats{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0 auto}.result-stats span{border:2px solid #fff;border-radius:11px;background:#fff9dded;padding:4px;font-size:12px;font-weight:900}.result-stats strong{display:block;color:#2d4b85;font-size:25px;line-height:1.2}.result-screen>.game-button{width:90%;font-size:19px;margin-bottom:16px}
+.failure-screen{background:linear-gradient(#172c60b3,#16315cd9);color:#fff}.failure-bubble{align-self:center;margin-top:42px;background:#204b80dc;border:3px solid #92caf0;border-radius:26px;transform:rotate(-6deg);padding:10px 20px;color:white;font-size:28px;font-weight:1000;box-shadow:0 6px #143155}.failure-characters{width:100%;height:36vh;min-height:210px;margin-top:25px;display:flex;justify-content:center;align-items:end;filter:saturate(.65)}.failure-characters img{width:65%;max-height:100%;object-fit:contain;filter:drop-shadow(0 5px 7px #061a39)}.failure-characters img:first-child{margin-right:-36%;transform:rotate(-7deg)}.failure-characters img:last-child{width:58%;transform:rotate(5deg)}.failure-reason{width:94%;border:3px solid #bceaff;background:#fff;border-radius:15px;color:#264877;text-shadow:none;padding:12px;margin:14px 0 auto;font-size:14px;font-weight:850}.failure-screen>.game-button{width:90%;margin:0 0 12px;font-size:17px}
+
+/* ⑥⑦⑧ サブ画面 */
+.banner-heading{position:relative;align-self:stretch;margin:32px 9px 20px;padding:7px 15px;background:linear-gradient(#fa606c,#e42643);border:3px solid #fff;border-radius:8px 8px 16px 16px;color:#fff;text-align:center;font-size:22px;font-weight:1000;text-shadow:0 2px #9b2740;transform:rotate(-2deg);box-shadow:0 5px #ac4850,0 8px 14px #24527c50}.banner-heading::before,.banner-heading::after{content:"";position:absolute;top:7px;border-top:19px solid #de3452;border-bottom:18px solid #de3452}.banner-heading::before{left:-19px;border-left:15px solid transparent}.banner-heading::after{right:-19px;border-right:15px solid transparent}
+.stage-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;margin-top:2vh}.stage-grid button{height:90px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:3px solid #fff;border-radius:13px;color:#2364a5;background:linear-gradient(#fffdec,#d7f3fb);box-shadow:0 5px 0 #55b3d7;font-weight:1000;cursor:pointer}.stage-grid button.active{background:linear-gradient(#fffadd,#ffe894);color:#f03f67;box-shadow:0 5px 0 #efaf4e}.stage-grid button:disabled{background:linear-gradient(#e7f3fa,#b4cadb);box-shadow:0 5px 0 #7d9bae;color:#6285a5;cursor:not-allowed}.stage-grid button span{font-size:16px}.stage-message,.rules-message{margin:auto 0 14px;background:#fffef0e9;border:2px solid #fff;border-radius:12px;padding:8px 10px;color:#315782;text-align:center;font-size:12px;font-weight:900}.stages-screen>.game-button,.ranking-screen>.game-button,.rules-screen>.game-button{width:90%;margin:0 0 10px}
+.ranking-tabs{display:flex;gap:2px;background:#fffdf0e9;border:2px solid #fff;border-radius:50px;padding:3px;margin-bottom:10px}.ranking-tabs span{font-size:12px;font-weight:900;border-radius:50px;padding:3px 12px}.ranking-tabs .selected{background:#1daceb;color:white}.ranking-list{list-style:none;padding:0;margin:0;width:100%;display:flex;flex-direction:column;gap:6px}.ranking-list li{min-height:54px;background:#fffdf0e9;border:2px solid #fff;border-radius:11px;box-shadow:0 3px 0 #80bedd;display:flex;align-items:center;gap:7px;padding:4px 8px;font-size:13px}.ranking-list li.my-rank{background:#ffe1eb;border-color:#fff;box-shadow:0 3px 0 #ea91b1}.rank-number{width:29px;font-weight:1000;font-size:20px;color:#e5a917;text-align:center}.ranking-list li:nth-child(2) .rank-number{color:#9bafb9}.ranking-list li:nth-child(3) .rank-number{color:#c88248}.rank-avatar{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#ffb9cc;color:#a61b5d;border:2px solid white;font-weight:1000}.rank-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:1000}.rank-name small{font-size:10px}.ranking-list strong{font-size:12px;color:#1e4d87;white-space:nowrap}.ranking-screen>.game-button{margin-top:auto}
+.rule-grid{width:100%;display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.rule-grid>div{position:relative;min-height:139px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:#fffde9ef;border:3px solid white;border-radius:16px;box-shadow:0 4px 0 #63b9d5;color:#1d4e8d}.rule-grid b{position:absolute;left:6px;top:3px;background:#13a4e9;color:white;border-radius:50%;width:25px;height:25px;text-align:center}.rule-grid span{font-size:14px;font-weight:1000}.rule-grid svg{color:#ec5473}.rule-grid img{width:70px;height:60px;object-fit:contain}.rules-message{margin-top:auto}.rules-screen>.game-button{margin-bottom:12px}
+@keyframes float{50%{transform:translateY(-10px)}}@keyframes progress{from{width:30%}to{width:87%}}
+@media(max-width:350px){.karimono-page{padding:0}.game-shell{border-width:0;border-radius:0;min-height:100dvh}.screen{padding-inline:12px}.home-screen{padding-top:20px}.wood-sign{min-height:123px}.wood-sign span{font-size:47px}.home-characters{height:205px}.round-meta{font-size:11px}.stage-grid button{height:75px}}
+@media(max-height:700px){.home-screen{padding-top:10px}.wood-sign{min-height:112px}.home-characters{height:185px}.round-meta{margin-top:15px}.camera-frame{aspect-ratio:1.25}.result-character{max-height:29vh}.failure-characters{height:25vh;min-height:160px}.stage-grid button{height:70px}.rule-grid>div{min-height:100px}}
+@media(prefers-reduced-motion:reduce){.judging-robot,.progress-track span{animation:none}.game-button{transition:none}}
+
+.design-comparison{min-height:100dvh;padding:20px;background:linear-gradient(125deg,#e8f6ff,#ffeaf3);color:#17305e;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif}
+.comparison-header{text-align:center}.comparison-header h1{font-size:23px;margin:0 0 5px}.comparison-header p{font-size:13px;margin:0 0 14px}.comparison-header .preview-switch{margin-inline:auto}
+.comparison-grid{display:grid;grid-template-columns:minmax(210px,1fr) minmax(320px,430px);gap:26px;max-width:800px;margin:auto;align-items:start}
+.comparison-reference,.comparison-implementation{min-width:0}.comparison-reference h2,.comparison-implementation h2{font-size:15px;margin:0 0 9px}.comparison-reference h2 small,.comparison-implementation h2 small{font-size:11px;font-weight:500}
+.comparison-reference{display:flex;flex-direction:column;align-items:center;padding:14px;border:1px solid #b4d2e8;border-radius:18px;background:#ffffffa8;min-height:390px}
+.comparison-reference img{display:block;width:auto;height:313px;max-width:100%;object-fit:contain;image-rendering:auto;box-shadow:0 5px 15px #234c8350}
+.comparison-implementation>.karimono-page{padding:0;background:none;min-height:0}
+@media(max-width:650px){.comparison-grid{grid-template-columns:1fr;gap:16px}.comparison-reference{min-height:0}.comparison-implementation{justify-self:center;width:min(100%,430px)}}
+.sound-toggle{position:absolute;right:8px;bottom:30px;z-index:10;display:grid;place-items:center;width:32px;height:32px;border:2px solid #fff;border-radius:50%;background:#1b67b9da;color:#fff;box-shadow:0 2px 5px #1c4a8499;cursor:pointer}
+.sound-toggle:focus-visible{outline:3px solid #092b7a;outline-offset:2px}
+.game-shell--live{background:#b1e7ff url('/design/sports-day/backgrounds/sky-bunting.png') center top/100% 52% no-repeat}
+.game-shell--live::before{background:linear-gradient(180deg,#ffffff00 35%,#fff8d0b0 63%,#9ad9a0 100%)}
+.game-shell--live::after{content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;height:58%;background:url('/design/sports-day/backgrounds/schoolyard.png') center bottom/100% 100% no-repeat;mask-image:linear-gradient(transparent,#000 26%);pointer-events:none}
+.game-shell--live .game-topline{height:27px;background:none;text-shadow:0 1px 2px #fff}
+.game-shell--live .game-nav{top:30px}
+.game-shell--live .screen{animation:screen-arrive .28s ease-out both}
+.game-shell--live .home-screen{padding-top:42px}
+.game-shell--live .home-characters{position:absolute;top:38%;height:34%;margin:0;width:100%}
+.game-shell--live .home-characters img{filter:drop-shadow(0 6px 4px #31577858)}
+.game-shell--live .home-actions{margin-top:auto;margin-bottom:6%}
+.game-shell--live .round-meta{margin:22px 0 12px}
+.game-shell--live .challenge-ticket{min-height:105px;padding-top:22px}
+.game-shell--live .timer-pill{margin:10px 0 9px}
+.game-shell--live .camera-frame{aspect-ratio:1.22;background:#6db9e9 url('/design/sports-day/backgrounds/schoolyard.png') center/cover}
+.game-shell--live .camera-actions{margin-top:-32px;z-index:3}
+.game-shell--live .camera-actions .camera-main-button{width:82px;height:82px}
+.game-shell--live .camera-main-button{animation:shutter-ready 2s ease-in-out 1}
+.game-shell--live .judging-screen{background:linear-gradient(#204f7488,#142e57b5)}
+.game-shell--live .judging-robot{width:53%;max-height:29vh;margin:12px 0 19px}
+.game-shell--live .success-screen .clear-burst{margin-top:1px;font-size:22px}
+.game-shell--live .success-screen h1{font-size:clamp(58px,16vw,79px);margin:0}
+.game-shell--live .result-character{width:65%;height:auto;max-height:29vh;object-fit:contain;margin-top:0}
+.game-shell--live .result-reward{margin-top:-4px}
+.game-shell--live .result-stats{margin-top:10px}
+.game-shell--live .failure-characters{height:28vh;min-height:180px;margin-top:8px;filter:none}
+.game-shell--live .failure-characters img{object-fit:contain}
+.game-shell--live .failure-characters img:last-child{width:45%}
+.game-shell--live .failure-reason{margin-top:4px}
+.game-shell--live .banner-heading{align-self:center;width:78%;margin:28px 0 18px;font-size:19px}
+.game-shell--live .stage-grid{grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;margin-top:0}
+.game-shell--live .stage-grid button{grid-column:span 4;height:108px}
+.game-shell--live .stage-grid button:nth-child(n+7){grid-column:span 3;height:78px}
+.game-shell--live .ranking-list{padding:12px 7px;background:#fffdf0e8;border:3px solid #fff;border-radius:14px;box-shadow:0 5px 0 #6ab5d4}
+.game-shell--live .ranking-list li{background:#fffdfa;border-color:#f4f6ec}
+.game-shell--live .ranking-list li.my-rank{background:#ffe0e9}
+.game-shell--live .rule-grid>div{min-height:160px}
+.game-shell--live .rule-grid img{width:110px;height:100px}
+.game-shell--live .rules-screen::after{content:"";position:absolute;right:3px;bottom:69px;width:86px;height:86px;background:url('/design/sports-day/characters/robot-judging.png') center/contain no-repeat;pointer-events:none}
+.gallery-button{flex:none;width:44px;height:42px;border:3px solid #fff;border-radius:10px;background:#fff9e5;color:#2f679e;box-shadow:0 3px 0 #3e87bf;font-size:25px;font-weight:900;cursor:pointer}
+.gallery-button:focus-visible{outline:3px solid #092b7a;outline-offset:2px}
+.gallery-button:disabled{opacity:.5;cursor:not-allowed}
+.game-shell--live .success-screen h1,.game-shell--live .result-reward,.game-shell--live .result-stats{animation:reward-pop .48s cubic-bezier(.2,1.6,.4,1) both}
+.game-shell--live .success-screen h1{animation-delay:.08s}
+.game-shell--live .result-reward{animation-delay:.18s}
+.game-shell--live .result-stats{animation-delay:.3s}
+.game-shell--live .failure-bubble{animation:failure-drop .5s ease-out both}
+.game-shell--live .stage-grid button{animation:tile-arrive .38s ease-out both}
+.game-shell--live .stage-grid button:nth-child(3n+2){animation-delay:.05s}
+.game-shell--live .stage-grid button:nth-child(3n+3){animation-delay:.1s}
+.game-shell--live .ranking-list li{animation:row-arrive .35s ease-out both}
+.game-shell--live .ranking-list li:nth-child(2){animation-delay:.06s}
+.game-shell--live .ranking-list li:nth-child(3){animation-delay:.12s}
+.game-shell--live .ranking-list li:nth-child(n+4){animation-delay:.18s}
+.game-shell--live .hint-card{animation:reward-pop .3s ease-out both}
+@keyframes screen-arrive{from{opacity:.65;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shutter-ready{50%{box-shadow:0 4px 0 #bd2a62,0 0 0 8px #fff9,inset 0 3px 0 #ffffffa8}}
+@keyframes reward-pop{from{opacity:0;transform:translateY(14px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes failure-drop{from{opacity:0;transform:translateY(-18px) rotate(-9deg)}to{opacity:1;transform:translateY(0) rotate(-6deg)}}
+@keyframes tile-arrive{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@keyframes row-arrive{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.game-shell--live .screen,.game-shell--live .camera-main-button,.game-shell--live .success-screen h1,.game-shell--live .result-reward,.game-shell--live .result-stats,.game-shell--live .failure-bubble,.game-shell--live .stage-grid button,.game-shell--live .ranking-list li,.game-shell--live .hint-card{animation:none}}
+
+/* 人数・順位は同じ部屋の状態から更新する */
+.live-count{display:inline-flex;align-items:center;gap:3px;flex:none;padding:2px 5px;border-radius:20px;background:#fffffff0;color:#164779;font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.live-count i,.live-indicator i{width:6px;height:6px;background:#20a775;border-radius:50%;box-shadow:0 0 0 2px #20a77520}
+.live-count small{font-size:9px;margin-left:1px}.live-count>span{animation:count-arrive .35s ease-out}.live-count--offline i,.live-indicator.offline i{background:#bf851b}
+.ranking-live-summary{display:flex;justify-content:space-between;align-items:center;width:100%;margin:0 0 9px;padding:5px 8px;border-radius:8px;background:#fffef3eb;font-size:11px;font-weight:850}
+.ranking-live-summary>span{display:inline-flex;gap:4px;align-items:center}.live-indicator{color:#187a59}.live-indicator.offline{color:#87591c}
+.my-rank-summary{display:flex;align-items:center;gap:9px;width:100%;padding:8px 12px;margin-bottom:10px;border:2px solid white;border-radius:13px;background:linear-gradient(100deg,#fff0b3,#fffbea);box-shadow:0 3px 0 #d8b357;color:#77531c}
+.my-rank-summary>span{flex:1;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px;font-weight:900}.my-rank-summary strong{font-size:24px;color:#294d79;line-height:1.2}.my-rank-summary>small{font-size:11px;white-space:nowrap;font-weight:900}
+.game-shell--live .ranking-list{position:relative;max-height:370px;max-height:min(47dvh,420px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#70bcd7 #fff9e8}
+.game-shell--live .ranking-list li{flex-shrink:0;animation:none;min-height:50px}.game-shell--live .rank-number{position:relative;width:28px;flex:none;font-size:18px;color:#376388;line-height:1.2;font-variant-numeric:tabular-nums}.rank-number small{display:block;font-size:9px;line-height:.8;color:#6e4b11}.game-shell--live .rank-number--1{color:#d6a01d}.game-shell--live .rank-number--2{color:#829aa9}.game-shell--live .rank-number--3{color:#ba7546}
+.ranking-footnote{margin:9px 0 14px;background:#fff9e5e8;border-radius:8px;padding:4px 8px;text-align:center;font-size:11px;font-weight:800}
+.game-shell--live .ranking-screen>.game-button{margin-top:auto}
+@keyframes count-arrive{from{transform:translateY(-3px);opacity:.4}to{transform:translateY(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.live-count>span{animation:none}}
+
+/* Mobbinの撮影UIを参照: 主操作は画面中央、補助操作は独立した左右列 */
+body{margin:0}
+.game-shell{min-height:800px}
+.game-shell--live .screen{padding:50px 22px 24px}
+.game-shell--live .home-screen{padding-top:42px}
+.game-shell--live .game-nav{top:34px;right:15px;gap:8px}
+.game-nav button{width:36px;height:36px;border-radius:12px;background:#fffef3ed;box-shadow:0 2px 0 #2f7ac65c}
+.game-shell--live .round-meta{margin:0 0 18px}
+.game-shell--live .challenge-ticket{min-height:104px;padding:22px 16px 14px}
+.game-shell--live .camera-frame{aspect-ratio:1.12;border-width:4px;border-radius:22px}
+.game-shell--live .camera-actions{display:grid;grid-template-columns:1fr 82px 1fr;gap:12px;align-items:center;margin-top:-32px;padding:0 14px}
+.game-shell--live .camera-actions .camera-main-button{grid-column:2;display:grid;place-items:center;width:82px;height:82px;padding:0;border:4px solid #fff;box-shadow:0 4px 0 #c52e66,0 8px 15px #17477f33,inset 0 2px 0 #ffffff88}
+.camera-main-button svg{display:block;width:32px;height:32px;fill:none}
+.gallery-button{justify-self:start;display:grid;place-items:center;width:44px;height:44px;padding:0;border-width:2px;box-shadow:0 3px 0 #3e87bf}
+.camera-action-spacer{width:44px;height:44px;justify-self:end}
+.game-shell--live .camera-actions--review{grid-template-columns:1fr 1fr;margin-top:14px;padding:0;gap:12px}
+.camera-caption{margin:12px 0 0;padding:4px 10px;border-radius:12px;background:#fffef2e8;color:#2d547c;font-size:11px;line-height:1.5;font-weight:800;text-align:center}
+.hint-link{margin-top:12px;min-height:40px;padding:8px 15px}
+.game-shell--live .banner-heading{margin:0 0 22px}
+.game-shell--live .judging-robot{width:65%;max-height:270px;margin:24px 0}
+.game-shell--live .judging-bubble{font-size:23px;padding:13px 24px}
+.game-shell--live .result-character{width:77%;max-height:270px;margin:12px 0 0}
+.game-shell--live .result-stats{margin:16px 0 22px}
+.game-shell--live .result-screen>.game-button{margin-top:auto;margin-bottom:12px}
+.game-shell--live .failure-bubble{margin-top:8px;font-size:25px}
+.game-shell--live .failure-characters{height:280px;min-height:200px;margin:22px 0 12px}
+.game-shell--live .failure-characters img:first-child{margin-right:-15%;width:65%;transform:rotate(-3deg)}
+.game-shell--live .failure-characters img:last-child{width:43%;transform:rotate(4deg)}
+.game-shell--live .failure-reason{margin:0 0 20px}
+.game-shell--live .failure-screen>.game-button{margin-top:0}
+.game-shell--live .failure-screen>.game-button:first-of-type{margin-top:auto}
+.game-shell--live .stage-grid button{height:102px}.game-shell--live .rule-grid>div{min-height:150px}
+.game-shell--live .rules-screen::after{background-image:url('/design/sports-day/enhanced/robot-judging.png');bottom:97px}
+@media(max-width:480px){.karimono-page{padding:0}.game-shell{border:0;border-radius:0;min-height:100dvh;box-shadow:none}.game-shell--live .screen{padding-inline:20px}.game-topline{padding-top:max(6px,env(safe-area-inset-top))}.game-footer{min-height:25px;padding-bottom:env(safe-area-inset-bottom)}}
+@media(max-height:740px){.game-shell--live .screen{padding-top:48px}.game-shell--live .home-screen{padding-top:30px}.game-shell--live .camera-frame{aspect-ratio:1.3}.game-shell--live .result-character{max-height:225px}.game-shell--live .failure-characters{height:225px;min-height:180px}.game-shell--live .stage-grid button{height:83px}.game-shell--live .rule-grid>div{min-height:128px}}
+.game-shell--live .rules-screen::after{display:none}
+.rules-invitation{display:grid;grid-template-columns:minmax(0,1fr) 66px;align-items:center;gap:10px;width:100%;margin:auto 0 20px;padding:12px 14px;border:2px solid #fff;border-radius:16px;background:#fffef1f5;box-shadow:0 3px 0 #9bd0da}
+.rules-invitation p{margin:0;min-width:0;color:#315782;font-size:13px;line-height:1.75;font-weight:850;overflow-wrap:anywhere}
+.rules-invitation img{width:66px;height:80px;object-fit:contain}
+.game-shell--live .rule-grid img{width:90px;height:90px;padding:6px}
+.rule-grid{margin-bottom:24px}
