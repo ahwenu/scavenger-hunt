@@ -6,6 +6,8 @@
 
 **公開Sites：[karimono-one-lease.ahwenu.chatgpt.site](https://karimono-one-lease.ahwenu.chatgpt.site/)**
 
+[配備記録](docs/12-sites-deployment.md)では、v6で当時の参加者React画面とBGMを公開しています。現在のソースに追加したルート `/` の新トップ、「さっちゃん」の声、参加者画面への効果音接続は、今回まだ公開再配備していません。
+
 参加者はホストが共有するQRまたは参加リンクから部屋に入ります。スマホへのアプリインストールやアカウント登録は不要です。ホストはChatGPT Work / Codexの **Plugin Extensions** から、招待・お題の準備・競技の進行・順位確認を行います。
 
 ## なぜ作ったか
@@ -42,7 +44,7 @@
 
 ## 画面
 
-2026年10月18日に取得した画面です。スマホ向けは最新の参加者画面を反映した公開Sitesの実部屋を、390×844のブラウザ表示領域で撮り直しました。ホスト向けはPlugin Extensions用UIをSitesへ実接続したブラウザプレビューです。撮影条件は[画像の記録](docs/images/README.md)にまとめています。
+2026年10月18日に取得した画面です。スマホ向けはv6配備時点の参加者画面を反映した公開Sitesの実部屋を、390×844のブラウザ表示領域で撮り直した記録です。ホスト向けはPlugin Extensions用UIをSitesへ実接続したブラウザプレビューです。撮影条件は[画像の記録](docs/images/README.md)にまとめています。
 
 ### スマホからの参加
 
@@ -91,8 +93,8 @@ flowchart TB
 | 領域 | 技術・サービス | 役割・実装場所 |
 | --- | --- | --- |
 | Web公開・サーバー | ChatGPT Sites / Cloudflare Workers / Vinext・Vite | 参加者画面・静的資産と同一オリジンの `/api/rooms/:id` を配信。`apps/cloud/` |
-| 参加者画面 | React / TypeScript / CSS | 公開Sitesの `/rooms/:id/join` で参加・撮影・結果・順位を表示。`apps/cloud/app/participant/` |
-| 入口・ブラウザホスト画面 | HTML / CSS / JavaScript | 入口と旧ブラウザホスト用の配信資産。`apps/web/` からSites向け資産を生成 |
+| 新トップ・参加者画面 | React / TypeScript / CSS | ソース上は `/` が新トップ、`/rooms/:id/join` が参加・撮影・結果・順位。`apps/cloud/app/participant/` |
+| 旧ブラウザホスト画面 | HTML / CSS / JavaScript | ソース上は `/host` が旧部屋作成、`/rooms/:id/host` が部屋ホスト。`apps/web/` からSites向け資産を生成 |
 | ホスト画面 | Plugin Extensions / React / TypeScript | QR招待、進行、共通ヒント、参加者・順位表示、ランキング変化の演出。`plugin/src/ui/` |
 | 拡張とゲームの接続 | MCP / MCP Apps SDK / Node.js / Zod | UI操作をツール呼び出しに変換し、Sites応答を検証して表示。`plugin/src/server/` |
 | お題生成 | OpenAI Responses API / Structured Outputs | お題・説明・2つの判定条件・制限時間をJSON Schemaに沿って生成。`apps/cloud/lib/text-agent.mjs` |
@@ -146,7 +148,7 @@ npm --prefix apps/cloud run install:ci
 npm --prefix apps/cloud run dev
 ```
 
-`http://localhost:5173/design-preview` で8種類の画面状態を確認できます。実ゲームのローカルDB設定、型検査、ビルド、HTTPSでのスマホ確認は[参加者フロントエンドの手順](docs/participant-frontend/README.md)を参照してください。リポジトリ直下の `npm run dev` は `apps/server/` を起動するため、Sites開発では上記のコマンドを使います。
+`http://localhost:5173/` が新しいReactトップです。ゲームスタートから参加リンク・部屋IDを入力します。`http://localhost:5173/design-preview` では8種類の画面状態を比較できます。旧HTMLの部屋作成はビルド版の `/host` に残しています。実ゲームのローカルDB設定、型検査、ビルド、HTTPSでのスマホ確認は[参加者フロントエンドの手順](docs/participant-frontend/README.md)を参照してください。リポジトリ直下の `npm run dev` は `apps/server/` を起動するため、Sites開発では上記のコマンドを使います。
 
 ### ホスト拡張
 
@@ -171,8 +173,8 @@ SITES_API_BASE_URL=https://karimono-one-lease.ahwenu.chatgpt.site
 ```text
 README.md              プロジェクトの概要・遊び方・技術・審査観点
 Project.md             仕様と開発文書の入口
-apps/cloud/            Sitesの参加者画面・Workers API・DB定義
-apps/web/              入口・旧ブラウザホスト用の配信資産
+apps/cloud/            新Reactトップ /・参加者画面・Workers API・DB定義
+apps/web/              旧HTMLの /host・部屋ホスト用の配信資産
 apps/server/           ローカル実行用サーバー
 plugin/                Plugin ExtensionsのホストUI・MCPサーバー
 api/                   独立したお題生成・写真判定API
