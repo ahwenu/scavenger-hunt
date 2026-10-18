@@ -125,3 +125,5 @@ public変更後、匿名でトップにアクセスしHTTP 200・ログイン要
 ローカルAPIとWork内実拡張の過去の成功例は[11](11-api-integration.md)を参照し、新Sitesの成功記録と区別する。
 
 判断の記録：[ADR-0011](adr/0011-new-sites-deployment.md)。
+
+後続のQR修正（plugin 0.2.1）：参加リンクだけだったUIへ、ローカルqrcode行列から256pxの白黒SVG・余白4セルでQRを描画し、リンクを残した。外部QR通信・CSP緩和はなし。21件のテスト・型チェック・ビルド・通常/共有配布物の可搬性・CLIインストールと有効化が成功。インストール済みMCPリソースの未改変HTMLを公式AppBridge/PostMessageTransport、`sandbox=allow-scripts`、`connect-src none` の検証ホストで表示し、「部屋を作る」から実Sitesへ部屋を作成した。画面画像をmacOS Visionで読取してQRと参加URLの完全一致、そのURLの匿名HTTP 200・ログイン不要を確認。画像はGit対象外の `plugin/artifacts/installed-plugin-qr-0.2.1.png` に保存した。ネイティブCodexパネルの直接操作、参加登録、新しい有料AI呼出は今回行わず、この修正のcommit/pushも未実施。

@@ -8,6 +8,8 @@
 
 入力・出力・待機状態・エラー・全10ステージの応答例は[12 Issue #1受け渡し](12-issue1-backend-handoff.md)、環境非依存の追加型は[game-contract.ts](../apps/cloud/lib/game-contract.ts)、判断は[ADR-0013](adr/0013-issue1-player-game-contract.md)。公開環境には未配備。Pluginのデモ用DTOや独立AI APIとは別契約で、結合済みとは扱わない。
 
+後続のAhwenu担当によるHTTP/MCP対応・公開配備の状況と、mae さん向けの最終応答例/配備版は[14](14-issue1-ahwenu-handoff.md)に記録する。元PRの検証履歴と新しい公開結果を分ける。
+
 ## 以下は初期API案（Issue #1の実装契約ではない）
 
 API契約・HTTPルート・外部API接続・MCPサーバーはAhwenuが担当する。ルートから呼ぶゲーム処理・DB/R2・認証/認可サービスはさが さん、モバイルからのAPI利用はmae さん、拡張画面からのMCP利用は未定（Ahwenu）が担当する。責務の詳細は[07 分担](07-delivery-plan.md)を参照。

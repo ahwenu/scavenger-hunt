@@ -46,10 +46,13 @@ test('unconfigured serves a portable UI resource and explicitly refuses room cre
     const tools = await client.listTools();
     assert.deepEqual(tools.tools.map(tool => tool.name).sort(), [
       'host_open', 'host_create_room', 'host_get_room', 'host_prepare_topics',
-      'host_start', 'host_advance', 'host_finish', 'host_purge_images',
+      'host_start', 'host_advance', 'host_finish', 'host_purge_images', 'host_set_hint',
       'ai_status', 'ai_generate_challenge',
     ].sort());
     const open = tools.tools.find(tool => tool.name === 'host_open')!;
+    const hint = tools.tools.find(tool => tool.name === 'host_set_hint')!;
+    assert.deepEqual(hint._meta?.ui, { visibility: ['app'] });
+    assert.equal(hint.annotations?.readOnlyHint, false);
     assert.deepEqual(open._meta?.['openai/ui'], { entrypoints: [{ type: 'global' }, { type: 'thread' }] });
     const resource = await client.readResource({ uri: HOST_RESOURCE_URI });
     assert.equal(resource.contents[0]?.mimeType, 'text/html;profile=mcp-app');
@@ -62,6 +65,9 @@ test('unconfigured serves a portable UI resource and explicitly refuses room cre
     const mutation = await client.callTool({ name: 'host_create_room', arguments: { operationId: randomUUID() } });
     assert.equal(mutation.isError, true);
     assert.match(JSON.stringify(mutation.structuredContent), /NOT_CONFIGURED/);
+    const hintMutation = await client.callTool({ name: 'host_set_hint', arguments: { roomId: 'room', roundId: 'round-1', text: 'ヒント', expectedVersion: 1, operationId: randomUUID() } });
+    assert.equal(hintMutation.isError, true);
+    assert.match(JSON.stringify(hintMutation.structuredContent), /NOT_CONFIGURED/);
     assert.equal((mutation.structuredContent as unknown as HostState).snapshot, null);
     assert.doesNotMatch(JSON.stringify(mutation), /hostToken|HOST_SERVICE_TOKEN/);
   });
@@ -79,6 +85,9 @@ test('demo follows create, prepare, start and rejects stale or premature control
     assert.equal(created.snapshot!.room.teams.length, 3);
     assert.deepEqual(await state(client, 'host_create_room', { operationId }), created);
     assert.equal(created.snapshot!.topicsStatus, 'empty');
+    const hint = await client.callTool({ name: 'host_set_hint', arguments: { roomId, roundId: 'round-1', text: null, expectedVersion: 1, operationId: randomUUID() } });
+    assert.equal(hint.isError, true);
+    assert.match(JSON.stringify(hint.structuredContent), /UNSUPPORTED_OPERATION/);
     const ai = await client.callTool({ name: 'host_prepare_topics', arguments: { roomId, source: 'ai', operationId: randomUUID() } });
     assert.equal(ai.isError, true);
     assert.match(JSON.stringify(ai.structuredContent), /NOT_CONFIGURED/);

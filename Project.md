@@ -12,9 +12,13 @@ Plugin Extensionsを自分の環境へ取り込む方は、[取り込み手順](
 
 Issue #1のバックエンド対応として、Sitesの既存 `/api/rooms/:id` を100人・最大10競技・各競技の初合格500点へ拡張しました。全10ステージ、確定得点・連番順位、競技ごとの共有ヒントを返します。ローカルworkerd/D1/R2で100人のデモ参加・写真提出・結果更新を確認済みですが、公開環境の負荷・実AI・Plugin結合は未検証で、再配備していません。[受け渡し契約](docs/12-issue1-backend-handoff.md)と[ADR-0013](docs/adr/0013-issue1-player-game-contract.md)を参照してください。
 
+後続のAhwenu宛5項目は、main統合・Plugin新契約・共通ヒント登録・公開配備/試験・mae さんへの最終受け渡しとして進めています。PR元のローカル検証と今回の公開検証を分け、結果を[14 Ahwenu受け渡し](docs/14-issue1-ahwenu-handoff.md)へ記録します。新公開版の配備・実結合は結果待ちです。
+
 Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能な `plugin/` にまとめています。[起動・移動手順](plugin/README.md)を参照してください。ローカル登録・有効化に加え、ユーザー操作と提供画像により実拡張内の表示・API接続確認・お題生成を確認済みです。また既存のデモ実装を元の配置で取り込んでおり、Sitesは `apps/cloud/`、ローカルデモは `apps/server/`・`apps/web/` にあります（[取り込み記録](docs/10-demo-import.md)）。取り込んだAPI・AI・配備設定の本環境での動作、現在の仕様への適合、拡張とのゲーム結合は未検証です。2026-10-18作成の以下の文書を、担当者間の実装契約に使います。
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
+
+ユーザー指定の運動会・猫耳キャラクターのスマホ案を参考に、0.3.0のホスト画面を実装しました。素材をpluginへ同梱し、参加者・勝利数・時間はHTMLで表示します。インストール済みHTMLの検証ホストで1280/390px表示・実部屋のQR読取/匿名参加ページ200、別MCPの明示デモ進行を確認済みです。ネイティブ拡張パネルの直接操作、新しい参加登録・有料AI呼出は今回未実施です（[ADR-0012](docs/adr/0012-sports-day-host-ui.md)、[素材ガイド](docs/design/sports-day-ui-assets-v1/README.md)）。
 
 独立API実装時の作業範囲はAhwenuのAPI処理に限定し、`api/` でお題生成・写真判定を提供して拡張からMCP経由で接続しました。この段階ではSites側を変更せず、実AIの確認画面とゲームデモを分離しています。[11 API連携](docs/11-api-integration.md)に当時の契約・検証を記録しています。現在の新Sites配備・Cloud/Web反映は、下記の追加指示に基づく別フェーズです。
 
@@ -53,6 +57,8 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [11 API連携](docs/11-api-integration.md) | Ahwenuの独立AI API、拡張との接続、秘密設定、Sitesとの受け渡し | Ahwenu・さが さん・拡張画面担当 |
 | [12 新Sitesの配置と接続](docs/12-sites-deployment.md) | 全ソースの保持、Cloud実行、publicアクセス・部屋認可、拡張の実ゲーム接続 | 全員 |
 | [12 Issue #1バックエンド受け渡し](docs/12-issue1-backend-handoff.md) | 100人・10競技・500点・状態/ヒントAPI、応答例、ローカル検証と未配備の境界 | さが さん・Ahwenu・mae さん |
+| [13 MCP Events調査](docs/13-mcp-events-audit.md) | 公式イベント機能の未使用、2秒ポーリングと独自イベントの違い | Ahwenu・バックエンド・拡張画面担当 |
+| [14 Issue #1 Ahwenu受け渡し](docs/14-issue1-ahwenu-handoff.md) | 5項目の対応、確定HTTP/MCP契約、mae向け応答例、公開版の検証 | Ahwenu・さが さん・mae さん |
 | [当日の全体コンテキスト](docs/hackathon/README.md) | ゴールを決める項目、実演の1周、担当間の受け渡し、確認済みの範囲 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
 | [参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |

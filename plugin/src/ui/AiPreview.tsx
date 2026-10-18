@@ -1,5 +1,6 @@
 /** Ahwenu担当のAI APIを、ゲーム状態を変えずに確認する表示。 */
 import type { AIChallenge, AIStatus } from "../shared/ai-contracts.js";
+import robotJudging from "./assets/robot-judging.png";
 import "./AiPreview.css";
 
 /** 通信と秘密設定は呼び出し元に委譲する。 */
@@ -79,10 +80,10 @@ export function AiPreview({
       aria-busy={busy}
     >
       <div className="ai-preview-heading">
-        <div>
-          <p className="ai-preview-kicker">AI API / PREVIEW</p>
-          <h2 id="ai-preview-heading">Ahwenu API / お題プレビュー</h2>
-        </div>
+        <div className="ai-preview-title"><img src={robotJudging} width="64" height="64" alt="" /><div>
+          <p className="ai-preview-kicker">AI / お題を試してみる</p>
+          <h2 id="ai-preview-heading">お題プレビュー</h2>
+        </div></div>
         <span className={`ai-preview-status ${canGenerate ? "ai-preview-ready" : ""}`}>
           {canGenerate ? "API利用可能" : status ? "要接続確認" : "接続未確認"}
         </span>

@@ -14,6 +14,7 @@ const ui = await build({
   format: 'iife',
   platform: 'browser',
   target: 'es2022',
+  loader: { '.png': 'dataurl' },
   minify: true,
   write: false,
   outdir: 'dist',

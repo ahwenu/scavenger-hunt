@@ -44,7 +44,7 @@ const stateSchema = z.object({
       roomName: z.string().optional(), joinUrl: z.string().url().optional(), scoreUnit: z.enum(['points', 'wins']).optional(),
       currentRound: z.object({
         roundId: z.string(), number: z.number().int(), status: z.enum(['pending', 'active', 'closing', 'result']),
-        title: z.string(), instruction: z.string(), startsAt: z.string(), deadlineAt: z.string(), settleUntil: z.string(),
+        title: z.string(), instruction: z.string(), startsAt: z.string(), deadlineAt: z.string(), settleUntil: z.string(), hint: z.string().max(500).nullable().optional(),
       }).nullable(),
       teams: z.array(z.object({ teamId: z.string(), name: z.string() })),
       leaderboard: z.array(z.object({ teamId: z.string(), name: z.string(), score: z.number(), rank: z.number(), totalMs: z.number().nonnegative().optional() })),
@@ -55,7 +55,8 @@ const stateSchema = z.object({
     teams: z.array(z.object({ teamId: z.string(), name: z.string(), lastSeenAt: z.string().nullable(), latestSubmission: submission.nullable() })),
     sites: z.object({
       aiAvailable: z.boolean(), gameMode: z.enum(['ai', 'demo']), canPrepare: z.boolean(), canStart: z.boolean(),
-      canAdvance: z.boolean(), canEndRound: z.boolean(), pendingJudgments: z.number().nonnegative(), automaticLobbyStart: z.boolean(),
+      canAdvance: z.boolean(), canEndRound: z.boolean(), canSetHint: z.boolean().optional(), pendingJudgments: z.number().nonnegative(), automaticLobbyStart: z.boolean(),
+      stages: z.array(z.object({ number: z.number().int().positive(), status: z.enum(['completed', 'active', 'locked']) })).optional(),
     }).optional(),
   }).nullable(),
 });
@@ -99,7 +100,7 @@ export function createHostBridge(preview = false): HostBridge {
       async generateAI(requestId) { return readAIResponse(await request('ai_generate_challenge', { requestId }), 'aiResult'); },
     };
   }
-  const app = new App({ name: 'karimono-host-ui', version: '0.2.0' }, {});
+  const app = new App({ name: 'karimono-host-ui', version: '0.3.1' }, {});
   return {
     async connect(onState) {
       app.ontoolresult = result => {

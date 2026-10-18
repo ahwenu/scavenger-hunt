@@ -11,7 +11,7 @@ import { DemoHostAdapter, HostOperationError, NotConfiguredHostAdapter, type Hos
 import { AiServiceClient, AiServiceError, type AiServiceOptions } from './ai-client.js';
 import { SitesHostAdapter, type SitesAdapterOptions } from './sites-adapter.js';
 
-export const HOST_RESOURCE_URI = 'ui://scavenger-hunt/host-v1';
+export const HOST_RESOURCE_URI = 'ui://scavenger-hunt/host-v0.3.1';
 
 export interface ServerOptions {
   mode?: 'demo' | 'unconfigured' | 'sites';
@@ -29,7 +29,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
   }
   const adapter = mode === 'sites' ? new SitesHostAdapter(options.sites) : mode === 'demo' ? new DemoHostAdapter(options.now) : new NotConfiguredHostAdapter();
   const htmlPath = options.htmlPath ?? fileURLToPath(new URL('./widget.html', import.meta.url));
-  const server = new McpServer({ name: 'karimono-host', version: '0.2.0' });
+  const server = new McpServer({ name: 'karimono-host', version: '0.3.1' });
   const ai = new AiServiceClient(options.ai);
 
   registerAppResource(server, 'カリモノ ホスト画面', HOST_RESOURCE_URI, {}, async () => ({
@@ -65,6 +65,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
     }
   };
   const roomId = z.string().min(1).max(200);
+  const roundId = z.string().regex(/^[a-zA-Z0-9-]{1,200}$/);
   const operationId = z.string().uuid();
   const expectedVersion = z.number().int().min(1);
   const mutation = { readOnlyHint: false, destructiveHint: false, openWorldHint: mode === 'sites' };
@@ -130,6 +131,11 @@ export function createServer(options: ServerOptions = {}): McpServer {
       inputSchema: { roomId, expectedVersion, operationId }, annotations: mutation, _meta: appOnly,
     }, handle(action));
   }
+  registerAppTool(server, 'host_set_hint', {
+    title: '共通ヒントを保存・削除', description: 'Sitesの受付中競技へ共通ヒントを保存する。1〜500文字、nullで削除。AI生成は呼び出さない。',
+    inputSchema: { roomId, roundId, text: z.string().min(1).max(500).refine(value => value.trim().length > 0).nullable(), expectedVersion, operationId },
+    annotations: mutation, _meta: appOnly,
+  }, handle('set_hint'));
   registerAppTool(server, 'host_purge_images', {
     title: '提出写真を削除', description: '終了後の写真削除の接続境界。デモでは写真を保持していない。',
     inputSchema: { roomId, operationId },

@@ -81,6 +81,20 @@ function HostController() {
     finally { inFlight.current = false; if (active.current) setBusy(false); }
   }
 
+  /** 受付中競技だけにホストの共通ヒントを保存し、ポーリングと二重送信を直列化する。 */
+  async function onSetHint(roundId: string, text: string | null): Promise<void> {
+    if (!bridge.current || inFlight.current) return;
+    const room = current.current.snapshot?.room;
+    if (current.current.mode !== 'sites' || !room || room.currentRound?.roundId !== roundId) return;
+    inFlight.current = true;
+    setBusy(true);
+    setError(null);
+    try {
+      apply(await bridge.current.call('host_set_hint', { roomId: room.roomId, roundId, text, expectedVersion: room.version, operationId: crypto.randomUUID() }));
+    } catch (cause) { if (active.current) setError(cause instanceof Error ? cause.message : '共通ヒントを保存できませんでした。'); }
+    finally { inFlight.current = false; if (active.current) setBusy(false); }
+  }
+
   /** 生成APIを明示操作でだけ実行し、部屋データのデモとは分離する。 */
   async function aiAction(generate: boolean) {
     if (!bridge.current || aiInFlight.current) return;
@@ -99,7 +113,7 @@ function HostController() {
     finally { aiInFlight.current = false; if (active.current) setAIBusy(false); }
   }
 
-  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} /><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy || busy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></>;
+  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} /><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy || busy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></>;
 }
 
 createRoot(document.getElementById('root')!).render(<HostController />);

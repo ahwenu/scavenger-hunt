@@ -39,6 +39,7 @@
 
 - API処理は自己完結した `api/`、拡張の接続処理は `plugin/src/server/` に置く。Sitesの `apps/cloud/` とルートの配備設定は今回のAPI作業で変更しない。ADR-0010とdocs/11を参照する。
 - OpenAIキーはAPIサーバーだけが扱う。`OPENAI_KEY_FILE` は利用者が指定した保存先の参照であり、キーや実際の保存先を文書・UI・Git・ログへ複製しない。`.env.local` とトークンファイルを配布物に入れない。
+- ローカルpluginの更新では、既存のSites接続設定に加えて独立AI用の `KARIMONO_API_URL`・`KARIMONO_API_TOKEN_FILE` の参照もインストール先へ引き継ぐ。Sitesの2項目だけで上書きしない。秘密設定はGit・共有アーカイブへ入れず、OpenAIキー自体をpluginへコピーしない。
 - APIのサービス認証とOpenAIキーを分離する。pluginは `KARIMONO_API_TOKEN_FILE` でサービス用トークンだけを読み、OpenAIキーを要求しない。
 - APIはお題・判定結果だけを返す。参加者・ゲーム進行・締切・加点・順位・DBの正本はSites担当が実装する。実AI確認の結果をデモのランキングへ混ぜない。
 

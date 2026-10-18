@@ -6,11 +6,17 @@ ONE LEASE / **借り物王に俺はなる！**
 
 以下のコマンド例はmacOS/Linuxのターミナル向けです。Windowsでの一連の導入は未検証です。
 
+
+## 0.3.0の画面更新
+
+運動会・猫耳キャラクターのデザインを取り入れています。イラストは配布物へ同梱し、外部画像サービスへの接続は不要です。部屋を作ると参加用QRと参加URLが表示されます。更新後は開いている拡張を閉じて開き直してください。旧画面が残る場合は拡張を再読み込みするか、アプリを再起動して新しいUIリソースを読み込んでください。
+
+
 ## 1. 用意するもの
 
 - Node.js 22.13以上。ターミナルで `node --version` を確認します。
 - `codex plugin` に対応したCodex CLIと、ローカルプラグインを利用できるデスクトップ環境。
-- `karimono-host-share-0.2.0.tar.gz` と `karimono-host-share-0.2.0.tar.gz.sha256`。配布者から受け取ってください。
+- `karimono-host-share-0.3.1.tar.gz` と `karimono-host-share-0.3.1.tar.gz.sha256`。配布者から受け取ってください。
 
 Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確認しています。利用できるUIやメニュー名はアプリのバージョンによって異なります。
 
@@ -19,15 +25,15 @@ Work内のPlugin Extensionsでも起動・API接続確認・お題生成を確�
 共有ファイルを置いたフォルダでターミナルを開き、次を実行します。ファイル名を変更した場合は読み替えてください。
 
 ```sh
-shasum -a 256 -c karimono-host-share-0.2.0.tar.gz.sha256
-tar -xzf karimono-host-share-0.2.0.tar.gz
+shasum -a 256 -c karimono-host-share-0.3.1.tar.gz.sha256
+tar -xzf karimono-host-share-0.3.1.tar.gz
 cd karimono-local
 codex plugin marketplace add . --json
 codex plugin add karimono-host@karimono-local --json
 codex plugin list --marketplace karimono-local --json
 ```
 
-最後の結果に `installed: true`、`enabled: true`、`version: 0.2.0` があれば登録できています。`plugin add --json` が返す `installedPath` は、後で接続を設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
+最後の結果に `installed: true`、`enabled: true`、`version: 0.3.1` があれば登録できています。`plugin add --json` が返す `installedPath` は、後で接続を設定するときに使うため控えてください。`plugin list` の結果にはこのパスは含まれません。
 
 展開したフォルダはmarketplaceの参照元になるため、更新するときまで残してください。公開ディレクトリへの申請、サイトの公開、スマホでの参加は、このローカル登録に必要ありません。
 
@@ -36,6 +42,8 @@ CLIに `plugin` コマンドがない場合は、アプリ側のプラグイン�
 ## 3. 画面を開く
 
 アプリのPlugin Extensionsから「カリモノ」を選びます。必要なら新しいチャットを開くか、アプリを再起動して登録内容を読み込みます。
+
+0.2.1から部屋作成後に参加QRを表示します。参加リンクも利用できます。QRが出ない場合は、下記の更新手順で0.2.1を入れ直し、一覧のバージョンと新しい `installedPath` の接続設定を確認してからプラグインを再読み込みしてください。旧版の画面が残る場合はアプリを再起動します。
 
 最初はゲームが「未接続」、AIも「未設定」と表示されます。これは標準状態です。サンプルの参加チーム・得点を動かすデモと実AIの確認領域は分かれています。部屋作成・実際のスマホ参加・得点・順位のゲーム結合は開発中です。
 
@@ -157,5 +165,7 @@ karimono-local/
 Node.jsは必要ですが、受取人の画面起動にnpm依存のインストールは不要です。ソース・`node_modules`・秘密設定は共有ファイルに含めません。
 
 ## 配布物の確認状況（2026-10-18）
+
+0.2.1のインストール・有効化、型チェック・ビルド・21件のテスト、通常/共有配布物の可搬性を確認済みです。インストール済みHTMLを公式ブリッジを使う検証ホストへ表示し、部屋作成後のQRを画面確認・macOS Visionで読取して参加URLと完全一致、参加ページは匿名200・ログイン不要を確認しました。ネイティブ拡張パネルの直接操作・参加登録・新しい有料AI呼出は今回行っていません。
 
 共有ファイル生成、SHA-256照合、含まれるファイルの検査、空白を含む別パス・別の作業ディレクトリ・node_modulesなしでのMCP起動を確認済みです。未接続/デモの両モードで10ツールとUIリソースを確認しました。別PCでの実機導入、Windows、更新手順の一連の操作は未検証です。
