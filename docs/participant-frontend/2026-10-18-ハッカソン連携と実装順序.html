@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Codex">
+  <title>カリモノ｜3時間の連携と実装順序（提案）</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, sans-serif; color: #172434; background: #f7f8f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; line-height: 1.65; }
+    main { max-width: 1000px; margin: auto; padding: 24px 20px 64px; }
+    header { border-top: 6px solid #176c73; padding-top: 18px; }
+    h1 { font-size: clamp(1.55rem, 4vw, 2.2rem); line-height: 1.25; margin: 0 0 10px; }
+    h2 { font-size: 1.3rem; margin: 32px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #cad4d2; }
+    h3 { font-size: 1.05rem; margin: 18px 0 6px; }
+    p { max-width: 83ch; }
+    .meta { font-size: .88rem; color: #52646b; margin: 0 0 16px; }
+    .lead { font-size: 1.1rem; margin: 8px 0 18px; }
+    .notice { border-left: 4px solid #176c73; background: #e9f4f1; padding: 10px 15px; }
+    .uncertain { border-left-color: #a8651e; background: #fff3e3; }
+    table { border-collapse: collapse; width: 100%; background: white; font-size: .94rem; }
+    th, td { border: 1px solid #ccd7d5; padding: 8px 10px; vertical-align: top; text-align: left; }
+    th { background: #e9f4f1; }
+    .scroll { overflow-x: auto; }
+    .scroll table { min-width: 680px; }
+    ul, ol { padding-left: 1.5em; }
+    li { margin: 5px 0; }
+    figure { margin: 18px 0; background: white; border: 1px solid #ccd7d5; padding: 12px; overflow-x: auto; }
+    figure svg { display: block; min-width: 850px; max-width: 100%; height: auto; }
+    figcaption, .small { font-size: .88rem; color: #52646b; }
+    blockquote { margin: 10px 0 20px; padding: 8px 14px; background: white; border-left: 3px solid #176c73; }
+    code { overflow-wrap: anywhere; }
+    a { color: #075e73; }
+    @media (max-width: 620px) { main { padding: 18px 13px 48px; } th,td { padding: 7px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>カリモノ｜3時間の連携と実装順序</h1>
+    <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 作成日：2026-10-18 ／ 対象コミット：c3615e2（取り込み実装 2921fb5） ／ 状態：チーム確認前の提案</p>
+    <p class="lead">最初の15分で「今日実演する1周」と担当間の受け渡しを揃え、並行作業、2台での結合、提出を順に進める案。動くプロトタイプを起点に、参加者が「入る→探す→撮る→判定を見る」を実際に遊べる状態にする。</p>
+    <p class="notice">この計画は、4人が並行して作業でき、14:15頃に共有を始める仮定で組んだ。時間帯は開始時刻に合わせてずらせるが、チームから共有された<strong>17:15の提出締切</strong>を先に守る。<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">イベントページ</a>の全体進行はハッカソン14:00〜17:30で、提出時刻そのものはこのページで確認できていない。</p>
+  </header>
+
+  <section aria-labelledby="start">
+    <h2 id="start">最初に4人で揃えること｜10〜15分</h2>
+    <p>以下は実装の着手前に確認する短い判断。仕様文書と取り込みコードは一致していないため、合意前の変更は「提案」のままにする。</p>
+    <div class="scroll"><table><thead><tr><th>決めること</th><th>今日の仮置き</th><th>決める人・出力</th></tr></thead><tbody>
+      <tr><td>実演する1周</td><td>QR参加→名前→お題→スマホ撮影→AI判定→合否・順位。まず1問を途切れずに通す</td><td>全員。実演端末と成功時の見え方を一言で共有</td></tr>
+      <tr><td>デモの基準と画面配置</td><td>取り込み済みの <code>apps/cloud/</code> と <code>apps/web/</code> を動く基準にする。現行デモのホストはSites内で、AcceptedのADR-0001はPlugin Extensions。今日どちらを実演するかを明示する</td><td>Ahwenu中心に全員。方針を変えるなら関連ADRを後続で合わせる</td></tr>
+      <tr><td>進行・得点</td><td>30秒自動開始と受付時刻順の現行デモ、またはホスト開始・点数案のどちらを今日の説明に使うか固定。初正解で次問を増やす案は追加範囲として扱う</td><td>さがさん中心に全員。画面に出す確定値とイベントを決める</td></tr>
+      <tr><td>API・AI・公開先</td><td>現行APIを使う範囲、実AIモードで実演する条件、公開URLと配備担当を固定。デモ判定を使う場合は実AI判定として説明しない</td><td>Ahwenu中心に全員。通信例1件と公開URLを渡す</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section aria-labelledby="handoff">
+    <h2 id="handoff">先に渡す情報と、受け取るもの</h2>
+    <p>連絡文は下に用意した。まだ送信していない。Akibakoさんには完成を待ってから渡すのではなく、既存画面と必要な3状態を先に共有すると、maeの実装と並行できる。</p>
+    <div class="scroll"><table><thead><tr><th>相手</th><th>先に渡すもの</th><th>返してもらうもの</th><th>編集境界の案</th></tr></thead><tbody>
+      <tr><td>Akibakoさん</td><td><a href="https://ai-karimono-race.ahwenu.chatgpt.site/">現行画面</a>、参加・撮影中・判定結果の3状態、成功/失敗の文言案。実装は現状 <code>apps/web/app.js</code> の素のJavaScriptとCSSで、03のReact部品案は未導入</td><td>360px幅の3状態の見本、色・文字・余白、ボタンと結果文言。可能ならCSS差分。READMEの「遊び方/面白さ」は結合後に短く</td><td>見た目はCSS・文言、maeは状態/撮影/通信。HTML変更は着手前に相談</td></tr>
+      <tr><td>さがさん</td><td>現行の30秒自動開始、合格通知、順位表示と、01/05の得点案との差。判定中・失敗・重複送信の参加者側の見え方</td><td>今日の進行・順位の確定ルール、合格イベントの例、1問を終えられる状態、失敗時の戻り方</td><td>ゲームと保存を担当。画面の仮得点計算は作らない</td></tr>
+      <tr><td>Ahwenu</td><td>参加者画面が使う状態取得・写真送信の現行形と04契約案の差。カメラ画像は撮影後すぐ送信</td><td>今日使うAPI応答例、実AIの小さな通し結果、公開URLと配備手順、Pluginの実演可否</td><td>API・AI・配備を担当。mae側は合意した応答を表示</td></tr>
+      <tr><td>mae</td><td>上の3担当から決まった形を受け、必要な画面状態を共有</td><td>スマホの参加→撮影→結果の1周、許可拒否/通信失敗の案内、実機確認結果</td><td><code>apps/web/app.js</code>・<code>live-camera.js</code> を中心に担当</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section aria-labelledby="messages">
+    <h2 id="messages">そのまま渡せる連携文案</h2>
+    <h3>Akibakoさんへ</h3>
+    <blockquote>現行デモを基準に、参加・撮影中・判定結果の3状態を先に合わせたいです。画面は今は素のJS＋CSSなので、15:15頃までに360pxの見本、色/文字/余白、成功・失敗の文言をもらえると並行で組み込めます。私は撮影・通信・復帰を触ります。READMEの「遊ぶと何が楽しいか」は結合後に一緒に短く整えたいです。</blockquote>
+    <h3>さがさんへ</h3>
+    <blockquote>今日の1周の進行と順位の正本を15分で合わせたいです。現行デモの30秒自動開始・受付時刻順と、文書のホスト開始・得点案が違います。今日見せるルール、合格イベントの例、判定失敗時の扱いを決めてもらえれば、私は確定値を画面に出します。</blockquote>
+    <h3>Ahwenuへ</h3>
+    <blockquote>今のデモAPIを今日の結合基準にする範囲、実AIで写真1枚が判定できるか、公開URLと配備担当を先に確認したいです。参加者側は撮影後すぐ送信する実装です。04のAPI案との差があるので、今日使う応答例とPluginホストの実演可否を共有してください。</blockquote>
+  </section>
+
+  <section aria-labelledby="flow">
+    <h2 id="flow">依存の流れ</h2>
+    <figure>
+      <svg viewBox="0 0 980 460" role="img" aria-labelledby="flow-title flow-desc" xmlns="http://www.w3.org/2000/svg">
+        <title id="flow-title">チーム合意から提出までの流れ</title>
+        <desc id="flow-desc">15分の合意から4担当が並行作業し、2台で結合確認する。実演できれば見た目と説明を整え、難しければ動く既存デモの経路に戻す。最後に公開URLとGitHubを提出する。</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#3d6267"/></marker></defs>
+        <g fill="none" stroke="#3d6267" stroke-width="2" marker-end="url(#arrow)">
+          <path d="M152 80 H205 V58 H240"/><path d="M205 80 V135 H240"/><path d="M205 80 V212 H240"/><path d="M205 80 V289 H240"/>
+          <path d="M440 58 H485 V175 H520"/><path d="M440 135 H520"/><path d="M440 212 H520"/><path d="M440 289 H485 V175 H520"/>
+          <path d="M685 175 H724"/><path d="M830 175 H925 V312"/><path d="M776 224 V268 H710 V278"/>
+          <path d="M610 319 V375 H770"/><path d="M862 378 V400"/>
+        </g>
+        <g fill="#e9f4f1" stroke="#3d6267" stroke-width="2">
+          <rect x="12" y="42" width="140" height="76" rx="10"/>
+          <rect x="240" y="26" width="200" height="64" rx="8"/><rect x="240" y="103" width="200" height="64" rx="8"/>
+          <rect x="240" y="180" width="200" height="64" rx="8"/><rect x="240" y="257" width="200" height="64" rx="8"/>
+          <rect x="520" y="140" width="165" height="70" rx="8"/>
+          <polygon points="776,126 830,175 776,224 722,175" fill="#fff3e3"/>
+          <rect x="520" y="278" width="190" height="70" rx="8" fill="#fff3e3"/>
+          <rect x="770" y="312" width="185" height="66" rx="8"/>
+          <rect x="770" y="400" width="185" height="52" rx="8" fill="#d9f1e9"/>
+        </g>
+        <g fill="#172434" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle">
+          <text x="82" y="70"><tspan x="82">15分で</tspan><tspan x="82" dy="21">1周を合意</tspan></text>
+          <text x="340" y="53">mae：参加・撮影・復帰</text>
+          <text x="340" y="130">Akibako：3画面とREADME</text>
+          <text x="340" y="207">さが：進行・得点・イベント</text>
+          <text x="340" y="284">Ahwenu：API・AI・公開</text>
+          <text x="602" y="168"><tspan x="602">2台で1周を</tspan><tspan x="602" dy="20">結合確認</tspan></text>
+          <text x="776" y="181">実演可能？</text>
+          <text x="615" y="306"><tspan x="615">難しい場合は</tspan><tspan x="615" dy="20">動く経路へ戻す</tspan></text>
+          <text x="862" y="339"><tspan x="862">見た目・説明を</tspan><tspan x="862" dy="20">整える</tspan></text>
+          <text x="862" y="432">URLとGitHubを提出</text>
+        </g>
+        <g fill="#52646b" font-family="system-ui,sans-serif" font-size="12"><text x="834" y="150">可</text><text x="781" y="256">難</text></g>
+      </svg>
+      <figcaption>draw.ioで同じフローチャートを確認。並行作業の合流点は「2台で1周」であり、各担当の完成待ちを連鎖させない。</figcaption>
+    </figure>
+  </section>
+
+  <section aria-labelledby="schedule">
+    <h2 id="schedule">3時間の進め方｜時刻は14:15開始の例</h2>
+    <div class="scroll"><table><thead><tr><th>時刻</th><th>全体と並行作業</th><th>次へ進める条件</th></tr></thead><tbody>
+      <tr><td>14:15–14:30</td><td>4人で上の4点を決める。maeは現行画面/差分と3担当への連携文を渡す</td><td>実演する1周、API、進行、公開担当が言葉で揃う</td></tr>
+      <tr><td>14:30–15:15</td><td>並行作業。maeは参加・撮影・結果の状態とエラー、Akibakoさんは3状態の見た目、さがさんはルールとイベント、AhwenuはAPI/実AI/公開</td><td>各担当が小さく動く差分と、相手に必要なサンプルを渡す</td></tr>
+      <tr><td>15:15–15:45</td><td>2台のスマホで1問を通す。QR→参加→撮影→判定→結果。通信失敗とカメラ拒否も短く試す</td><td>一度通った手順と失敗点を共有。統合先のブランチ/デプロイが分かる</td></tr>
+      <tr><td>15:45–16:15</td><td>全員で短いプレイテスト。誰かが実物を探して撮る。必要な見た目と文言を直し、既存の合格演出・他者通知を活かす</td><td>初見の人が操作を説明なしで進め、成功/失敗を見分けられる</td></tr>
+      <tr><td>16:15–16:40</td><td>新機能を増やさず公開版を固定。AhwenuがURL、AkibakoさんがREADMEの遊び方、さがさんが発表の1周、maeが実機の再確認</td><td>公開URLが別端末で開き、GitHubの対象コミットが分かる</td></tr>
+      <tr><td>16:40–17:00</td><td>提出者がURLとGitHubを入力し、別端末でリンクを確認。全員で1分程度の実演を合わせる</td><td>提出完了の表示/控えが残る</td></tr>
+      <tr><td>17:00–17:15</td><td>提出の予備時間。新規実装は入れず、リンク・起動・デモ手順の問題だけ直す</td><td>17:15までに提出できている</td></tr>
+    </tbody></table></div>
+    <p class="small">3時間を超えて作業時間がある場合も、提出の予備時間は後ろへずらさない。開始が遅れた分は並行作業と演出調整を短くする。</p>
+  </section>
+
+  <section aria-labelledby="scope">
+    <h2 id="scope">時間が足りない時の切り分け</h2>
+    <p><strong>残す:</strong> QRから入れる、スマホで撮れる、判定結果が分かる、公開URLが開く。新機能の活用を説明するなら、実AI判定の動作を確認した範囲だけ示す。</p>
+    <p><strong>後ろへ回す候補:</strong> 初正解でお題を無制限に増やすルール、複雑な加点、全面的なアーキテクチャ分割、複数画面の作り直し。Plugin Extensionsの実演が間に合わない場合は、既存のSitesホストで何を見せるかをチームで明示し、Accepted方針との差を隠さない。</p>
+    <p><strong>楽しさを試す:</strong> 全員が1回プレイし、「お題を見て探す」「シャッター」「合否が出る」の間に迷う点を直す。既存の紙吹雪と他者クリア通知を先に確認し、追加演出は1つに絞る。</p>
+  </section>
+
+  <section aria-labelledby="review">
+    <h2 id="review">提出時に確認すること</h2>
+    <ul>
+      <li>実演の1周が公開URLで通り、QR・参加・撮影・判定・結果がつながる。実AIとデモ判定の区別がつく。</li>
+      <li>初見の人がスマホで使える。カメラ拒否、送信中、判定失敗の表示がある。</li>
+      <li>READMEには何をするゲームか、遊び方、使ったDevDay機能、公開URL、現時点の制約を短く書く。</li>
+      <li>持ち込みプロトタイプの扱いは主催ルールに照らして確認する。新規プロトタイプの事前準備と公開状況を、必要なら主催へ事実として説明できるようにする。</li>
+      <li>審査の4観点「新機能の活用・使いやすさ・有用性・独創性」に対し、実際に動く場面を一つずつ示せる。<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">主催ページのルール</a>では成果物のWeb公開と、当日の開発にCodex CLI / App / ChatGPT Workを使う条件がある。</li>
+    </ul>
+    <p class="notice uncertain">未確認：17:15の提出フォームと実際の提出操作、会場での2機種の撮影、Plugin Extensionsの実演、今回のブランチからの配備。公開検証ページにある過去の試験結果を、今回の結合確認に読み替えない。</p>
+  </section>
+
+  <footer>
+    <h2>参照</h2>
+    <p><a href="../07-delivery-plan.md">担当分担</a>、<a href="../03-ui-frontend.md">画面仕様</a>、<a href="../04-api-contract.md">API案</a>、<a href="../10-demo-import.md">デモ取り込み</a>、<a href="mobile-frontend-context.md">参加者画面の現状</a>、2026-10-17議事録、さがさんのMVPメモ、チーム共有の審査画像、<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">主催ページ</a>（2026-10-18確認）。</p>
+  </footer>
+</main>
+</body>
+</html>
