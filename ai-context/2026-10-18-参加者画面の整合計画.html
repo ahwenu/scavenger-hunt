@@ -31,13 +31,13 @@
 <main>
   <header>
     <h1>参加者画面とチーム方針の整合計画</h1>
-    <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 日付：2026-10-18 ／ 対象コミット：64d509a ／ 作業ブランチ：feat/mae-context-alignment</p>
-    <p class="lead">まえ担当の参加者向け実装を、現在の仕様とチームのメモ、公開中の画面に照らして整理する計画。プロトタイプのコードは今後コミット・プッシュされる見込みで、実装の中身は未確認。</p>
-    <p>AIが参照しやすい作業コンテキストは <a href="../mobile-frontend-context.md">参加者向けフロントエンドの作業コンテキスト</a> にまとめた。</p>
+    <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 日付：2026-10-18 ／ 対象コミット：仕様 64d509a・取り込み実装 2921fb5 ／ 作業ブランチ：feat/mae-context-alignment</p>
+    <p class="lead">mae担当の参加者向け実装を、現行仕様、チームメモ、取り込まれたプロトタイプのコードに照らして整理した計画。配置、ゲーム進行、API契約には担当間で揃える項目が残る。</p>
+    <p>AIが参照しやすい調査記録は <a href="mobile-frontend-context.md">参加者向けフロントエンドの作業コンテキスト</a> にまとめた。</p>
   </header>
 
   <section aria-labelledby="basis"><h2 id="basis">前提と差分</h2>
-    <p>現行のProject.mdとAcceptedのADR-0001・0002では、参加者はスマホのブラウザでSitesを利用し、ホスト画面はPlugin Extensionsに置く。まえ担当は参加者画面の処理である。10月17日の議事録には、参加者側をPlugin Extensionsとする古い案が残る。</p>
+    <p>現行のProject.mdとAcceptedのADR-0001・0002では、参加者はスマホのブラウザでSitesを利用し、ホスト画面はPlugin Extensionsに置く。mae担当は参加者画面の処理である。10月17日の議事録には、参加者側をPlugin Extensionsとする古い案が残る。</p>
     <table><thead><tr><th>論点</th><th>現行文書</th><th>追加メモ</th><th>この作業での扱い</th></tr></thead><tbody>
       <tr><td>参加者画面</td><td>SitesのスマホWeb</td><td>議事録とさがさんメモにExtensionの記述</td><td>新しいAccepted方針を基準とし、相違をコンテキストに明記</td></tr>
       <tr><td>お題の進行</td><td>共通3問を準備し、ホストが次問へ進める案</td><td>最初の正解で次のお題を増やす案</td><td>採用判断は保留。画面はAPIの状態で表示できる境界を保つ</td></tr>
@@ -49,17 +49,28 @@
   <section aria-labelledby="live"><h2 id="live">公開プロトタイプで見えたこと</h2>
     <p><a href="https://ai-karimono-race.ahwenu.chatgpt.site/">公開された入口画面</a>には「AI借り物競争 / FIND IT. SNAP IT.」と表示され、Sites上に部屋作成フォームがある。QR参加、デモ・実AIモード、参考写真、写真受付時刻順のランキングも画面の説明に現れる。部屋作成や写真投稿はこの作業では行っていない。</p>
     <p><a href="https://ai-karimono-race.ahwenu.chatgpt.site/verification.html">公開検証ページ</a>には、初回参加から30秒での自動開始、合格通知、実画像を使ったAI判定、70接続のデモ負荷の記録がある。これらはページの記載であり、こちらで再試験した結果ではない。</p>
-    <p class="note">現行文書との主な差は、Sites上のホスト操作、アプリの表示名、30秒自動開始、参考写真のMVP利用、画像縮小の上限。コードが届いてから実際の画面遷移とAPIを読み、どの差を実装へ反映するか確認する。</p>
+    <p class="note">取り込まれたコードでも、Sites上のホスト操作、30秒自動開始、参考写真、画像縮小の上限、現在のAPI契約と文書との差を確認した。公開検証ページに書かれた試験は、この作業では再実行していない。</p>
+  </section>
+
+  <section aria-labelledby="code"><h2 id="code">取り込まれたコードで確認した現状</h2>
+    <p><code>apps/web/app.js</code> は参加者画面とSites上のホスト画面、状態取得、写真送信、結果演出を扱う。<code>apps/web/live-camera.js</code> は明示操作でカメラを開き、撮影後すぐにJPEGを送る。APIは <code>apps/cloud/lib/cloud-api.ts</code> にあり、部屋ごとの状態と合格イベントを返す。</p>
+    <table><thead><tr><th>観点</th><th>現在のコード</th><th>文書との主な差</th></tr></thead><tbody>
+      <tr><td>撮影</td><td>長辺960px・1MiB以下、撮影後すぐ送信</td><td>03の送信前プレビュー・撮り直し、1280px・2MiBとは異なる</td></tr>
+      <tr><td>参加と送信</td><td>参加者トークンはlocalStorageで保持。送信時はrequestIdを本文に含める</td><td>04のCookie認証とIdempotency-Keyヘッダー案とは異なる</td></tr>
+      <tr><td>進行</td><td>最初の参加から30秒で自動開始。合格数と受付時刻で順位付け</td><td>01のホスト開始、得点・同点順位案とは異なる</td></tr>
+      <tr><td>演出</td><td>自分の合格、他者のクリア通知、紙吹雪、任意の効果音</td><td>追加メモの希望の一部は既に実装済み</td></tr>
+    </tbody></table>
+    <p><code>node --test tests/camera.test.mjs tests/camera-app.test.mjs</code> は17件成功。模擬DOMと通信境界のテストで、実機カメラや公開サイトへの投稿は未確認。</p>
   </section>
 
   <section aria-labelledby="scope"><h2 id="scope">何を作るか</h2>
     <ol class="steps">
-      <li><strong>コンテキスト文書：</strong><code>docs/mobile-frontend-context.md</code> に、参加者の体験、画面状態、まえ担当の境界、他担当から必要な契約、メモとの相違、未決事項を記す。詳細仕様は既存の03・04・07とADRへリンクし、別の正本を増やさない。</li>
-      <li><strong>実装の確認：</strong>プロトタイプの保存先を特定して画面遷移・カメラ・送信・結果・ランキング・復帰を読み、文書と違う点を事実として整理する。</li>
+      <li><strong>コンテキスト文書：</strong><code>ai-context/mobile-frontend-context.md</code> に、参加者の体験、実コード、mae担当の境界、他担当から必要な契約、メモとの相違を記す。詳細仕様は既存の03・04・07とADRへリンクする。</li>
+      <li><strong>実装の確認：</strong>取り込まれた <code>apps/web/</code> と <code>apps/cloud/</code> の画面遷移・カメラ・送信・結果・ランキング・復帰を読み、文書との差を記録した。</li>
       <li><strong>参加者画面の整合：</strong>実装が見つかったら、入口→待機→お題→撮影→送信・判定→結果・順位の流れを、APIから来る状態に合わせる。読み込み・通信失敗・カメラ拒否も画面状態として扱う。</li>
       <li><strong>結合確認：</strong>API契約がまだ仮の場合はモックで画面を確認し、実APIがある範囲で接続する。実機や実AIを試していない部分は未確認と記録する。</li>
     </ol>
-    <p class="note">現在のリポジトリには文書と参考画像だけがある。公開画面は見られるが、プロトタイプがプッシュされた後にコードを読み、実装の変更範囲を確定する。</p>
+    <p class="note">コードは取り込み済み。次の実装変更では、参加認証・API契約・得点・ホスト配置を関係担当と合わせたうえで、参加者の操作と表示から適用範囲を定める。</p>
   </section>
 
   <section aria-labelledby="structure"><h2 id="structure">境界とデータの流れ</h2>
@@ -75,9 +86,9 @@
         <g fill="none" stroke="#41637a" stroke-width="2.2" marker-end="url(#arrow)"><path d="M140 69 H177"/><path d="M322 69 H360"/><path d="M495 69 H533"/><path d="M648 69 H670"/><path d="M780 69 H800"/><path d="M725 98 V182 H800"/><path d="M180 239 H230"/><path d="M375 239 H470 V135 H660 V95 H670"/></g>
         <g fill="#172434" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle"><text x="77" y="75">参加者のスマホ</text><text x="249" y="75">Sitesの参加者画面</text><text x="427" y="75">画面状態と操作</text><text x="590" y="75">API契約</text><text x="725" y="75">SitesのAPI</text><text x="860" y="75">ゲームと保存</text><text x="860" y="187">AI判定</text><text x="97" y="245">ホストの拡張画面</text><text x="302" y="245">MCP接続</text></g>
       </svg>
-      <figcaption>同じ構造をdraw.ioのMermaid図でも開いて確認した。まえ担当の主な変更範囲は「Sitesの参加者画面」と「画面状態と操作」。</figcaption>
+      <figcaption>目標とする依存方向。同じ構造をdraw.ioのMermaid図でも開いて確認した。現在の実装では参加者・ホスト画面、状態操作、API呼び出しの多くが同じフロントエンドファイルにある。</figcaption>
     </figure>
-    <p>表示部品はAkibakoさんの設計を受け、参加者画面の状態管理・撮影・API接続をまえ担当が持つ。得点や締切の確定はサーバー側、HTTP契約はAhwenu、ゲームと保存はさがさんの領域として扱う。</p>
+    <p>表示部品はAkibakoさんの設計を受け、参加者画面の状態管理・撮影・API接続をmae担当が持つ。得点や締切の確定はサーバー側、HTTP契約はAhwenu、ゲームと保存はさがさんの領域として扱う。</p>
   </section>
 
   <section aria-labelledby="verify"><h2 id="verify">確認できたと言える条件</h2>
@@ -85,7 +96,7 @@
   </section>
 
   <section aria-labelledby="decision"><h2 id="decision">作業前に確かめる事項</h2>
-    <p>プロトタイプのコードがプッシュされたら、現行の動作を先に読む。お題を「ホストが進める共通3問」から「初正解で追加生成」に変えるか、先着特典・クリア通知をMVPに含めるかは、現行文書と追加メモで一致していない。画面の構造はどちらにも対応できるよう保ち、ゲームルールの変更は合意後に関係ADR・API契約と一緒に扱う。</p>
+    <p>現行コードの動作を読んだ。お題を「ホストが進める共通3問」から「初正解で追加生成」に変えるか、先着特典をMVPに含めるかは、現行文書と追加メモで一致していない。他者のクリア通知はコードに存在する。ゲームルールの変更は合意後に関係ADR・API契約と一緒に扱う。</p>
   </section>
 </main>
 </body>
