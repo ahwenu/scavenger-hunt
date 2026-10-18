@@ -52,6 +52,9 @@
 .challenge-ticket{width:100%;min-height:126px;padding:23px 14px 12px;position:relative;border:4px solid #fff;background:#fffdeaeb;border-radius:16px;text-align:center;box-shadow:0 6px 0 #e5b861,0 10px 15px #355e8b52}
 .ticket-ribbon{position:absolute;top:-16px;left:50%;transform:translateX(-50%) rotate(-3deg);background:#fb4171;color:white;border:2px solid #fff;border-radius:5px;padding:0 15px;box-shadow:0 3px #c22b53;font-weight:1000;white-space:nowrap}
 .challenge-ticket h1{margin:0;color:#1d427c;font-size:clamp(19px,5.6vw,26px);line-height:1.35;font-weight:1000}.challenge-ticket p{margin:3px 0 0;font-size:12px;font-weight:750}
+.challenge-criteria{margin-top:10px;padding-top:9px;border-top:1px solid #d7cda3;text-align:left;color:#294a6e;font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+.challenge-criteria>strong{font-weight:900}.challenge-criteria ul{margin:4px 0 0;padding-left:1.35em}.challenge-criteria li+li{margin-top:3px}
+.challenge-ticket .challenge-photo-rule{margin-top:6px;font-size:11px;line-height:1.65;font-weight:750}
 .timer-pill{display:flex;align-items:center;gap:8px;border:3px solid #fff;background:#fffdf7;border-radius:50px;margin:12px 0 9px;padding:1px 18px;color:#f02c65;box-shadow:0 3px #70bde5}.timer-pill svg{color:#1973cb}.timer-pill strong{font-size:27px;font-variant-numeric:tabular-nums;letter-spacing:.03em}
 .camera-frame{position:relative;overflow:hidden;width:100%;aspect-ratio:1.05;border:5px solid white;border-radius:18px;background:#6db9e9 url('/design/sports-field.png') center 68%/cover;box-shadow:0 6px 0 #428ccc,0 10px 20px #22528070}
 .captured-photo{width:100%;height:100%;object-fit:cover;display:block}.camera-placeholder{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:white;text-shadow:0 2px #155491;font-size:17px;font-weight:1000;background:#3289c455}.camera-placeholder svg{filter:drop-shadow(0 3px 2px #285080)}

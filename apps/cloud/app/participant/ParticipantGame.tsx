@@ -525,7 +525,18 @@ export function ParticipantGame({ preview = false, landing = false, previewView,
 
       {screen === 'challenge' && <section className="screen challenge-screen" aria-label="お題画面">
         <div className="round-meta"><span>第 {round?.number ?? 1} 競技！</span><strong>現在 {rankText}</strong></div>
-        <div className="challenge-ticket"><span className="ticket-ribbon">お題</span><h1>{round?.challenge.title || 'お題を待っています'}</h1>{round?.challenge.description && <p>{round.challenge.description}</p>}</div>
+        <div className="challenge-ticket">
+          <span className="ticket-ribbon">お題</span>
+          <h1>{round?.challenge.title || 'お題を待っています'}</h1>
+          {round?.challenge.description && <p>{round.challenge.description}</p>}
+          {round && <div className="challenge-criteria">
+            {Boolean(round.challenge.criteria?.length) && <>
+              <strong>写真の判定基準</strong>
+              <ul>{round.challenge.criteria?.map((criterion, index) => <li key={index}>{criterion}</li>)}</ul>
+            </>}
+            <p className="challenge-photo-rule">条件に合う実物を撮影してください。画面や印刷された写真は使えません。</p>
+          </div>}
+        </div>
         <div className="timer-pill"><Clock3 size={22}/><strong>{formatTime(preview ? 30 : secondsLeft)}</strong></div>
         <div className="camera-frame">
           {cameraOpen ? <video ref={element => { videoRef.current = element; if (element) element.srcObject = streamRef.current; }} autoPlay playsInline muted aria-label="カメラの映像" className="captured-photo" /> : photoUrl ? <img src={photoUrl} alt="送信前の写真" className="captured-photo" /> : reference ? <img src={reference} alt="お題の参考写真" className="captured-photo" /> : <div className="camera-placeholder"><Camera size={58}/><span>見つけたものを撮ろう！</span></div>}

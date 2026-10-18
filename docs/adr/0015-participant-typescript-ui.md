@@ -30,6 +30,8 @@
 
 ## 関連仕様
 
+公開E2Eの後続確認で、実写真のAI合格500点と実Plugin Extensions/参加者画面の順位一致を確認した。一方、新しいお題画面で `challenge.criteria` が非表示だったため、既存の判定契約を変更せず、条件一覧と実物写真の案内を表示する修正を追加する。結果と公開反映の記録は[17 公開E2E](../17-public-game-e2e.md)を参照。
+
 [参加者画面の作業コンテキスト](../participant-frontend/mobile-frontend-context.md)、[画面仕様](../03-ui-frontend.md)、[フォルダ構成](../09-repository-structure.md)、[実装計画](../ai-reports/2026-10-18-デザイン画像から参加者画面を実装する計画.html)
 
 ## 変更履歴
