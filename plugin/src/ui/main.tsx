@@ -10,6 +10,7 @@ import { SoundCredits } from './SoundControls.js';
 import { CompactDialog } from './CompactDialog.js';
 import { hostSounds } from './sound-effects.js';
 import { createGameSoundObserver } from './sound-events.js';
+import type { InvitationFile } from './join-invitation.js';
 
 declare global { interface Window { __KARIMONO_PREVIEW__?: boolean } }
 
@@ -159,7 +160,13 @@ function HostController() {
     finally { aiInFlight.current = false; if (active.current) setAIBusy(false); }
   }
 
-  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} onOpenAI={() => setToolsPanel('ai')} onOpenCredits={() => setToolsPanel('credits')} />{toolsPanel === 'ai' && <CompactDialog title="独立AIのお題プレビュー" onClose={() => setToolsPanel(null)}><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></CompactDialog>}{toolsPanel === 'credits' && <CompactDialog title="効果音の出典" onClose={() => setToolsPanel(null)}><SoundCredits /></CompactDialog>}</>;
+  /** 配布画像をSitesやAIへ送らず、ユーザーが選んだ保存操作へ渡す。 */
+  async function onDownloadInvitation(file: InvitationFile): Promise<void> {
+    if (!bridge.current) throw new Error('ホスト接続を確認してください。');
+    await bridge.current.downloadInvitation(file);
+  }
+
+  return <><HostDashboard state={state} busy={busy} error={error} onAction={onAction} onSetHint={onSetHint} onOpenAI={() => setToolsPanel('ai')} onOpenCredits={() => setToolsPanel('credits')} onDownloadInvitation={onDownloadInvitation} />{toolsPanel === 'ai' && <CompactDialog title="独立AIのお題プレビュー" onClose={() => setToolsPanel(null)}><AiPreview status={aiStatus} challenge={challenge} busy={aiBusy} error={aiError} onCheck={() => void aiAction(false)} onGenerate={() => void aiAction(true)} /></CompactDialog>}{toolsPanel === 'credits' && <CompactDialog title="効果音の出典" onClose={() => setToolsPanel(null)}><SoundCredits /></CompactDialog>}</>;
 }
 
 createRoot(document.getElementById('root')!).render(<HostController />);

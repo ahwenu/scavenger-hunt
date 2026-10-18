@@ -1,12 +1,12 @@
 # 技術構成と採用方針
 
-> 2026-10-18更新：本番ゲーム記録の保存先はSupabaseとする（[ADR-0016](adr/0016-supabase-game-persistence.md)）。現在のCloud実装・既存Sites配備はD1/R2。以下のD1/R2図・表は当初案の履歴で、Supabase接続を示さない。Sites/Cloudの実行配置を維持し、API背後の保存実装を移す受け渡しは[16](16-supabase-integration.md)を参照。接続URL・秘密設定・スキーマ・写真の保存先変更は未確認。
+> 2026-10-18更新：最新のユーザー指示に従い、ゲーム記録は既存SitesのD1、写真はR2を継続する（[ADR-0020](adr/0020-sites-persistence-advance-invites.md)）。参加者とPluginは同じSites API・部屋を使う。Supabase移行方針は[ADR-0016](adr/0016-supabase-game-persistence.md)の履歴とし、新しい正本や接続を増やさない。事前招待と人数/順位更新の契約は[16](16-supabase-integration.md)を参照。以下には当初案も残るため、現在の実装契約は04・05・12・14を優先する。
 
 ## 方針
 
 追加指示を優先し、Sitesには参加者向けモバイル画面・API・DB・画像保存を集約する。ホスト画面はPlugin Extensionsに分離し、MCP経由で同じSitesバックエンドを操作する。同一リポジトリで、Akibako さん（デザイン）、mae さん（モバイルフロントエンド）、さが さん（バックエンド）、Ahwenu（API処理）が責務を分ける。拡張画面開発は未定（Ahwenu）。詳細は[07 分担](07-delivery-plan.md)と[08 Plugin Extensions](08-plugin-extensions.md)を参照。
 
-Sitesスキルの提供仕様では、サーバーはCloudflare Workers、構造化データはD1、ファイルはR2を使う。これは利用可能な構成の確認であり、このリポジトリでのプロビジョニングや動作確認は未実施。作業時点の同梱Sitesスキルの `SKILL.md`、`references/storage.md`、`references/identity-and-secrets.md` に基づく。
+Sitesスキルの提供仕様では、サーバーはCloudflare Workers、構造化データはD1、ファイルはR2を使う。この段落は当初の利用可能な構成の確認であり、後続のD1/R2配備と公開検証は[12](12-sites-deployment.md)・[14](14-issue1-ahwenu-handoff.md)に記録した。作業時点の同梱Sitesスキルの `SKILL.md`、`references/storage.md`、`references/identity-and-secrets.md` に基づく。
 
 | 領域 | 推奨技術 | 選定理由・条件 |
 | --- | --- | --- |

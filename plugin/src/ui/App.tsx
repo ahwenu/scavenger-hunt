@@ -5,6 +5,8 @@ import { JoinQr } from './JoinQr.js';
 import { SoundToggle } from './SoundControls.js';
 import { CompactDialog, TextPager } from './CompactDialog.js';
 import { RankingBoard } from './RankingBoard.js';
+import { InvitationShare } from './InvitationShare.js';
+import type { InvitationFile } from './join-invitation.js';
 import girlFlag from './assets/girl-flag.png';
 import robotFlag from './assets/robot-flag.png';
 import crown from './assets/crown.png';
@@ -20,10 +22,11 @@ export interface HostDashboardProps {
   onSetHint?: (roundId: string, text: string | null) => Promise<void>;
   onOpenAI?: () => void;
   onOpenCredits?: () => void;
+  onDownloadInvitation?: (file: InvitationFile) => Promise<void>;
 }
 
 type MainTab = 'game' | 'invite' | 'ranking' | 'teams';
-type DetailPanel = 'notice' | 'topic' | 'hint' | 'stages' | 'team' | null;
+type DetailPanel = 'notice' | 'topic' | 'hint' | 'stages' | 'team' | 'invite' | null;
 const roomLabels = { lobby: '参加受付中', playing: 'ゲーム進行中', finished: 'ゲーム終了' };
 const roundLabels = { pending: '準備中', active: '写真受付中', closing: '判定を確定中', result: '結果発表' };
 const topicLabels = { empty: '未準備', generating: '生成中', ready: '準備完了', failed: '準備失敗' };
@@ -63,7 +66,7 @@ function CommonHint({ roundId, saved, enabled, busy, error, onSave }: { roundId:
 }
 
 /** 安全な状態DTOだけを使い、狭い画面では操作面を切り替えて表示する。 */
-export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenAI, onOpenCredits }: HostDashboardProps) {
+export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenAI, onOpenCredits, onDownloadInvitation }: HostDashboardProps) {
   const [tab, setTab] = useState<MainTab>('game');
   const [panel, setPanel] = useState<DetailPanel>(null);
   const [teamPage, setTeamPage] = useState(0);
@@ -78,6 +81,7 @@ export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenA
   }, []);
   const snapshot = state.snapshot;
   const room = snapshot?.room;
+  useEffect(() => { if (state.mode === 'sites' && room?.roomId) setTab('invite'); }, [state.mode, room?.roomId]);
   const round = room?.currentRound;
   const isDemo = state.mode === 'demo';
   const isSites = state.mode === 'sites';
@@ -109,7 +113,8 @@ export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenA
       <div className="welcome-art" aria-hidden="true"><img src={girlFlag} alt="" /><img src={robotFlag} alt="" /></div>
       <span className="section-kicker">借り物王に俺はなる！</span><h2>運動会、はじめよう！</h2>
       <p>みんなの挑戦を、ここから進めよう。</p>
-      <button className="button button-primary" disabled={busy || (!isDemo && !isSites)} onClick={() => onAction('create')}>{busy ? '処理中…' : isDemo ? 'デモの部屋を作る' : '部屋を作る'} ↗</button>
+      <button className="button button-primary" disabled={busy || (!isDemo && !isSites)} onClick={() => onAction('create')}>{busy ? '処理中…' : isDemo ? 'デモの部屋を作る' : '招待QRを事前に作る'} ↗</button>
+      {isSites && <p className="helper">部屋を作ってQRを配布。全員が集まってからゲームを開始できます。</p>}
       {(isSites || error) && <button className="button button-quiet" disabled={busy} onClick={() => onAction('refresh')}>{error ? '接続を再試行' : '接続状態を再取得'}</button>}
       <ol className="welcome-steps" aria-label="開催の流れ"><li><b>1</b>部屋をつくる</li><li><b>2</b>集合</li><li><b>3</b>開始！</li></ol>
     </section> : <>
@@ -124,7 +129,7 @@ export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenA
       <div className={`game-stage ${showOverview ? 'overview' : 'single-panel'} ${isSites ? 'with-invite' : ''}`}>
         {isSites && <section className="join-panel surface" aria-labelledby="join-heading" hidden={!showOverview && tab !== 'invite'}>
           <div className="section-heading"><span className="section-kicker">みんなを招待</span><span className="small-tag">JOIN</span></div><h2 id="join-heading">QRで、集合！</h2>
-          {room.joinUrl ? <><div className="join-content"><JoinQr url={room.joinUrl} /></div><a className="join-url" href={room.joinUrl} target="_blank" rel="noreferrer">参加ページを開く ↗</a><button className="text-button" onClick={() => setPanel('notice')}>参加URL・部屋の詳細</button></> : <TextPager text="実AIの接続準備が完了するまで参加URLを表示しません。Sitesの設定後に新しい部屋を作成してください。" />}
+          {room.joinUrl ? <><div className="join-content"><JoinQr url={room.joinUrl} /></div><button className="button button-secondary invite-share-button" onClick={() => setPanel('invite')}>参加QRを配布・保存</button><a className="join-url" href={room.joinUrl} target="_blank" rel="noreferrer">参加ページを開く ↗</a></> : <TextPager text="実AIの接続準備が完了するまで参加URLを表示しません。Sitesの設定後に新しい部屋を作成してください。" />}
         </section>}
         <section className="topic-panel surface" aria-labelledby="topic-heading" hidden={!showOverview && tab !== 'game'}>
           <div className="section-heading"><span className="section-kicker">{room.status === 'finished' ? 'ゲーム終了' : round ? roundLabels[round.status] : 'ゲームの進行'}</span><button className="small-tag" onClick={() => setPanel('stages')}>{round ? `第${round.number}問` : '準備中'}{room.roundCount !== null && ` / ${room.roundCount}`} ›</button></div>
@@ -148,6 +153,7 @@ export function HostDashboard({ state, busy, error, onAction, onSetHint, onOpenA
       </div>
     </>}
     <footer className="footer"><span>借り物王に俺はなる！</span><button className="text-button" onClick={onOpenCredits}>効果音の出典</button></footer>
+    {panel === 'invite' && room?.joinUrl && <CompactDialog title="参加QRを配布" onClose={() => setPanel(null)}><InvitationShare url={room.joinUrl} automaticStart={sites?.automaticLobbyStart === true} onDownload={onDownloadInvitation} /></CompactDialog>}
     {panel === 'notice' && <CompactDialog title={error ? '通信・操作の詳細' : '接続・部屋の詳細'} onClose={() => setPanel(null)}><TextPager text={[error && `操作できませんでした：${error}\n表示情報が古い可能性があります。「更新」で最新状態を確認してください。`, notice, room && `部屋名：${room.roomName ?? room.roomCode}\n部屋ID：${room.roomId}`, room?.joinUrl && `参加URL：${room.joinUrl}`, isDemo && '部屋コード・参加者・得点はデモ用です。スマホから参加できません。', sites?.automaticLobbyStart && '参加者が登録されると、Sites側で初回のお題準備・開始が自動進行します。'].filter(Boolean).join('\n\n')} />{room?.joinUrl && <a className="button button-quiet" href={room.joinUrl} target="_blank" rel="noreferrer">参加ページを開く ↗</a>}<button className="button button-secondary" disabled={busy} onClick={() => onAction('refresh')}>最新状態を取得</button></CompactDialog>}
     {panel === 'topic' && <CompactDialog title="お題・進行案内" onClose={() => setPanel(null)}><TextPager text={[round?.title ?? '次の借り物王は、誰だ。', round?.instruction ?? '参加者とお題の準備を確認してください。', gameHelp].join('\n\n')} /></CompactDialog>}
     {panel === 'stages' && <CompactDialog title="全競技の進行" onClose={() => setPanel(null)}>{sites?.stages ? <ol className="stage-progress">{sites.stages.map(stage => <li key={stage.number} className={`stage-${stage.status}`} aria-current={stage.status === 'active' ? 'step' : undefined}><b>第{stage.number}競技</b><span>{{ completed: '完了', active: '進行中', locked: '未解放' }[stage.status]}</span></li>)}</ol> : <TextPager text={room?.roundCount === null ? '問題数の上限はありません。' : `全${room?.roundCount ?? 0}問です。現在は${round ? `第${round.number}問` : '準備中'}です。`} />}</CompactDialog>}

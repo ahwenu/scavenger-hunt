@@ -148,8 +148,8 @@ function hostReferenceHTML(round){
 }
 /** ホストの重要情報は、長い導入を省き1画面の課題エリアへ集約する。 */
 function hostChallengeHTML(round){
- if(state.generating)return '<section class="challenge card host-challenge host-ready"><p class="eyebrow">GETTING READY</p><h2>次のお題を準備しています<span class="thinking"> ●</span></h2><p>参加者にルールを説明してお待ちください。</p><span class="decorative-arrow" aria-hidden="true">↗</span></section>';
- if(!round)return '<section class="challenge card host-challenge host-ready"><p class="eyebrow">READY, SET…</p><h2>会場ぜんぶが、<br>プレイグラウンド。</h2><p>QRで参加。お題を見て、探して、撮ろう。<br>最初の参加から30秒でスタートします。</p><div class="host-howto"><span>01 参加する</span><span>02 探して撮る</span><span>03 一番をめざす</span></div><span class="decorative-arrow" aria-hidden="true">↗</span></section>';
+ if(state.generating)return `<section class="challenge card host-challenge host-ready"><p class="eyebrow">GETTING READY</p><h2>次のお題を準備しています<span class="thinking"> ●</span></h2><p>参加者にルールを説明してお待ちください。</p><span class="decorative-arrow" aria-hidden="true">↗</span></section>`;
+ if(!round)return `<section class="challenge card host-challenge host-ready"><p class="eyebrow">READY, SET…</p><h2>会場ぜんぶが、<br>プレイグラウンド。</h2><p>QRで参加。お題を見て、探して、撮ろう。<br>${state?.lobby?.autoStart===false?'ホストが開始するとゲームが始まります。':'最初の参加から30秒でスタートします。'}</p><div class="host-howto"><span>01 参加する</span><span>02 探して撮る</span><span>03 一番をめざす</span></div><span class="decorative-arrow" aria-hidden="true">↗</span></section>`;
  return `<section class="challenge card host-challenge ${round.status!=='active'?'closed':''}"><div class="challenge-top"><p class="eyebrow">ROUND ${String(round.number).padStart(2,'0')} / ${round.status==='active'?'NOW PLAYING':'FINISHED'}</p><span class="countdown" data-ends="${Number(round.endsAt)}" data-active="${round.status==='active'}"></span></div><h2>${esc(round.challenge.title)}</h2><div class="host-task-grid">${hostReferenceHTML(round)}<div class="host-task-copy"><p class="host-task-description">${esc(round.challenge.description)}</p><div class="criteria"><strong>写真の判定基準</strong>${round.challenge.criteria.map(criterion=>`<div><span>✓</span> ${esc(criterion)}</div>`).join('')}</div></div></div><p class="host-task-rule">${round.mode==='demo'?'デモでは写真を評価せず、選択した合否を返します。':'同じ種類や指定の色・形の実物を、自分で撮影。背景・構図を合わせる必要はありません。参考写真や画面・印刷物の撮影は使えません。'}</p></section>`;
 }
 /** 上位人数、全員の順位、直近3件の確定通過だけを更新する。 */
@@ -205,7 +205,8 @@ function updateLobby(){
  const box=$('#lobby-status');if(!box)return;const first=isFirstLobby();box.hidden=!first;if(!first)return;
  const lobby=state.lobby,players=state.stats.players,remaining=lobby.deadline==null?null:Math.max(0,Math.ceil((Number(lobby.deadline)-Date.now()-offset)/1000));
  const headline=$('#lobby-countdown'),detail=$('#lobby-detail');
- if(!players||lobby.status==='empty'){headline.textContent='最初の参加者を待っています';detail.textContent='1人目が参加すると、30秒後にゲームが始まります。';}
+ if(!players||lobby.status==='empty'){headline.textContent='最初の参加者を待っています';detail.textContent=lobby.autoStart===false?'QRを配布して参加者を集め、ホストが開始してください。':'1人目が参加すると、30秒後にゲームが始まります。';}
+ else if(lobby.autoStart===false&&lobby.deadline==null){headline.textContent='ホストの開始を待っています';detail.textContent='参加できました。ホストが開始するまで、この画面でお待ちください。';}
  else if(lobby.status==='error'){headline.textContent='お題の準備を確認してください';detail.textContent=isJoin?'準備中にエラーが起きました。ホストの操作をお待ちください。':'準備中にエラーが起きました。「先にお題を準備」で再試行してください。';}
  else if(remaining!==null&&remaining>0){headline.textContent=`ゲーム開始まで ${String(Math.floor(remaining/60)).padStart(2,'0')}:${String(remaining%60).padStart(2,'0')}`;detail.textContent=state.prepared?'お題の準備ができました。みんなが集まるまでお待ちください。':state.mode==='ai'?'参考写真とお題を準備しています。みんなが集まるまでお待ちください。':'みんなが集まるまでお待ちください。';}
  else{headline.textContent=state.mode==='ai'?'参考写真とお題の準備中。完了後に開始':'お題の準備中。完了後に開始';detail.textContent='このままお待ちください。開始するとお題と残り時間が表示されます。';}
@@ -213,7 +214,7 @@ function updateLobby(){
 }
 /** 初回のみ、今すぐ開始と時間追加を用意し、自動準備の失敗時は再試行を残す。 */
 function hostLobbyControls(){
- const first=isFirstLobby(),extend=$('#extend-lobby');extend.hidden=!first;if(!first)return;
+ const first=isFirstLobby(),extend=$('#extend-lobby');extend.hidden=!first||state?.lobby?.autoStart===false;if(!first)return;
  const noControl=!state.isHost||busy||!state.stats.players;
  const due=state.lobby.deadline!=null&&Number(state.lobby.deadline)<=Date.now()+offset;
  $('#start').disabled=noControl||due;$('#start').textContent=busy?'処理中…':'今すぐ開始 ↗';extend.disabled=noControl;

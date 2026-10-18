@@ -11,7 +11,7 @@ import { DemoHostAdapter, HostOperationError, NotConfiguredHostAdapter, type Hos
 import { AiServiceClient, AiServiceError, type AiServiceOptions } from './ai-client.js';
 import { SitesHostAdapter, type SitesAdapterOptions } from './sites-adapter.js';
 
-export const HOST_RESOURCE_URI = 'ui://scavenger-hunt/host-v0.4.1';
+export const HOST_RESOURCE_URI = 'ui://scavenger-hunt/host-v0.4.2';
 
 export interface ServerOptions {
   mode?: 'demo' | 'unconfigured' | 'sites';
@@ -29,7 +29,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
   }
   const adapter = mode === 'sites' ? new SitesHostAdapter(options.sites) : mode === 'demo' ? new DemoHostAdapter(options.now) : new NotConfiguredHostAdapter();
   const htmlPath = options.htmlPath ?? fileURLToPath(new URL('./widget.html', import.meta.url));
-  const server = new McpServer({ name: 'karimono-host', version: '0.4.1' });
+  const server = new McpServer({ name: 'karimono-host', version: '0.4.2' });
   const ai = new AiServiceClient(options.ai);
 
   registerAppResource(server, 'カリモノ ホスト画面', HOST_RESOURCE_URI, {}, async () => ({
@@ -109,7 +109,7 @@ export function createServer(options: ServerOptions = {}): McpServer {
     },
   }, handle('open'));
   registerAppTool(server, 'host_create_room', {
-    title: '部屋を作成', description: '部屋作成の接続境界。デモの場合はメモリ上のサンプル部屋を作る。',
+    title: '招待QR用の部屋を事前作成', description: 'Sitesでは手動開始の待機部屋を作り、当日まで同じ参加QRを配布できる。デモの場合はメモリ上のサンプル部屋を作る。',
     inputSchema: { operationId }, annotations: mutation, _meta: appOnly,
   }, handle('create_room'));
   registerAppTool(server, 'host_get_room', {

@@ -1,27 +1,6 @@
 /** 参加URLのQRを拡張内で生成し、外部通信なしでインラインSVGへ描画する。 */
 import { useMemo } from 'react';
-import QRCode from 'qrcode';
-
-/** QRの黒モジュールを横方向にまとめ、白い余白を含むSVGパスへ変換する。 */
-function createJoinQr(url: string): { path: string; size: number } {
-  const target = new URL(url);
-  if (!['https:', 'http:'].includes(target.protocol) || target.username || target.password) {
-    throw new Error('invalid_join_url');
-  }
-  const quietZone = 4;
-  const { modules } = QRCode.create(url, { errorCorrectionLevel: 'M' });
-  const segments: string[] = [];
-  for (let row = 0; row < modules.size; row++) {
-    let column = 0;
-    while (column < modules.size) {
-      if (!modules.get(row, column)) { column++; continue; }
-      const start = column;
-      while (column < modules.size && modules.get(row, column)) column++;
-      segments.push(`M${start + quietZone} ${row + quietZone}h${column - start}v1h-${column - start}z`);
-    }
-  }
-  return { path: segments.join(''), size: modules.size + quietZone * 2 };
-}
+import { createJoinQr } from './join-invitation.js';
 
 /** 部屋URLが変わるとQRを再生成し、失敗時も併設の参加リンクで参加できるようにする。 */
 export function JoinQr({ url }: { url: string }) {

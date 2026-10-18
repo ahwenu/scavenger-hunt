@@ -6,7 +6,7 @@
 
 当初の基準コミット: 仕様文書 `64d509a`、取り込み `2921fb5`。最新ゲーム契約の照合対象: main `29e6728`。
 
-状態: 下記の旧プロトタイプ調査は履歴。現在の契約は[12](../12-issue1-backend-handoff.md)・[14](../14-issue1-ahwenu-handoff.md)・ADR-0013を参照。TypeScript参加者UIは公開Sites v6へ配備済み。Supabaseと実機動作は未確認。
+状態: 下記の旧プロトタイプ調査は履歴。現在の契約は[12](../12-issue1-backend-handoff.md)・[14](../14-issue1-ahwenu-handoff.md)・ADR-0013を参照。TypeScript参加者UIは公開Sites v6へ配備済み。最新の保存方針は[ADR-0020](../adr/0020-sites-persistence-advance-invites.md)のD1/R2継続。実機動作は未確認。今回の追加実装・検証は[16](../16-supabase-integration.md)を参照。
 
 公開反映：2026-10-18 17:07 JST、TypeScript参加者UIと画像・音源をSitesの実行ルートへ同期してv6を配備した。従来の `/rooms/:id/join` とQRのURLは維持し、旧HTMLから新しいReact画面へ切り替えている。公開版の新画面・匿名参加・画像・新BGMの配信を確認済み。配備ID・ソースSHA・ローカル/公開検証と限界は[12 Sites配備記録](../12-sites-deployment.md)を参照。
 
@@ -21,9 +21,10 @@
 | 確定 | 参加者はスマホのブラウザを使い、Sitesに参加者画面とAPIを置く。ホスト画面はPlugin Extensionsに置く | [ADR-0001](../adr/0001-product-surfaces.md) |
 | 確定 | mae担当は参加者画面の処理、カメラ、写真送信、API接続、復帰。デザインはAkibakoさん、ゲーム・保存はさがさん、HTTP契約・AI接続はAhwenu | [ADR-0002](../adr/0002-team-boundaries.md)、[07](../07-delivery-plan.md) |
 | 確定 | 制作チーム名はONE LEASE、アプリ名はカリモノ、キャッチコピーは「借り物王に俺はなる！」 | [ADR-0007](../adr/0007-product-identity.md) |
-| 確定 | 本番ゲーム記録はSupabaseへ保存する。約100人全員がプレイヤーで、人数と順位をライブ更新する | [ADR-0016](../adr/0016-supabase-game-persistence.md)、[16](../16-supabase-integration.md)。実接続は未確認 |
+| 確定 | 本番ゲーム記録は既存SitesのD1、写真はR2を継続する。約100人全員がプレイヤーで、人数と順位を自動更新する | [ADR-0020](../adr/0020-sites-persistence-advance-invites.md)、[16](../16-supabase-integration.md) |
+| 確定 | 事前配布のQRは先に作る同じ部屋の参加URL。Pluginの新規部屋はホスト開始まで待機する | [ADR-0020](../adr/0020-sites-persistence-advance-invites.md)。`autoStart:false` の部屋をD1へ保存する |
 | 採用・実装済み | 最大100人・10競技・初合格500点・連番順位・保存済み共通ヒント | [ADR-0013](../adr/0013-issue1-player-game-contract.md)。3問/10点の旧案は使わない |
-| 提案・履歴 | 当初のD1/R2構成案はSupabase方針に置き換え。AIアダプター・フォルダ案には未検証部分がある | [ADR-0003](../adr/0003-sites-runtime-storage.md)はSuperseded。[0004](../adr/0004-ai-adapters.md)、[0006](../adr/0006-deployment-and-folder-boundaries.md)を参照 |
+| 提案・履歴 | 当初のD1/R2案、次のSupabase移行方針は各ADRの履歴に残し、最新指示でD1/R2継続を採用。AIアダプター・フォルダ案には未検証部分がある | [ADR-0003](../adr/0003-sites-runtime-storage.md)・[0016](../adr/0016-supabase-game-persistence.md)はSuperseded。[0004](../adr/0004-ai-adapters.md)、[0006](../adr/0006-deployment-and-folder-boundaries.md)を参照 |
 
 10月17日の議事録には「参加者側もPlugin Extensions」という古い配置案がある。10月18日のProject.mdとAcceptedのADR-0001を、現時点の画面配置の基準とする。配置を変えるなら関係担当の合意と後継ADRが必要。
 
@@ -111,7 +112,7 @@
 
 提供デザイン画像から、現行Sitesの `apps/cloud/app/rooms/[id]/join/` にTypeScript/Reactの参加者画面を追加した。追加指示により `/` も新しいトップとし、参加リンク・部屋IDから既存の参加URLへ移動する。8画面の見本は `apps/cloud/app/design-preview/` で切り替えられる。元画像と現在使う素材の関係は [デザイン共有フォルダ](../design/README.md)、最新の入口と配信境界は [ADR-0019](../adr/0019-participant-root-entry.md) を参照する。従来の部屋作成画面は `/host`、部屋ホストは `/rooms/:id/host` に残し、公開反映には再配備を要する。
 
-画面は現行の部屋参加・状態取得・写真提出APIへ接続し、写真を長辺960px・1MiB以下のJPEGに変換して送る。送信前プレビュー、撮り直し、判定中・合否、順位表示、画面復帰時の再取得を実装した。最新mainのAPIは得点・10競技・共通ヒントを返し、画面はその確定値を表示する。登録人数と順位を定期取得で自動更新し、通信失敗・復帰と順位変動を表示する。追加のrevision・在席数とSupabase接続は[16](../16-supabase-integration.md)の残件。
+画面は現行の部屋参加・状態取得・写真提出APIへ接続し、写真を長辺960px・1MiB以下のJPEGに変換して送る。送信前プレビュー、撮り直し、判定中・合否、順位表示、画面復帰時の再取得を実装した。最新mainのAPIは得点・10競技・共通ヒントを返し、画面はその確定値を表示する。登録人数と順位を定期取得で自動更新し、通信失敗・復帰と順位変動を表示する。revision・在席近似数と事前招待の開始方式を今回追加する契約は[16](../16-supabase-integration.md)へまとめる。以前のSupabase移行方針はADR-0016の履歴とし、現在はD1/R2を継続する。
 
 参加者画面のローカル表示と通信・表示モック9ケース、D1の1人参加から画像ファイル提出・デモ結果までは確認した。最新main統合後の型検査/buildと、バックエンド・既存音のテスト19件が成功した。詳細は[作業レポート](../ai-reports/)を参照。新UIの公開配備、iPhone/Android撮影、100実端末、Supabase接続は未確認。mainには別担当の公開100HTTPデモの記録があり、この新UIで再実行した結果ではない。上の「この文書作成時点」の記述は元の索引作成時の記録として残し、この追記で追加作業の範囲を区別する。
 

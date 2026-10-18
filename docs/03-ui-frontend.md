@@ -6,7 +6,9 @@
 
 100人全員が個人プレイヤーとして参加し、最大10競技・各競技の初合格500点をサーバーが確定する。`game`、全10件の`stages`、`ranks[].score/rank`、`mine[].awardedPoints`、共通ヒントのGETは[12の応答例](12-issue1-backend-handoff.md)と[ADR-0013](adr/0013-issue1-player-game-contract.md)を基準とする。点数やステージ解放を端末で仮計算しない。開始前はround=null、競技間は直前roundのclosedを表示し、ホストが次競技を開始するまで待機する。ヒント未用意はavailable=false、写真の処理状態はqueued/processing/accepted/rejected/error。順位は連番で、同点同順位の初期案は使わない。
 
-バックエンド契約は公開v3へ配備された記録がある（[14](14-issue1-ahwenu-handoff.md)）。このブランチではTypeScript参加者画面へ得点・順位・ステージ・ヒントを接続した。参加者はBearer、写真は1MiB以下。新しい参加者画面の公開配備とスマホ実機確認は未実施で、下記のCookie契約等の初期案とは区別する。
+事前招待部屋では `room.autoStart=false`・`lobby.autoStart=false` に合わせ、「ホストが開始するまで待機」と表示する。参加後も `lobby.deadline=null` のため30秒のカウントダウンを補わない。従来の自動開始部屋はtrueで従来の待機表示を保つ。追加の `revision`・`live`・`stats.activePlayers` と実装/検証状況は[16](16-supabase-integration.md)・[ADR-0020](adr/0020-sites-persistence-advance-invites.md)を参照。
+
+バックエンド契約は公開v3へ配備された記録がある（[14](14-issue1-ahwenu-handoff.md)）。このブランチではTypeScript参加者画面へ得点・順位・ステージ・ヒントを接続した。参加者はBearer、写真は1MiB以下。新しい参加者画面は後続の公開v6配備を[12](12-sites-deployment.md)へ記録済みで、スマホ実機確認は未実施。下記のCookie契約等の初期案とは区別する。
 
 デザインはAkibako さん、Sitesの参加者向けフロントエンド開発はmae さん。Plugin Extensionsのホスト画面開発は未定（Ahwenu）とし、mae さんの担当には含めない。API処理はAhwenu、バックエンドはさが さんが担当する。
 

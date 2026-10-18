@@ -22,10 +22,11 @@ ADR（Architecture Decision Record）には「何を選び、なぜ選び、ど�
 | [0013](0013-issue1-player-game-contract.md) | Issue #1の100人・10競技・初合格500点と状態/ヒントAPI | Accepted | 2026-10-18 | 2026-10-18 |
 | [0014](0014-game-sound-effects.md) | モバイルとPlugin Extensionsに無料素材のゲーム効果音を同梱する | Accepted | 2026-10-18 | 2026-10-18 |
 | [0015](0015-participant-typescript-ui.md) | 参加者の画像準拠UIを現行SitesのTypeScript画面に置く（ルート入口を0019へ） | Superseded | 2026-10-18 | 2026-10-18 |
-| [0016](0016-supabase-game-persistence.md) | ゲーム記録の本番保存先をSupabaseにする | Accepted | 2026-10-18 | 2026-10-18 |
+| [0016](0016-supabase-game-persistence.md) | ゲーム記録の本番保存先をSupabaseにする | Superseded → 0020 | 2026-10-18 | 2026-10-18 |
 | [0017](0017-viewport-host-ranking-effects.md) | ホスト画面を一画面に収め、ランキング変化を視覚演出する | Accepted | 2026-10-18 | 2026-10-18 |
 | [0018](0018-participant-media-audio.md) | TypeScript参加者画面の音を初期オンとし、メディア再生経路へまとめる | Accepted | 2026-10-18 | 2026-10-18 |
 | [0019](0019-participant-root-entry.md) | 新しい参加者画面をサイトのルート入口にする | Accepted | 2026-10-18 | 2026-10-18 |
+| [0020](0020-sites-persistence-advance-invites.md) | SitesのD1/R2を継続し、待機部屋の参加QRを事前配布する | Accepted | 2026-10-18 | 2026-10-18 |
 
 ## 状態
 

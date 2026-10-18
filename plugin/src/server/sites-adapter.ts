@@ -3,12 +3,14 @@ import { readFile } from 'node:fs/promises';
 import { z } from 'zod';
 import type { HostSnapshot, HostState } from '../shared/contracts.js';
 import { HostOperationError, type HostAction, type HostAdapter, type HostInput } from './adapters.js';
+import { defaultSitesSessionFile, loadSitesSessions, saveSitesSessions } from './sites-session-store.js';
 
 /** Sites専用の設定。OpenAIキーや参加者用Bearer認証はここでは使わない。 */
 export interface SitesAdapterOptions {
   baseUrl?: string;
   accessTokenFile?: string;
   fetch?: typeof globalThis.fetch;
+  sessionFile?: string;
 }
 
 const idSchema = z.string().regex(/^[a-zA-Z0-9-]{1,200}$/);
@@ -19,7 +21,7 @@ const cloudStateSchema = z.object({
   serverTime: z.number().int().positive(),
   generating: z.boolean(), preparing: z.boolean(), prepared: z.boolean(),
   preparationError: z.string().nullable(),
-  lobby: z.object({ deadline: z.number().nullable(), startedAt: z.number().nullable(), status: z.string() }),
+  lobby: z.object({ deadline: z.number().nullable(), startedAt: z.number().nullable(), status: z.string(), autoStart: z.boolean().optional() }),
   game: z.object({ status: z.enum(['lobby', 'playing', 'finished']), totalRounds: z.number().int().positive() }).optional(),
   stages: z.array(z.object({ number: z.number().int().positive(), status: z.enum(['completed', 'active', 'locked']) })).max(100).optional(),
   players: z.array(playerSchema).max(200),
@@ -67,7 +69,7 @@ function parseBaseUrl(value?: string): URL {
   }
 }
 
-/** プロセス内の部屋別Cookieと操作IDを保持する。再起動後の既存部屋復帰は未対応。 */
+/** 部屋別CookieをUIから隔離し、設定したユーザー保管先から再起動後も復帰する。 */
 export class SitesHostAdapter implements HostAdapter {
   private readonly options: SitesAdapterOptions;
   private readonly fetcher: typeof globalThis.fetch;
@@ -75,11 +77,17 @@ export class SitesHostAdapter implements HostAdapter {
   private readonly operations = new Map<string, { fingerprint: string; promise: Promise<HostState> }>();
   private currentRoomId?: string;
   private queue: Promise<unknown> = Promise.resolve();
+  private sessionsLoaded = false;
+  private sessionWarning = '';
+  private sessionFile?: string;
+  private readonly useDefaultSessionFile: boolean;
 
   /** 明示的な環境変数以外からゲート認証や接続先を探索しない。 */
   constructor(options?: SitesAdapterOptions) {
     this.options = options ?? { baseUrl: process.env.SITES_API_BASE_URL, accessTokenFile: process.env.SITES_SERVICE_ACCESS_TOKEN_FILE };
     this.fetcher = options?.fetch ?? globalThis.fetch;
+    this.useDefaultSessionFile = options === undefined;
+    this.sessionFile = options ? options.sessionFile : process.env.KARIMONO_HOST_SESSION_FILE || undefined;
   }
 
   /** 同一操作IDの多重送信をプロセス内で抑止し、操作とポーリングを直列化する。 */
@@ -102,13 +110,14 @@ export class SitesHostAdapter implements HostAdapter {
   /** 現行Sitesのラウンド操作へ変換し、未実装のゲーム全体終了や写真削除を作らない。 */
   private async perform(action: HostAction, input: HostInput): Promise<HostState> {
     const base = parseBaseUrl(this.options.baseUrl);
+    await this.restoreSessions(base);
     if (action === 'open' && !input.roomId && !this.currentRoomId) {
       await this.gateHeaders();
-      return { mode: 'sites', snapshot: null, notice: 'Sites接続モードです。部屋を作成して実際の参加URLを発行できます。ホスト認証はこのMCPプロセス内で保持します。', serverTime: new Date().toISOString() };
+      return { mode: 'sites', snapshot: null, notice: this.sessionWarning || 'Sites接続モードです。招待QRを事前に作成し、参加URLを配布できます。ゲームはホストが開始します。', serverTime: new Date().toISOString() };
     }
     if (action === 'create_room') return this.createRoom(base);
     const roomId = input.roomId ?? (action === 'open' ? this.currentRoomId : undefined);
-    if (!roomId || !this.rooms.has(roomId)) throw new HostOperationError('HOST_SESSION_REQUIRED', 'このMCPプロセスで作成した部屋だけ操作できます。再起動後のホスト認証復帰は未対応です。');
+    if (!roomId || !this.rooms.has(roomId)) throw new HostOperationError('HOST_SESSION_REQUIRED', 'この端末にホスト権限が保存された部屋だけ操作できます。部屋を作成した環境とSitesの接続先を確認してください。');
     let cloud = await this.getCloud(base, roomId);
     let state = this.toState(base, roomId, cloud);
     if (action === 'open' || action === 'get_room') return state;
@@ -165,7 +174,7 @@ export class SitesHostAdapter implements HostAdapter {
 
   /** Set-Cookieから作成した部屋のHttpOnly値だけを保存し、認証成功後のDTOを返す。 */
   private async createRoom(base: URL): Promise<HostState> {
-    const response = await this.request(base, '/api/rooms', 'POST', undefined, { name: 'カリモノ / ONE LEASE' });
+    const response = await this.request(base, '/api/rooms', 'POST', undefined, { name: 'カリモノ / ONE LEASE', autoStart: false });
     const parsed = z.object({ id: idSchema }).safeParse(response.body);
     if (!parsed.success) throw new HostOperationError('INVALID_RESPONSE', 'Sitesの部屋作成応答を確認できませんでした。再作成前にSites側の状態を確認してください。');
     const roomId = parsed.data.id;
@@ -175,6 +184,7 @@ export class SitesHostAdapter implements HostAdapter {
     if (!found?.token) throw new HostOperationError('HOST_SESSION_REQUIRED', 'Sitesで部屋が作成されましたがホスト認証を受け取れませんでした。再作成前に状態を確認してください。');
     this.rooms.set(roomId, { cookie: `host_${roomId}=${found.token}`, version: 0, signature: '' });
     this.currentRoomId = roomId;
+    await this.persistSessions(base);
     let cloud = await this.getCloud(base, roomId);
     if (cloud.aiAvailable && cloud.mode !== 'ai') {
       await this.request(base, `/api/rooms/${roomId}/host/mode`, 'POST', roomId, { mode: 'ai' });
@@ -228,7 +238,7 @@ export class SitesHostAdapter implements HostAdapter {
         canAdvance: !finished && aiReady && !!round && idle && pending === 0 && !cloud.generating,
         canEndRound: !finished && round?.status === 'active',
         canSetHint: !finished && round?.status === 'active' && round.endsAt > cloud.serverTime, pendingJudgments: pending,
-        automaticLobbyStart: !finished && !round && cloud.lobby.deadline !== null,
+        automaticLobbyStart: !finished && !round && (cloud.lobby.autoStart ?? cloud.lobby.deadline !== null),
         ...(cloud.stages ? { stages: cloud.stages } : {}),
       },
     };
@@ -236,10 +246,33 @@ export class SitesHostAdapter implements HostAdapter {
     const signature = JSON.stringify(snapshot);
     if (signature !== session.signature) { session.version++; session.signature = signature; }
     snapshot.room.version = session.version;
-    const notice = finished ? `Sitesで全${cloud.game!.totalRounds}競技が終了しました。確定したランキングを表示しています。` : !cloud.aiAvailable ? 'Sites接続済みですが、Sites側のAI設定が未完了です。実AIの準備・開始は利用できません。デモへは切り替えません。' : cloud.mode !== 'ai' ? 'Sitesはデモモードです。実AIモードへの変更が必要です。' : cloud.preparationError ? 'Sitesでお題の準備に失敗しました。最新状態を確認して準備を再実行してください。' : `Sitesの実部屋へ接続しています。参加者登録後はSites側が初回のお題準備・開始を自動進行します。順位は${hasPoints ? '得点' : '勝数'}と累計回答時間で決まります。`;
-    const state: HostState = { mode: 'sites', snapshot, notice, serverTime: new Date(cloud.serverTime).toISOString() };
+    const notice = finished ? `Sitesで全${cloud.game!.totalRounds}競技が終了しました。確定したランキングを表示しています。` : !cloud.aiAvailable ? 'Sites接続済みですが、Sites側のAI設定が未完了です。実AIの準備・開始は利用できません。デモへは切り替えません。' : cloud.mode !== 'ai' ? 'Sitesはデモモードです。実AIモードへの変更が必要です。' : cloud.preparationError ? 'Sitesでお題の準備に失敗しました。最新状態を確認して準備を再実行してください。' : `Sitesの実部屋へ接続しています。${snapshot.sites!.automaticLobbyStart ? 'この既存部屋はSites側の自動開始が有効です。' : '招待QRを事前に配布できます。全員が集まったら、お題を準備してゲームを開始してください。'}順位は${hasPoints ? '得点' : '勝数'}と累計回答時間で決まります。`;
+    const state: HostState = { mode: 'sites', snapshot, notice: [this.sessionWarning, notice].filter(Boolean).join(' '), serverTime: new Date(cloud.serverTime).toISOString() };
     session.state = state;
     return state;
+  }
+
+  /** 初回だけ認証ファイルを検証し、安全なUI状態は必ずSitesから取り直す。 */
+  private async restoreSessions(base: URL): Promise<void> {
+    if (this.sessionsLoaded) return;
+    this.sessionsLoaded = true;
+    if (!this.sessionFile && this.useDefaultSessionFile) this.sessionFile = defaultSitesSessionFile(base.origin);
+    if (!this.sessionFile) return;
+    try {
+      const saved = await loadSitesSessions(this.sessionFile, base.origin);
+      if (!saved) return;
+      for (const room of saved.rooms) this.rooms.set(room.roomId, { cookie: room.cookie, version: 0, signature: '' });
+      this.currentRoomId = saved.currentRoomId;
+    } catch { this.sessionWarning = '保存したホスト権限を安全に復元できませんでした。保存先の権限・接続先を確認してください。'; }
+  }
+
+  /** 保存失敗時も作成済み部屋を隠さず、再起動前に対処できる案内を返す。 */
+  private async persistSessions(base: URL): Promise<void> {
+    if (!this.sessionFile || !this.currentRoomId) return;
+    try {
+      await saveSitesSessions(this.sessionFile, { format: 1, origin: base.origin, currentRoomId: this.currentRoomId, rooms: [...this.rooms].slice(-100).map(([roomId, session]) => ({ roomId, cookie: session.cookie })) });
+      this.sessionWarning = '';
+    } catch { this.sessionWarning = '部屋は作成しましたがホスト権限を保存できませんでした。再起動するとこの部屋へ復帰できません。保存先の書き込み権限を確認してください。'; }
   }
 
   /** Private Sitesのゲート認証だけを別ヘッダーへ設定し、通常のAuthorizationは使わない。 */

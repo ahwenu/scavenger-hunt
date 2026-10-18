@@ -6,7 +6,7 @@
 - 関係担当：mae さん、さが さん、Ahwenu
 - 決定の根拠：既存の技術構成案。実環境での採否は未確定
 - 置き換えるADR：なし
-- 後継ADR：[ADR-0016](0016-supabase-game-persistence.md)。本番ゲーム記録はSupabaseへ変更。Sites/Cloud実行の現行方針は[ADR-0011](0011-new-sites-deployment.md)を参照
+- 後継ADR：[ADR-0016](0016-supabase-game-persistence.md)。当時は本番ゲーム記録をSupabaseへ変更する方針。その後[ADR-0020](0020-sites-persistence-advance-invites.md)でD1/R2継続を採用した。Sites/Cloud実行の現行方針は[ADR-0011](0011-new-sites-deployment.md)を参照
 
 ## 背景と提案
 

@@ -519,7 +519,7 @@ export function ParticipantGame({ preview = false, landing = false, previewView,
           <label htmlFor="participant-name">ニックネーム</label>
           <input id="participant-name" value={name} maxLength={24} autoComplete="nickname" onChange={event => setName(event.target.value)} placeholder="お名前を入力" required />
           <button type="submit" className="game-button game-button--pink" disabled={busy || !roomId}>▶ 参加する</button>
-        </form> : <div className="home-actions"><GameButton onClick={startPlaying} disabled={!round && !preview && state?.game?.status !== 'finished'}>{state?.game?.status === 'finished' ? '結果を見る' : '▶ ゲームスタート！'}</GameButton>{!round && state?.game?.status !== 'finished' && <p className="waiting-copy">参加しました。お題の公開を待っています。</p>}</div>}
+        </form> : <div className="home-actions"><GameButton onClick={startPlaying} disabled={!round && !preview && state?.game?.status !== 'finished'}>{state?.game?.status === 'finished' ? '結果を見る' : '▶ ゲームスタート！'}</GameButton>{!round && state?.game?.status !== 'finished' && <p className="waiting-copy">{state?.lobby.autoStart === false && state.lobby.deadline == null ? '参加しました。ホストが開始するまでお待ちください。' : '参加しました。お題の公開を待っています。'}</p>}</div>}
         <button type="button" className="text-link" onClick={() => setView('rules')}>遊び方を見る <ChevronRight size={16}/></button>
       </section>}
 

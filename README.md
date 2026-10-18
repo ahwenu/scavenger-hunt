@@ -26,8 +26,8 @@
 
 ## 遊び方
 
-1. **ホストが部屋を作る。** Plugin Extensionsで参加用QRとリンクを発行します。拡張の導入は[取り込み手順](plugin/INSTALL.md)を参照してください。
-2. **スマホで集合。** 参加者はQRを読み取り、ニックネームを登録します。1人目の参加から30秒後の初回開始に向けて、SitesがAIのお題を準備します。
+1. **ホストが事前に部屋を作る。** Plugin Extensionsで参加用QRとリンクを準備し、参加者へ配布します。拡張の導入は[取り込み手順](plugin/INSTALL.md)を参照してください。
+2. **スマホで集合。** 参加者はQRを読み取り、ニックネームを登録します。事前配布用の部屋ではホストの開始操作まで待機し、当日も同じQRと部屋を使います。
 3. **探して、撮る。** 共通のお題と判定条件を読み、会場で見つけた実物を撮影・送信します。標準のお題は1競技120秒です。
 4. **AIが判定。** 合格するとその競技で500点。不合格なら、受付時間内に撮り直して挑戦できます。
 5. **順位を確認して次の競技へ。** 人数とランキングは自動更新されます。2競技目以降はホストが開始し、最大10競技で借り物王を決めます。
@@ -87,7 +87,6 @@ flowchart TB
   MCP -. 独立AIの確認 .-> Independent["独立AI API / Node.js・Express・Sharp"]
   Independent --> Responses
   Independent --> Decisions
-  API -. 保存先の移行方針 .-> Supabase[("Supabase / Postgres")]
 ```
 
 | 領域 | 技術・サービス | 役割・実装場所 |
@@ -105,7 +104,7 @@ flowchart TB
 | 画面同期 | fetch / 2秒ポーリング | サーバーのスナップショットから参加人数・競技・得点・順位を更新 |
 | 音・演出 | 同梱MP3 / CSSアニメーション | 参加・撮影・開始・合否・順位変化を音や動きで通知。音のON/OFFに対応 |
 
-図の実線は実装の接続経路です。**Supabase / Postgresへの保存移行は採用方針**で、接続・スキーマ・移行の実装と検証は別途必要です。D1/R2の実装・検証結果をSupabaseの動作実績には含めません（[ADR-0016](docs/adr/0016-supabase-game-persistence.md)、[統合契約](docs/16-supabase-integration.md)）。独立AI APIの確認経路も、Sitesが直接OpenAIを呼ぶゲームの経路と分かれています。
+ゲーム記録は既存Sitesの**D1**、写真は**R2**を継続します。以前のSupabase移行方針は最新のユーザー指示で置き換えました（[ADR-0020](docs/adr/0020-sites-persistence-advance-invites.md)、[保存・参加者API契約](docs/16-supabase-integration.md)）。参加者の画面とホスト拡張は同じSitesの部屋を利用します。独立AI APIの確認経路は、Sitesが直接OpenAIを呼ぶゲームの経路と分かれています。
 
 参考写真付きのお題を作るAgents API経路もソースにあります。これは `AI_REFERENCE_PHOTOS=true` で明示的に有効にする追加モードで、標準のお題生成には使いません。成功の検証は未完了です（[AI連携仕様](docs/11-api-integration.md)）。
 

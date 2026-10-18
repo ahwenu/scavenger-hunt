@@ -27,7 +27,7 @@ npm --prefix apps/cloud run start
 
 ## 部屋・QR・写真投稿を確認する
 
-**新しいローカルDBの初回だけ**、build後に4つのSQLを順番に適用する。既に0000〜0002を適用したDBは、再実行せず未適用の0003だけを適用する。0003も適用済みならSQLの再実行は不要。以下はローカル専用で、公開DBへの適用手順ではない。
+**新しいローカルDBの初回だけ**、build後に5つのSQLを順番に適用する。既存DBは適用済みのSQLを再実行せず、未適用のマイグレーションだけを適用する。0003まで適用済みなら、今回追加した0004だけを適用する。以下はローカル専用で、公開DBへの適用手順ではない。
 
 ```sh
 cd apps/cloud
@@ -35,6 +35,7 @@ node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wr
 node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0001_boring_menace.sql
 node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0002_boring_swarm.sql
 node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0003_issue1_round_hint.sql
+node node_modules/wrangler/bin/wrangler.js d1 execute DB --config dist/server/wrangler.json --local --persist-to .wrangler/state --file drizzle/0004_sites_live_and_advance_rooms.sql
 npm run start
 ```
 
@@ -46,7 +47,7 @@ npm run start
 
 ## APIと秘密設定
 
-参加者画面は同じオリジンの `/api/rooms/:id` を呼ぶ。**フロントにSupabaseキーやOpenAIキーを登録する必要はない**。現行サーバーはD1/R2で、Supabase接続はまだ実装・確認されていない。保存先・入出力・人数/順位のライブ更新依頼と、バックエンドの設定場所は[Supabase統合](../16-supabase-integration.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)にまとめた。
+参加者画面は同じオリジンの `/api/rooms/:id` を呼ぶ。保存先は最新のユーザー指示に従い、既存SitesのD1/R2を継続する（[ADR-0020](../adr/0020-sites-persistence-advance-invites.md)）。**フロントへDB資格情報やOpenAIキーを登録する必要はない**。入出力、人数/順位の自動更新、事前招待の手動開始と設定場所は[Sites保存・参加者API](../16-supabase-integration.md)にまとめた。
 
 ローカルで既存Cloudの実AIを確認する場合だけ、`apps/cloud/.dev.vars.example` を参考に `apps/cloud/.dev.vars` へ自分の `OPENAI_API_KEY` を設定する。値はGitへ入れない。build後のstartは設定ファイルを絶対パスで渡すと、生成設定のディレクトリとの違いを避けられる。
 
@@ -55,7 +56,7 @@ npm run start
 npm run start -- --env-file "$PWD/.dev.vars"
 ```
 
-`.dev.vars` はローカルAI用の任意設定。Supabaseの接続値を入れるだけで接続する実装はまだない。本番の秘密値はSites APIの秘密設定へ登録し、設定名はバックエンド実装と合わせる。
+`.dev.vars` はローカルAI用の任意設定。D1/R2はSitesの `DB` / `BUCKET` バインディングを使う。本番のOpenAIキーはSites APIの秘密設定へ登録し、フロントやPluginへコピーしない。
 
 ## 素材・音・確認範囲
 

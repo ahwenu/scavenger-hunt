@@ -4,14 +4,14 @@ export type Round = { id: string; number: number; status: 'active' | 'closed'; m
 export type Submission = { id: string; roundId: string; status: string; awardedPoints?: number; verdict?: { pass?: boolean; reason?: string; provider?: string } | null; receivedAt?: number };
 export type SubmissionReceipt = Pick<Submission, 'id' | 'status' | 'receivedAt'>;
 export type GameState = {
-  room: { id: string; name: string };
+  room: { id: string; name: string; autoStart?: boolean };
   game?: { status: 'lobby' | 'playing' | 'finished'; totalRounds: number };
   stages?: { number: number; status: 'completed' | 'active' | 'locked' }[];
   mode: 'demo' | 'ai';
   serverTime: number;
   revision?: number;
   live?: { pollIntervalMs: number; activeWindowMs: number; updatedAt: number };
-  lobby: { status: string; deadline?: number | null };
+  lobby: { status: string; autoStart?: boolean; deadline?: number | null };
   players: Player[];
   ranks: Player[];
   round: Round | null;

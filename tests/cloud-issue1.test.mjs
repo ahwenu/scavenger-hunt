@@ -79,8 +79,8 @@ function fixture() {
   } };
   const ctx = { waitUntil(promise) { pending.add(promise); promise.finally(() => pending.delete(promise)); } };
   async function drain() { while (pending.size) await Promise.all([...pending]); }
-  async function request(route, { method = 'GET', json, form, token, cookie, expected = 200 } = {}) {
-    const response = await handleApi(new Request(`https://local.test${route}`, {
+  async function request(route, { method = 'GET', json, form, token, cookie, expected = 200, handler = handleApi } = {}) {
+    const response = await handler(new Request(`https://local.test${route}`, {
       method, headers: { ...(json ? { 'Content-Type': 'application/json' } : {}), ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(cookie ? { Cookie: cookie } : {}) },
       ...(json ? { body: JSON.stringify(json) } : form ? { body: form } : {}),
     }), env, ctx);
@@ -88,8 +88,8 @@ function fixture() {
     assert.ok((Array.isArray(expected)?expected:[expected]).includes(response.status), `${method} ${route}: HTTP ${response.status}: ${JSON.stringify(data)}`);
     return { data, response };
   }
-  async function room() {
-    const { data, response } = await request('/api/rooms', { method: 'POST', json: { name: 'Issue #1 fixture' }, expected: 201 });
+  async function room(options = {}) {
+    const { data, response } = await request('/api/rooms', { method: 'POST', json: { name: 'Issue #1 fixture', ...options }, expected: 201 });
     return { ...data, api: `/api/rooms/${data.id}`, cookie: response.headers.get('set-cookie').split(';')[0] };
   }
   async function join(room, name = randomUUID()) { return (await request(`${room.api}/join`, { method: 'POST', json: { name: name.slice(0, 24) }, expected: 201 })).data; }
@@ -106,6 +106,8 @@ function fixture() {
     return form;
   }
   return { sqlite, DB, request, room, join, start, photo, drain, recordPass, gameProjection, objects,
+    /** 同じD1を使う別Workerのモジュール内キャッシュを再現する。 */
+    worker() { modules.clear(); return load(path.join(cloud, 'lib/cloud-api.ts')).handleApi; },
     generations: () => generations, judgments: () => judgments,
     failJudgment(value) { failJudgment = value; },
     hold(value) { holdJudgment = value; },
@@ -290,4 +292,98 @@ test('Issue #1: expired final round rejects new joins before a state request clo
   await h.request(`${room.api}/join`, { method: 'POST', json: { name: 'after-finish' }, expected: 409 });
   assert.equal(h.sqlite.prepare('SELECT COUNT(*) AS n FROM players WHERE roomId=?').get(room.id).n, 0);
   assert.equal(h.sqlite.prepare("SELECT status FROM rounds WHERE id='expired-final'").get().status, 'active');
+});
+
+/** 事前配布URLは参加者が入っても待機を保ち、ホストの明示操作だけで開始する。 */
+test('Sites D1: advance room waits beyond thirty seconds and starts only by host action', async t => {
+  const originalNow = Date.now; let now = originalNow(); Date.now = () => now;
+  t.after(() => { Date.now = originalNow; });
+  const h = fixture(); t.after(h.close); const room = await h.room({ autoStart: false });
+  assert.equal(room.autoStart, false);
+  const p = await h.join(room); await h.drain(); now += 31000;
+  const waiting = (await h.request(`${room.api}/state`, { token: p.token })).data;
+  await h.drain();
+  assert.equal(waiting.room.autoStart, false); assert.equal(waiting.lobby.autoStart, false);
+  assert.equal(waiting.lobby.deadline, null); assert.equal(waiting.lobby.status, 'waiting');
+  assert.equal(waiting.round, null); assert.equal(waiting.game.status, 'lobby'); assert.equal(h.generations(), 0);
+  await h.request(`${room.api}/host/start`, { method: 'POST', token: p.token, expected: 403 });
+  await h.request(`${room.api}/host/start`, { method: 'POST', cookie: room.cookie, expected: 202 });
+  await h.drain();
+  const started = (await h.request(`${room.api}/state`, { token: p.token })).data;
+  assert.equal(started.round.number, 1); assert.equal(started.round.status, 'active');
+  assert.equal(started.game.status, 'playing'); assert.equal(h.generations(), 1);
+  assert.equal(started.joinUrl, room.joinUrl);
+});
+
+/** 既存の呼び出しは自動開始を維持し、不正な設定を暗黙変換しない。 */
+test('Sites D1: omitted autoStart remains true and invalid settings return 400', async t => {
+  const h = fixture(); t.after(h.close); const room = await h.room(), p = await h.join(room); await h.drain();
+  const state = (await h.request(`${room.api}/state`, { token: p.token })).data;
+  assert.equal(room.autoStart, true); assert.equal(state.lobby.autoStart, true);
+  assert.equal(typeof state.lobby.deadline, 'number'); assert.ok(state.lobby.deadline > Date.now());
+  for (const autoStart of ['false', 0, null]) await h.request('/api/rooms', { method: 'POST', json: { name: 'invalid', autoStart }, expected: 400 });
+});
+
+/** 在席は部屋限定の認証通信だけを記録し、公開スナップショットへ個別時刻を出さない。 */
+test('Sites D1: recent authenticated presence expires without removing registered players or ranks', async t => {
+  const originalNow = Date.now; let now = originalNow(); Date.now = () => now;
+  t.after(() => { Date.now = originalNow; });
+  const h = fixture(); t.after(h.close); const room = await h.room({ autoStart: false });
+  const a = await h.join(room, 'a'), b = await h.join(room, 'b'); await h.drain();
+  let state = (await h.request(`${room.api}/state`, { token: a.token })).data;
+  assert.equal(state.stats.activePlayers, 2); assert.equal(state.stats.players, 2);
+  assert.equal(state.live.pollIntervalMs, 2000); assert.equal(state.live.activeWindowMs, 30000);
+  assert.ok(!JSON.stringify(state).includes('lastSeenAt')); assert.ok(!JSON.stringify(state).includes(b.token));
+  const beforeSeen = h.sqlite.prepare('SELECT lastSeenAt FROM players WHERE id=?').get(a.id).lastSeenAt;
+  now += 2000; await h.request(`${room.api}/state`, { token: a.token });
+  assert.equal(h.sqlite.prepare('SELECT lastSeenAt FROM players WHERE id=?').get(a.id).lastSeenAt, beforeSeen);
+  now += 29000;
+  state = (await h.request(`${room.api}/state`)).data;
+  assert.equal(state.stats.activePlayers, 0); assert.equal(state.stats.players, 2); assert.equal(state.ranks.length, 2);
+  const renewed = (await h.request(`${room.api}/state`, { token: a.token })).data;
+  assert.equal(renewed.stats.activePlayers, 1); assert.ok(renewed.revision > state.revision);
+  assert.equal(h.sqlite.prepare('SELECT lastSeenAt FROM players WHERE id=?').get(a.id).lastSeenAt, now);
+  const other = await h.room({ autoStart: false }), outsider = await h.join(other); await h.drain();
+  await h.request(`${room.api}/state`, { token: outsider.token, expected: 401 });
+  assert.equal((await h.request(`${room.api}/state`)).data.stats.activePlayers, 1);
+});
+
+/** 更新版はD1に永続し、別Workerの書き込み後も古い共通キャッシュを採用しない。 */
+test('Sites D1: revisions survive worker restart and invalidate another worker snapshot cache', async t => {
+  const h = fixture(); t.after(h.close); const room = await h.room(), a = await h.join(room), round = await h.start(room);
+  const first = (await h.request(`${room.api}/state`, { token: a.token })).data;
+  assert.ok(Number.isSafeInteger(first.revision) && first.revision > 0);
+  const worker = h.worker();
+  await h.request(`${room.api}/host/hint`, { method: 'POST', cookie: room.cookie, json: { roundId: round.id, text: 'shared' }, handler: worker });
+  const next = (await h.request(`${room.api}/state`, { token: a.token })).data;
+  assert.ok(next.revision > first.revision);
+  const revision = h.sqlite.prepare('SELECT revision FROM rooms WHERE id=?').get(room.id).revision;
+  assert.equal(next.revision, revision);
+  const restart = (await h.request(`${room.api}/state`, { token: a.token, handler: h.worker() })).data;
+  assert.equal(restart.revision, revision); assert.deepEqual(restart.ranks, next.ranks);
+  // 非表示の写真削除や同じ値への更新では版を増やさない。
+  h.sqlite.prepare('UPDATE rounds SET hint=hint WHERE id=?').run(round.id);
+  assert.equal(h.sqlite.prepare('SELECT revision FROM rooms WHERE id=?').get(room.id).revision, revision);
+});
+
+/** 0004は既存レコードを保持するスキーマ変更だけで、新旧部屋を区別できる。 */
+test('Sites D1: live migration preserves legacy rooms and adds compatible schema defaults', t => {
+  const db = new DatabaseSync(':memory:'); t.after(() => db.close());
+  const directory = path.join(cloud, 'drizzle');
+  for (const file of readdirSync(directory).filter(f => /^000[0-3]_.*\.sql$/.test(f)).sort()) db.exec(readFileSync(path.join(directory, file), 'utf8'));
+  db.prepare("INSERT INTO rooms(id,name,hostHash,mode,createdAt) VALUES ('legacy','existing','hash','demo',1234)").run();
+  db.prepare("INSERT INTO players(id,token,name,profile,joinedAt,roomId) VALUES ('player','secret','name','',1235,'legacy')").run();
+  db.prepare("INSERT INTO rounds(id,number,mode,status,challenge,context,startedAt,endsAt,roomId,hint) VALUES ('round',1,'demo','closed','{}','{}',2000,3000,'legacy','saved')").run();
+  db.prepare("INSERT INTO submissions(id,playerId,roundId,requestId,receivedAt,status,roomId,objectKey,mime,demoResult) VALUES ('receipt','player','round','key',2100,'accepted','legacy','','image/jpeg','pass')").run();
+  db.exec(readFileSync(path.join(directory, '0004_sites_live_and_advance_rooms.sql'), 'utf8'));
+  const room = db.prepare("SELECT * FROM rooms WHERE id='legacy'").get();
+  assert.equal(room.name, 'existing'); assert.equal(room.createdAt, 1234); assert.equal(room.autoStart, 1);
+  assert.equal(room.revision, 0); assert.equal(room.updatedAt, 0);
+  assert.equal(db.prepare("SELECT lastSeenAt FROM players WHERE id='player'").get().lastSeenAt, 0);
+  assert.equal(db.prepare("SELECT hint FROM rounds WHERE id='round'").get().hint, 'saved');
+  assert.equal(db.prepare("SELECT status FROM submissions WHERE id='receipt'").get().status, 'accepted');
+  db.prepare("UPDATE players SET lastSeenAt=10000 WHERE id='player'").run();
+  assert.equal(db.prepare("SELECT revision FROM rooms WHERE id='legacy'").get().revision, 1);
+  db.prepare("UPDATE submissions SET objectKey='' WHERE id='receipt'").run();
+  assert.equal(db.prepare("SELECT revision FROM rooms WHERE id='legacy'").get().revision, 1);
 });

@@ -1,8 +1,8 @@
 # 担当分担・開発順序・検証
 
-> 2026-10-18追記：本番ゲーム記録はSupabaseへ接続する方針に更新した（[ADR-0016](adr/0016-supabase-game-persistence.md)）。以下のD1/R2記述は当初案と現行実装の責務を示す。さが さんがSupabaseの保存・ゲーム処理、AhwenuがHTTP/AI境界を担当し、役割自体は変えない。接続・設定・人数/順位更新の受け渡しは[16](16-supabase-integration.md)を参照。
+> 2026-10-18更新：最新のユーザー指示に従い本番ゲーム記録は既存SitesのD1、写真はR2を継続する（[ADR-0020](adr/0020-sites-persistence-advance-invites.md)）。以前のSupabase移行方針はSupersededのADR-0016へ残す。さが さんが保存・ゲーム処理、AhwenuがHTTP/AI境界を担当する役割は変えない。事前QR配布と人数/順位更新の受け渡しは[16](16-supabase-integration.md)・[08](08-plugin-extensions.md)を参照。
 
-Issue #1のバックエンド改修では、さが担当として `apps/cloud/` のゲーム/DBに加え、要望された状態/ヒントの最小HTTP応答を変更した。Ahwenu・maeへの確定した入出力と編集範囲は[12](12-issue1-backend-handoff.md)に記録し、独立 `api/`・`plugin/`・UI・配備設定は変更していない。100人・10競技・500点は[ADR-0013](adr/0013-issue1-player-game-contract.md)を優先する。以下の3問・10点の計画は初期案。後続の公開v3/Plugin結合・100HTTPデモ・実AI陰性の記録と、陽性加点・実機の未確認は[14](14-issue1-ahwenu-handoff.md)を参照。Supabaseと追加ライブ契約は[16](16-supabase-integration.md)の残件。
+Issue #1のバックエンド改修では、さが担当として `apps/cloud/` のゲーム/DBに加え、要望された状態/ヒントの最小HTTP応答を変更した。Ahwenu・maeへの確定した入出力と編集範囲は[12](12-issue1-backend-handoff.md)に記録し、独立 `api/`・`plugin/`・UI・配備設定は変更していない。100人・10競技・500点は[ADR-0013](adr/0013-issue1-player-game-contract.md)を優先する。以下の3問・10点の計画は初期案。後続の公開v3/Plugin結合・100HTTPデモ・実AI陰性の記録と、陽性加点・実機の未確認は[14](14-issue1-ahwenu-handoff.md)を参照。追加のライブ表示と事前招待契約は[16](16-supabase-integration.md)を参照。
 
 ## 担当者と責務
 

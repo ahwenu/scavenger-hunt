@@ -28,7 +28,7 @@ ADR-0015では、参加URLだけをReactへ通し、サイトのルートは従�
 
 ## 継承する判断
 
-提供デザインに沿ったTypeScript/Reactの参加者画面、画像素材の静的配信、既存 `/api/rooms/:id` との境界、サーバー確定得点の表示、デモ比較画面の分離はADR-0015から継承する。Supabase・人数/順位の追加契約はADR-0016、音の再生経路はADR-0018を参照する。
+提供デザインに沿ったTypeScript/Reactの参加者画面、画像素材の静的配信、既存 `/api/rooms/:id` との境界、サーバー確定得点の表示、デモ比較画面の分離はADR-0015から継承する。保存と人数/順位・事前招待の追加契約は[ADR-0020](0020-sites-persistence-advance-invites.md)、音の再生経路はADR-0018を参照する。以前のSupabase移行方針はSupersededのADR-0016に履歴を残す。
 
 ## 代替案と理由
 
@@ -44,8 +44,9 @@ TypeScript型検査・Cloudビルド、参加先の入力検証4件が成功。�
 
 ## 関連仕様
 
-[ADR-0015](0015-participant-typescript-ui.md)、[ADR-0016](0016-supabase-game-persistence.md)、[ADR-0018](0018-participant-media-audio.md)、[画面仕様](../03-ui-frontend.md)、[参加者README](../participant-frontend/README.md)
+[ADR-0015](0015-participant-typescript-ui.md)、[ADR-0016](0016-supabase-game-persistence.md)、[ADR-0018](0018-participant-media-audio.md)、[ADR-0020](0020-sites-persistence-advance-invites.md)、[画面仕様](../03-ui-frontend.md)、[参加者README](../participant-frontend/README.md)
 
 ## 変更履歴
 
 - 2026-10-18：ユーザー指示によりルートを新トップへ変更。既存参加QRとブラウザホストの互換性、公開配備との区別を記録。
+- 2026-10-18：最新のユーザー指示によるADR-0020のD1/R2継続・事前招待へ参照を更新。ルート入口と音声の判断は維持する。

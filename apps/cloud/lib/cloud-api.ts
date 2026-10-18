@@ -8,7 +8,9 @@ import { gameProjection } from './game-state';
 export type GameEnv = {DB:D1Database;BUCKET:R2Bucket;OPENAI_API_KEY?:string;AI_REFERENCE_PHOTOS?:string};
 let expiryAt=0;
 let runningPump:Promise<void>|undefined;
-const snapshotCache=new Map<string,{until:number,rows:any[]}>();
+const snapshotCache=new Map<string,{until:number,revision:number,rows:any[]}>();
+const ACTIVE_WINDOW_MS=30000;
+const PRESENCE_WRITE_INTERVAL_MS=10000;
 const pending="('uploading','queued','processing')";
 /** JSONはキャッシュせず、他サイトからの操作を制限する。 */
 function json(value:any,status=200,headers:Record<string,string>={}){return Response.json(value,{status,headers:{'Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});}
@@ -40,14 +42,17 @@ async function expire(env:GameEnv){const now=Date.now();if(now<expiryAt)return;e
 }
 /** room外の参加者情報や回答を含めずにスナップショットを作る。 */
 async function snapshot(req:Request,env:GameEnv,room:any,player:any){
-  let out=snapshotCache.get(room.id)?.until!>Date.now()?snapshotCache.get(room.id)!.rows:undefined;
+  const cached=snapshotCache.get(room.id);
+  let out=cached&&cached.until>Date.now()&&cached.revision===room.revision?cached.rows:undefined;
   if(!out){out=await env.DB.batch([
-    env.DB.prepare('SELECT id,name,joinedAt FROM players WHERE roomId=? ORDER BY joinedAt,id').bind(room.id),
+    env.DB.prepare('SELECT id,name,joinedAt,lastSeenAt FROM players WHERE roomId=? ORDER BY joinedAt,id').bind(room.id),
     env.DB.prepare('SELECT * FROM rounds WHERE roomId=? ORDER BY number').bind(room.id),
     env.DB.prepare('SELECT s.seq,s.id,s.playerId,s.roundId,s.receivedAt,s.status,s.verdict,e.id AS passEventId FROM submissions s LEFT JOIN pass_events e ON e.submissionId=s.id WHERE s.roomId=? ORDER BY s.receivedAt,s.seq').bind(room.id),
     env.DB.prepare('SELECT * FROM pass_events WHERE roomId=? ORDER BY id DESC LIMIT 40').bind(room.id),
-  ]);snapshotCache.set(room.id,{until:Date.now()+500,rows:out});if(snapshotCache.size>1000)snapshotCache.delete(snapshotCache.keys().next().value!);}
-  const players=out[0].results as any[],rounds=out[1].results as any[],subs=out[2].results as any[],round=rounds.at(-1),currentSubs=subs.filter(s=>s.roundId===round?.id);
+    env.DB.prepare('SELECT * FROM rooms WHERE id=?').bind(room.id),
+  ]);snapshotCache.set(room.id,{until:Date.now()+500,revision:out[4].results[0]?.revision,rows:out});if(snapshotCache.size>1000)snapshotCache.delete(snapshotCache.keys().next().value!);}
+  room=out[4].results[0]||room;
+  const presence=out[0].results as any[],players=presence.map(({lastSeenAt,...publicPlayer})=>publicPlayer),rounds=out[1].results as any[],subs=out[2].results as any[],round=rounds.at(-1),currentSubs=subs.filter(s=>s.roundId===round?.id);
   const now=Date.now(),progress=gameProjection(players,rounds,subs,now),ranks=progress.ranks;
   const events=(out[3].results as any[]).slice().reverse().map(e=>{
     const own=subs.find(s=>s.id===e.submissionId),ordered=subs.filter(s=>s.roundId===e.roundId&&s.status==='accepted');
@@ -56,18 +61,19 @@ async function snapshot(req:Request,env:GameEnv,room:any,player:any){
   });
   const origin=new URL(req.url).origin;
   return {
-    room:{id:room.id,name:room.name}, game:progress.game, stages:progress.stages,
+    room:{id:room.id,name:room.name,autoStart:room.autoStart!==0}, game:progress.game, stages:progress.stages,
     isHost:await hostOf(req,room),mode:room.mode,aiAvailable:!!env.OPENAI_API_KEY,
     publicUrl:origin,joinUrl:`${origin}/rooms/${room.id}/join`,serverTime:now,
+    revision:room.revision??0,live:{pollIntervalMs:2000,activeWindowMs:ACTIVE_WINDOW_MS,updatedAt:room.updatedAt||room.createdAt},
     generating:room.generationLease>now,
     preparing:room.generationLease>now&&room.preparedMode===room.mode&&!room.preparedChallenge,
     prepared:!!(room.preparedChallenge&&room.preparedMode===room.mode&&now-room.preparedAt<300000),
     preparationError:room.preparationError||null,
     preparationStage:room.generationLease>now?(room.mode==='ai'&&env.AI_REFERENCE_PHOTOS==='true'?'searching':'generating'):null,
-    lobby:{deadline:room.lobbyDeadline??null,startedAt:room.lobbyStartedAt||round?.startedAt||null,status:room.lobbyStartedAt||round?'started':!room.lobbyDeadline?'empty':room.preparationError?'error':room.generationLease>now?'preparing':'waiting'},
+    lobby:{autoStart:room.autoStart!==0,deadline:room.lobbyDeadline??null,startedAt:room.lobbyStartedAt||round?.startedAt||null,status:room.lobbyStartedAt||round?'started':room.preparationError?'error':room.generationLease>now?'preparing':players.length?'waiting':'empty'},
     players,ranks,events,eventCursor:events.at(-1)?.id||0,
     round:round?{id:round.id,number:round.number,mode:round.mode,status:round.status==='active'&&round.endsAt<=now?'closed':round.status,challenge:publicChallenge(JSON.parse(round.challenge),room.id,round.id),startedAt:round.startedAt,endsAt:round.endsAt}:null,
-    stats:{players:players.length,answered:new Set(currentSubs.map(s=>s.playerId)).size,accepted:new Set(currentSubs.filter(s=>progress.awardedIds.has(s.id)).map(s=>s.playerId)).size,pending:currentSubs.filter(s=>['uploading','queued','processing'].includes(s.status)).length,queued:currentSubs.filter(s=>s.status==='queued').length,processing:currentSubs.filter(s=>s.status==='processing').length},
+    stats:{players:players.length,activePlayers:presence.filter(p=>p.lastSeenAt>now-ACTIVE_WINDOW_MS).length,answered:new Set(currentSubs.map(s=>s.playerId)).size,accepted:new Set(currentSubs.filter(s=>progress.awardedIds.has(s.id)).map(s=>s.playerId)).size,pending:currentSubs.filter(s=>['uploading','queued','processing'].includes(s.status)).length,queued:currentSubs.filter(s=>s.status==='queued').length,processing:currentSubs.filter(s=>s.status==='processing').length},
     finishers:currentSubs.filter(s=>progress.awardedIds.has(s.id)).map((s,i)=>({rank:i+1,playerId:s.playerId,submissionId:s.id,name:players.find(p=>p.id===s.playerId)?.name,elapsedMs:s.receivedAt-round.startedAt})),
     mine:player?subs.filter(s=>s.playerId===player.id).map(s=>({...s,status:s.status==='uploading'?'queued':s.status,awardedPoints:progress.awardedIds.has(s.id)?PASS_POINTS:0,verdict:s.verdict?JSON.parse(s.verdict):null})):[],
     sync:'polling',queue:{maxConcurrency:8,maxRoomPending:100,maxGlobalPending:200},
@@ -233,18 +239,22 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
   if(req.method!=='GET'&&req.headers.get('origin')&&req.headers.get('origin')!==url.origin)return json({error:'別サイトからの操作はできません。'},403);
   try{
     if(p==='/api/rooms'&&req.method==='POST'){
-      const {name}=await req.json() as any;if(typeof name!=='string'||!name.trim()||name.length>48)return json({error:'部屋の名前を1〜48文字で入力してください。'},400);
+      const {name,autoStart=true}=await req.json() as any;if(typeof name!=='string'||!name.trim()||name.length>48)return json({error:'部屋の名前を1〜48文字で入力してください。'},400);
+      if(typeof autoStart!=='boolean')return json({error:'自動開始の設定を確認してください。'},400);
       const id=crypto.randomUUID().replaceAll('-',''),token=crypto.randomUUID()+crypto.randomUUID();
       const mode=env.OPENAI_API_KEY?'ai':'demo';
-      const inserted=await env.DB.prepare("INSERT INTO rooms(id,name,hostHash,mode,createdAt,generationLease) SELECT ?,?,?,?,?,0 WHERE (SELECT COUNT(*) FROM rooms)<1000 RETURNING id").bind(id,name.trim(),await hash(token),mode,receivedAt).first();
+      const inserted=await env.DB.prepare("INSERT INTO rooms(id,name,hostHash,mode,createdAt,autoStart,updatedAt,generationLease) SELECT ?,?,?,?,?,?,?,0 WHERE (SELECT COUNT(*) FROM rooms)<1000 RETURNING id").bind(id,name.trim(),await hash(token),mode,receivedAt,autoStart?1:0,receivedAt).first();
       if(!inserted)return json({error:'部屋の作成上限に達しました。'},409);
-      return json({id,hostUrl:`/rooms/${id}/host`,joinUrl:`${url.origin}/rooms/${id}/join`},201,{'Set-Cookie':`host_${id}=${token}; Path=/api/rooms/${id}; HttpOnly; SameSite=Strict; Secure; Max-Age=2592000`});
+      return json({id,autoStart,hostUrl:`/rooms/${id}/host`,joinUrl:`${url.origin}/rooms/${id}/join`},201,{'Set-Cookie':`host_${id}=${token}; Path=/api/rooms/${id}; HttpOnly; SameSite=Strict; Secure; Max-Age=2592000`});
     }
     const match=p.match(/^\/api\/rooms\/([a-zA-Z0-9-]+)\/(.+)$/);if(!match)return json({error:'APIが見つかりません。'},404);
     const [,roomId,action]=match;
     let room=await env.DB.prepare('SELECT * FROM rooms WHERE id=?').bind(roomId).first<any>();if(!room)return json({error:'この部屋は見つかりません。共有リンクを確認してください。'},404);
     const token=req.headers.get('authorization')?.replace(/^Bearer /,'');let player:any;
-    if(token){player=await env.DB.prepare('SELECT * FROM players WHERE roomId=? AND token=?').bind(roomId,token).first();if(!player)return json({error:'この部屋の参加登録が見つかりません。'},401);}
+    if(token){
+      player=await env.DB.prepare('SELECT * FROM players WHERE roomId=? AND token=?').bind(roomId,token).first();if(!player)return json({error:'この部屋の参加登録が見つかりません。'},401);
+      if(player.lastSeenAt<receivedAt-PRESENCE_WRITE_INTERVAL_MS){await env.DB.prepare('UPDATE players SET lastSeenAt=? WHERE id=? AND roomId=? AND lastSeenAt<?').bind(receivedAt,player.id,roomId,receivedAt-PRESENCE_WRITE_INTERVAL_MS).run();snapshotCache.delete(roomId);}
+    }
     if(action==='state'&&req.method==='GET'){await expire(env);if(!room.lobbyStartedAt){await driveLobby(env,roomId,ctx);room=await env.DB.prepare('SELECT * FROM rooms WHERE id=?').bind(roomId).first<any>();}const state=await snapshot(req,env,room,player);if(state.stats.pending>0)ctx.waitUntil(pump(env));return json(state);}
     if(action==='hint'&&req.method==='GET'){
       if(!player)return json({error:'この部屋に参加登録してください。'},401);
@@ -269,10 +279,10 @@ export async function handleApi(req:Request,env:GameEnv,ctx:ExecutionContext):Pr
     if(action==='join'&&req.method==='POST'){
       const {name,profile=''}=await req.json() as any;if(typeof name!=='string'||!name.trim()||name.length>24||typeof profile!=='string'||profile.length>240)return json({error:'名前は1〜24文字、自己紹介は240文字以内です。'},400);
       const id=crypto.randomUUID(),token=crypto.randomUUID()+crypto.randomUUID();
-      const inserted=await env.DB.prepare('INSERT INTO players(id,token,name,profile,joinedAt,roomId) SELECT ?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM players WHERE roomId=?)<? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=? AND number>=? AND (status=\'closed\' OR endsAt<=?)) RETURNING id').bind(id,token,name.trim(),profile,receivedAt,roomId,roomId,MAX_PLAYERS,roomId,TOTAL_ROUNDS,receivedAt).first();
+      const inserted=await env.DB.prepare('INSERT INTO players(id,token,name,profile,joinedAt,lastSeenAt,roomId) SELECT ?,?,?,?,?,?,? WHERE (SELECT COUNT(*) FROM players WHERE roomId=?)<? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=? AND number>=? AND (status=\'closed\' OR endsAt<=?)) RETURNING id').bind(id,token,name.trim(),profile,receivedAt,receivedAt,roomId,roomId,MAX_PLAYERS,roomId,TOTAL_ROUNDS,receivedAt).first();
       if(inserted){
-        await env.DB.prepare('UPDATE rooms SET lobbyDeadline=COALESCE(lobbyDeadline,(SELECT MIN(joinedAt)+30000 FROM players WHERE roomId=?)) WHERE id=? AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=?)').bind(roomId,roomId,roomId).run();
-        await env.DB.prepare('UPDATE rooms SET preparedChallenge=NULL,preparedContext=NULL,preparedMode=CASE WHEN generationLease>? THEN preparedMode ELSE NULL END,preparedAt=NULL,preparationError=NULL WHERE id=? AND EXISTS(SELECT 1 FROM rounds WHERE roomId=?)').bind(Date.now(),roomId,roomId).run();
+        await env.DB.prepare('UPDATE rooms SET lobbyDeadline=COALESCE(lobbyDeadline,(SELECT MIN(joinedAt)+30000 FROM players WHERE roomId=?)) WHERE id=? AND autoStart=1 AND NOT EXISTS(SELECT 1 FROM rounds WHERE roomId=?)').bind(roomId,roomId,roomId).run();
+        await env.DB.prepare('UPDATE rooms SET preparedChallenge=NULL,preparedContext=NULL,preparedMode=CASE WHEN generationLease>? THEN preparedMode ELSE NULL END,preparedAt=NULL,preparationError=NULL WHERE id=? AND ((autoStart=0 AND lobbyDeadline IS NULL) OR EXISTS(SELECT 1 FROM rounds WHERE roomId=?))').bind(Date.now(),roomId,roomId).run();
         ctx.waitUntil(driveLobby(env,roomId,ctx));
       }
       return inserted?json({id,token},201):json({error:'この部屋は満員、または全競技が終了しています。'},409);

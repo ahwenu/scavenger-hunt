@@ -4,6 +4,7 @@ import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import type { HostState } from '../shared/contracts.js';
 import type { AIStatus, AIResult } from '../shared/ai-contracts.js';
+import type { InvitationFile } from './join-invitation.js';
 
 const aiStatusSchema = z.object({ configured: z.boolean(), available: z.boolean(), notice: z.string() });
 const aiResultSchema = z.object({
@@ -79,6 +80,7 @@ export interface HostBridge {
   close(): Promise<void>;
   checkAI(): Promise<AIStatus>;
   generateAI(requestId: string): Promise<AIResult>;
+  downloadInvitation(file: InvitationFile): Promise<void>;
 }
 
 /** 失敗した問い合わせも直ちに処理し、他方の完了待ちで未処理例外にしない。 */
@@ -108,9 +110,17 @@ export function createHostBridge(preview = false): HostBridge {
       async close() {},
       async checkAI() { return readAIResponse(await request('ai_status', {}), 'aiStatus'); },
       async generateAI(requestId) { return readAIResponse(await request('ai_generate_challenge', { requestId }), 'aiResult'); },
+      /** 開発プレビューだけは通常のブラウザ保存を使う。実拡張は下のホスト経由。 */
+      async downloadInvitation(file) {
+        const data = file.text ?? Uint8Array.from(atob(file.blob ?? ''), character => character.charCodeAt(0));
+        const url = URL.createObjectURL(new Blob([data], { type: file.mimeType }));
+        const anchor = document.createElement('a'); anchor.href = url; anchor.download = file.name;
+        document.body.append(anchor); anchor.click(); anchor.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 30000);
+      },
     };
   }
-  const app = new App({ name: 'karimono-host-ui', version: '0.4.1' }, {});
+  const app = new App({ name: 'karimono-host-ui', version: '0.4.2' }, {});
   let ready = false;
   let closed = false;
   let connecting: Promise<void> | undefined;
@@ -142,5 +152,13 @@ export function createHostBridge(preview = false): HostBridge {
     async close() { closed = true; ready = false; await app.close(); },
     async checkAI() { await ensureConnected(); return readAIResponse(await app.callServerTool({ name: 'ai_status', arguments: {} }), 'aiStatus'); },
     async generateAI(requestId) { await ensureConnected(); return readAIResponse(await app.callServerTool({ name: 'ai_generate_challenge', arguments: { requestId } }, { timeout: 40000 }), 'aiResult'); },
+    /** SDK標準の保存要求を使い、非対応ホストではURLコピーへ誘導する。 */
+    async downloadInvitation(file) {
+      await ensureConnected();
+      if (!app.getHostCapabilities()?.downloadFile) throw new Error('このホストはQR画像の保存に対応していません。参加URLをコピーして配布してください。');
+      const resource = { uri: `file:///${encodeURIComponent(file.name)}`, mimeType: file.mimeType, ...(file.text !== undefined ? { text: file.text } : { blob: file.blob ?? '' }) };
+      const result = await app.downloadFile({ contents: [{ type: 'resource', resource }] }, { timeout: 60000 });
+      if (result.isError) throw new Error('QRの保存がキャンセルされたか、許可されませんでした。再度保存するか参加URLをコピーしてください。');
+    },
   };
 }

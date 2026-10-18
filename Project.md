@@ -26,9 +26,9 @@ Plugin Extensionsのホスト画面とMCPサーバーを、移動可能な `plug
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
 
-参加者向け画面は提供デザインをもとにTypeScriptで実装しています。追加指示により新しいトップを `/` へ置き、参加リンク・部屋IDから既存の `/rooms/:id/join` へ入る構成とします。発行済みQRと部屋ホストは維持し、従来の部屋作成ページは `/host` へ置きます。入口と画面見本の扱いは[ADR-0019](docs/adr/0019-participant-root-entry.md)を参照してください。リポジトリの変更と公開サイトへの再配備は区別します。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。10競技・500点・共通ヒントのAPIはmainへ実装済みで、参加者画面はサーバーの確定値を表示します。Supabaseと人数/順位更新の追加契約は[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)の残依頼です。
+参加者向け画面は提供デザインをもとにTypeScriptで実装しています。追加指示により新しいトップを `/` へ置き、参加リンク・部屋IDから既存の `/rooms/:id/join` へ入る構成とします。発行済みQRと部屋ホストは維持し、従来の部屋作成ページは `/host` へ置きます。入口と画面見本の扱いは[ADR-0019](docs/adr/0019-participant-root-entry.md)を参照してください。リポジトリの変更と公開サイトへの再配備は区別します。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。10競技・500点・共通ヒントのAPIはmainへ実装済みで、参加者画面はサーバーの確定値を表示します。保存と人数/順位更新、事前招待の追加契約は[16 Sites保存・参加者API](docs/16-supabase-integration.md)にまとめています。
 
-本番ゲーム記録の保存先は、ユーザー指示により**Supabase**とします（[ADR-0016](docs/adr/0016-supabase-game-persistence.md)）。参加人数と順位の変化を画面へ自動反映することも実演の要件です。現行コードと既存Sites v3はD1/R2であり、Supabaseの接続・スキーマ・Supabaseでの100人同時利用は未確認です。D1の公開100HTTP試験記録は上記14へ分けています。参加者の同一オリジン `/api/rooms/:id` 境界を保つ引き渡しと設定項目は[16 Supabase統合](docs/16-supabase-integration.md)を参照してください。
+本番ゲーム記録は、最新のユーザー指示に従い既存Sitesの**D1**、写真は**R2**を継続します（[ADR-0020](docs/adr/0020-sites-persistence-advance-invites.md)）。参加者画面は同一オリジンの `/api/rooms/:id` を使い、実行ソースにSupabase接続はありません。以前のSupabase移行方針は[ADR-0016](docs/adr/0016-supabase-game-persistence.md)をSupersededとして保持します。参加人数と順位の自動更新を維持し、事前配布用にはホストが開始するまで待機する部屋と同じ参加URL/QRを使う方針です。追加機能の実装とローカル検証は完了し、このコミット後にSites・Plugin 0.4.2へ配備します。過去のD1公開100HTTP試験とは分けて[16 Sites保存・参加者API](docs/16-supabase-integration.md)・[08 ホスト画面](docs/08-plugin-extensions.md)へ記録します。
 
 ユーザー指定の運動会・猫耳キャラクターのスマホ案を参考に、0.3.0のホスト画面を実装しました。素材をpluginへ同梱し、参加者・勝利数・時間はHTMLで表示します。インストール済みHTMLの検証ホストで1280/390px表示・実部屋のQR読取/匿名参加ページ200、別MCPの明示デモ進行を確認済みです。この0.3.0画面確認ではネイティブ拡張パネルの直接操作、新しい参加登録・有料AI呼出は未実施でした。後続0.3.1の結果は14を参照してください（[ADR-0012](docs/adr/0012-sports-day-host-ui.md)、[素材ガイド](docs/design/sports-day-ui-assets-v1/README.md)）。
 
@@ -75,7 +75,7 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [12 Issue #1バックエンド受け渡し](docs/12-issue1-backend-handoff.md) | 100人・10競技・500点の契約と、さが さんの初期実装/ローカル検証履歴 | さが さん・Ahwenu・mae さん |
 | [13 MCP Events調査](docs/13-mcp-events-audit.md) | 公式イベント機能の未使用、2秒ポーリングと独自イベントの違い | Ahwenu・バックエンド・拡張画面担当 |
 | [14 Issue #1 Ahwenu受け渡し](docs/14-issue1-ahwenu-handoff.md) | 5項目の対応、確定HTTP/MCP契約、mae向け応答例、公開版の検証 | Ahwenu・さが さん・mae さん |
-| [16 Supabase統合](docs/16-supabase-integration.md) | 本番保存先、既存API互換、人数/順位の更新、環境設定、バックエンドへの受け渡し | mae さん・さが さん・Ahwenu |
+| [16 Sites保存・参加者API](docs/16-supabase-integration.md) | D1/R2の正本、事前招待、既存API互換、人数/順位の更新、環境設定 | mae さん・さが さん・Ahwenu |
 | [当日の全体コンテキスト](docs/hackathon/README.md) | ゴールを決める項目、実演の1周、担当間の受け渡し、確認済みの範囲 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
 | [参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |

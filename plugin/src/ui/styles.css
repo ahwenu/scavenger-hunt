@@ -64,6 +64,14 @@ h1 { font-size:26px; line-height:1.1; letter-spacing:-.07em; font-weight:900; }
 .join-qr figcaption { font-size:10px; line-height:1.5; margin-top:5px; color:#49657c; }
 .join-url { display:block; flex:none; padding:8px 10px; color:#176497; background:#eff8fe; border:1px solid #cee7f3; border-radius:10px; font-size:11px; font-weight:800; text-align:center; line-height:1.5; text-underline-offset:3px; }
 .join-qr-error { color:#9c3430; font-size:12px; }
+.invite-share-button { flex:none; min-height:36px; margin-bottom:6px; font-size:12px; }
+.invitation-share { flex:1; min-height:0; display:flex; flex-direction:column; gap:10px; }
+.invitation-instruction { margin:0; font-size:14px; line-height:1.75; }
+.invitation-share label { font-weight:800; font-size:13px; }
+.invitation-url-input { flex:none; width:100%; min-height:44px; padding:10px; border:1px solid #8fc9e2; border-radius:8px; font-size:12px; color:var(--navy); background:#f1faff; }
+.invitation-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.invitation-actions .button { flex:1 1 140px; min-height:42px; }
+.invitation-status { margin:0; font-size:12px; line-height:1.75; color:var(--navy); }
 .topic-panel { border-top:4px solid #d92648; }
 .topic-state { align-self:flex-start; flex:none; padding:4px 8px; background:#fff0d1; border:1px solid #ffdf95; color:#7b5010; border-radius:7px; font-size:10px; font-weight:900; margin-bottom:10px; }
 .topic-summary { display:flex; flex:1; min-height:52px; flex-direction:column; justify-content:center; gap:6px; text-align:left; border:0; background:transparent; color:var(--navy); padding:0; width:100%; }

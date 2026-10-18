@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { App } from '@modelcontextprotocol/ext-apps';
 import { createHostBridge, readHostState, readAIResponse, readInitialConnectionState, type HostBridge } from '../../src/ui/bridge.js';
+import { createInvitationFile } from '../../src/ui/join-invitation.js';
 
 const hostResult = { content: [], structuredContent: { mode: 'sites', snapshot: null, notice: 'Sites接続済み' } };
 const aiStatusResult = { content: [], structuredContent: { aiStatus: { configured: true, available: true, notice: 'AI接続済み' } } };
@@ -14,6 +15,7 @@ function initialBridge(overrides: Partial<HostBridge>): HostBridge {
     async call() { return readHostState(hostResult); },
     async checkAI() { return readAIResponse(aiStatusResult, 'aiStatus'); },
     async generateAI() { throw new Error('この検証でAI生成は呼び出しません。'); },
+    async downloadInvitation() {},
     ...overrides,
   };
 }
@@ -163,4 +165,35 @@ test('AI確認が遅れていても部屋の接続結果を先に利用できる
   assert.equal(aiSettled, false);
   release();
   assert.equal((await pending.ai).status, 'fulfilled');
+});
+
+test('配布QRはSDKのホスト保存だけを使い、ツールや外部通信へ送らない', async t => {
+  let exported: unknown;
+  t.mock.method(App.prototype, 'connect', async () => {});
+  t.mock.method(App.prototype, 'close', async () => {});
+  t.mock.method(App.prototype, 'getHostCapabilities', () => ({ downloadFile: {} }));
+  t.mock.method(App.prototype, 'callServerTool', async () => { throw new Error('保存でツールを呼ばない'); });
+  t.mock.method(App.prototype, 'downloadFile', async (params: unknown) => { exported = params; return {}; });
+  const bridge = createHostBridge();
+  const file = createInvitationFile('https://karimono.example/rooms/my-room/join', 'svg');
+  await bridge.downloadInvitation(file);
+  assert.deepEqual(exported, { contents: [{ type: 'resource', resource: { uri: 'file:///karimono-join-my-room.svg', mimeType: file.mimeType, text: file.text } }] });
+  await bridge.close();
+});
+
+test('保存非対応とキャンセルを成功表示せず、参加URLコピーの案内へ戻せる', async t => {
+  let supported = false;
+  let saves = 0;
+  t.mock.method(App.prototype, 'connect', async () => {});
+  t.mock.method(App.prototype, 'close', async () => {});
+  t.mock.method(App.prototype, 'getHostCapabilities', () => supported ? { downloadFile: {} } : {});
+  t.mock.method(App.prototype, 'downloadFile', async () => { saves++; return { isError: true }; });
+  const bridge = createHostBridge();
+  const file = createInvitationFile('https://karimono.example/rooms/my-room/join', 'svg');
+  await assert.rejects(bridge.downloadInvitation(file), /参加URLをコピー/);
+  assert.equal(saves, 0);
+  supported = true;
+  await assert.rejects(bridge.downloadInvitation(file), /キャンセル/);
+  assert.equal(saves, 1);
+  await bridge.close();
 });

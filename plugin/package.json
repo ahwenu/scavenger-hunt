@@ -1,6 +1,6 @@
 {
   "name": "karimono-host",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "private": true,
   "type": "module",
   "description": "カリモノのPlugin Extensionsホスト画面・MCP開発ひな形",

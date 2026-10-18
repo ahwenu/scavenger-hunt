@@ -8,11 +8,11 @@
 
 API例・検証・適用手順は[12](12-issue1-backend-handoff.md)。後続作業で公開v3と0003を適用し、D1/R2で公開100HTTPクライアントのデモを確認した記録がある（[14](14-issue1-ahwenu-handoff.md)）。終盤transport失敗1件と補完確認は同書を参照。このマージ時に試験を再実行したものではない。以下のteams/score_events・10点・v1契約・24時間画像保持などは初期提案の履歴であり、今回採用済みとは扱わない。既存Sitesは提出写真を判定後に削除する。
 
-## Supabaseへの統合（2026-10-18追記）
+## SitesのD1/R2継続と事前招待（2026-10-18追記）
 
-ゲーム記録の本番保存先はSupabaseのPostgresとする（[ADR-0016](adr/0016-supabase-game-persistence.md)）。実装済みのCloudはD1/R2のまま。スキーマ・SQL・接続設定・移行は未実装/未確認で、以下のD1テーブルは当初案として残す。現在のコードは `players`、`rounds`、`submissions`、`pass_events` 等を使うため、この案をそのまま移行SQLとして使わない。
+最新のユーザー指示に従い、ゲーム記録は既存SitesのD1、写真は非公開R2を継続する（[ADR-0020](adr/0020-sites-persistence-advance-invites.md)）。Supabaseへの接続・移行は不要となり、以前の採用指示と未実施の移行計画は[ADR-0016](adr/0016-supabase-game-persistence.md)のSuperseded履歴に残す。現在のコードは `rooms`、`players`、`rounds`、`submissions`、`pass_events` 等を使う。以下の初期テーブル案をそのまま現行スキーマとして使わない。
 
-Supabaseでは部屋・参加者・競技・提出・得点を永続化し、競合時の加点と提出確定をPostgresの一意制約とトランザクションで一度だけ反映する実装を依頼する。写真の保存先をSupabase Storageへ変えることは未確定。現行R2の一時保存・判定後削除と、以下の24時間保持案も異なるため、バックエンドPRで実装した保存期間と削除経路を明記する。入出力と受入条件は[16](16-supabase-integration.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)を参照。
+事前招待部屋は `rooms.autoStart=false` を永続化し、初回参加でも自動開始せずホスト開始まで待つ。既存行・省略時はtrueを保つ。人数/順位の追加表示はD1の部屋revision・updatedAtと、認証通信時に記録するplayers.lastSeenAtを利用する。直近30秒の通信は在席の近似とし、個別の最終通信時刻を参加者へ公開しない。追加スキーマは過去のSQLを変更せず新しいマイグレーションで適用する。R2の一時保存・判定後削除は維持する。契約と今回の実装/検証状況は[16](16-supabase-integration.md)を参照。
 
 ## 以下は初期バックエンド案
 

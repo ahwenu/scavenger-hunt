@@ -10,7 +10,9 @@
 
 後続のAhwenu担当によるHTTP/MCP対応・公開配備の状況と、mae さん向けの最終応答例/配備版は[14](14-issue1-ahwenu-handoff.md)に記録する。元PRの検証履歴と新しい公開結果を分ける。
 
-本番ゲーム記録はSupabaseへ接続する方針（[ADR-0016](adr/0016-supabase-game-persistence.md)）。現行コードはD1/R2で、保存先の移行、人数/順位更新のrevision・在席数等は残る実装依頼として[16](16-supabase-integration.md)と[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)へまとめる。既存API・参加者Bearer・ホストCookieを維持し、Supabase Authや `/api/v1` へ同時移行しない。
+本番ゲーム記録は既存SitesのD1、写真はR2を継続する（[ADR-0020](adr/0020-sites-persistence-advance-invites.md)）。以前のSupabase移行方針はADR-0016の履歴とし、既存API・参加者Bearer・ホストCookieを維持する。
+
+事前招待用には `POST /api/rooms` の `{name,autoStart:false}` でD1へ部屋を作る。`autoStart` 省略は従来どおりtrueで、既存自動開始部屋は最初の参加から30秒後に初回開始する。falseの部屋は参加後も `lobby.deadline=null` で待機し、ホストの `host/start` で開始する。参加URLは同じ `/rooms/:id/join` を事前配布し、ホスト秘密を含めない。`room.autoStart`・`lobby.autoStart`、`revision`・`live`・`stats.activePlayers` の追加契約と実装/検証状況は[16](16-supabase-integration.md)へまとめる。
 
 ## 以下は初期API案（Issue #1の実装契約ではない）
 
