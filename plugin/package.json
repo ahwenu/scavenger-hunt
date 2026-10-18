@@ -15,7 +15,9 @@
     "preview": "node --env-file-if-exists=.env.local scripts/preview.mjs",
     "package": "npm run check && npm run build && node scripts/package.mjs",
     "test:portable": "node scripts/verify-portability.mjs",
-    "marketplace:prepare": "npm run check && npm run build && node scripts/prepare-local-marketplace.mjs"
+    "marketplace:prepare": "npm run check && npm run build && node scripts/prepare-local-marketplace.mjs",
+    "share": "npm run marketplace:prepare && node scripts/package-share.mjs",
+    "test:share": "node scripts/verify-portability.mjs --share"
   },
   "dependencies": {
     "@modelcontextprotocol/ext-apps": "1.7.5",

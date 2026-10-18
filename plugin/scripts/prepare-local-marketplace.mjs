@@ -11,9 +11,10 @@ const destination = path.join(artifacts, 'local-marketplace');
 try {
   await mkdir(path.join(stage, 'plugin/dist'), { recursive: true });
   await mkdir(path.join(stage, '.agents/plugins'), { recursive: true });
-  for (const file of ['plugin.json', 'mcp.json', 'README.md', 'dist/server.mjs', 'dist/widget.html']) {
+  for (const file of ['plugin.json', 'mcp.json', 'README.md', 'INSTALL.md', 'dist/server.mjs', 'dist/widget.html']) {
     await cp(path.join(root, file), path.join(stage, 'plugin', file));
   }
+  await cp(path.join(root, 'INSTALL.md'), path.join(stage, 'INSTALL.md'));
   const catalog = {
     name: 'karimono-local',
     interface: { displayName: 'カリモノ / ローカル開発' },

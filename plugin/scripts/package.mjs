@@ -13,7 +13,7 @@ await mkdir(artifacts, { recursive: true });
 try {
   const folder = path.join(stage, 'karimono-host');
   await mkdir(path.join(folder, 'dist'), { recursive: true });
-  for (const name of ['plugin.json', 'mcp.json', 'README.md']) {
+  for (const name of ['plugin.json', 'mcp.json', 'README.md', 'INSTALL.md']) {
     await cp(path.join(root, name), path.join(folder, name));
   }
   for (const name of ['server.mjs', 'widget.html']) {

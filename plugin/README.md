@@ -2,6 +2,8 @@
 
 ONE LEASE / **借り物王に俺はなる！**
 
+**受け取った共有ファイルから追加する方は、[取り込み手順 INSTALL.md](INSTALL.md)から始めてください。** 画面を開くためのソース取得・依存インストール・ビルドは不要です。
+
 ホストの部屋作成、参加チーム一覧、ランキング、開始・次問・終了の画面を育てるための独立パッケージです。Sitesの参加者画面・バックエンドとは別にビルドし、`plugin/` ごと別の場所へ移動できます。
 
 元リポジトリには既存デモも取り込まれています（Sitesは `apps/cloud/`、ローカル版は `apps/server/`・`apps/web/`）。このpluginはそれらのソースや依存を参照しません。Ahwenuの独立AI APIへはMCPサーバーからHTTP接続し、SitesのゲームAPI接続は後続作業です。
@@ -97,6 +99,8 @@ npm run test:portable
 `test:portable` はアーカイブを空白を含む一時パスに展開し、`node_modules` のない配布物を別の作業ディレクトリから起動して確認します。パッケージ作成後に実行してください。
 
 ## ローカルPlugin Extensionsへ登録する
+
+他の人に渡すときは `npm run share` で `artifacts/karimono-host-share-0.1.0.tar.gz` とSHA-256を作ります。marketplace宣言とビルド済みplugin・取り込み手順をまとめた共有用です。秘密設定・APIサーバーは含めません。受取人は[INSTALL.md](INSTALL.md)に従って展開・登録します。
 
 この `plugin/` フォルダを作業ルートにし、チェック・テスト・ビルドを済ませてから、ローカルmarketplaceを準備して公式CLIへ登録します。
 
