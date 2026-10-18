@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Codex">
+  <title>カリモノ｜全員で決めるゴールと受け渡し</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui,-apple-system,sans-serif; background:#f6f7f5; color:#192936; }
+    * { box-sizing:border-box; }
+    body { margin:0; line-height:1.62; }
+    main { max-width:1080px; margin:auto; padding:24px 20px 70px; }
+    header { border-top:6px solid #146b72; padding-top:18px; }
+    h1 { font-size:clamp(1.7rem,4vw,2.4rem); line-height:1.25; margin:0 0 12px; }
+    h2 { font-size:1.3rem; margin:34px 0 12px; border-bottom:1px solid #cbd8d5; padding-bottom:5px; }
+    h3 { font-size:1.04rem; margin:20px 0 7px; }
+    p { max-width:90ch; }
+    a { color:#075f72; }
+    .meta,.small,figcaption { color:#566970; font-size:.88rem; }
+    .lead { font-size:1.1rem; margin:14px 0; }
+    .callout { border-left:4px solid #146b72; background:#e8f4f0; padding:12px 16px; margin:16px 0; }
+    .amber { border-left-color:#aa6b22; background:#fff2dc; }
+    .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:16px 0; }
+    .card { background:white; border:1px solid #cbd8d5; border-radius:9px; padding:12px 15px; }
+    .card h3 { margin:0 0 5px; }
+    .card p { margin:0; }
+    table { border-collapse:collapse; width:100%; background:white; font-size:.94rem; }
+    th,td { border:1px solid #cbd8d5; padding:8px 10px; vertical-align:top; text-align:left; }
+    th { background:#e8f4f0; }
+    .scroll { overflow-x:auto; }
+    .scroll table { min-width:720px; }
+    ul,ol { padding-left:1.5em; }
+    li { margin:5px 0; }
+    figure { margin:18px 0; padding:12px; background:white; border:1px solid #cbd8d5; overflow-x:auto; }
+    figure svg { width:100%; min-width:860px; height:auto; display:block; }
+    blockquote { margin:12px 0; padding:10px 15px; background:white; border-left:3px solid #146b72; }
+    code { overflow-wrap:anywhere; }
+    @media(max-width:720px) { .grid { grid-template-columns:1fr; } main { padding:18px 13px 48px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>カリモノ｜全員で決めるゴールと受け渡し</h1>
+    <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 日付：2026-10-18 ／ 対象コミット：c318550 ／ 状態：チーム確認前の整理</p>
+    <p class="lead">いま必要なのは、別々に動いている参加者デモ・Plugin・AI APIを、審査員が1回遊べる体験へつなぐための完成線を揃えること。その完成線は、下の6項目をチームで決めてから固定する。</p>
+    <div class="callout"><strong>今日の実演案（未合意）</strong><br>ホストがお題を公開し、2台のスマホがQRから参加する。会場の物を撮影して実AIの合否を見て、ホスト側でも結果を確認する。公開URL・GitHub・READMEに、実際に動いた範囲を示す。</div>
+    <p class="small">主催の<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">イベントページ</a>はWeb公開と、審査の4観点「新機能の活用・使いやすさ・有用性・独創性」を示す。17:15の提出とGitHub・公開URLの連携は、同日のXチーム共有による。提出操作は未確認。</p>
+  </header>
+
+  <section aria-labelledby="decisions">
+    <h2 id="decisions">ゴールを定めるために決める6つ</h2>
+    <div class="scroll"><table><thead><tr><th>問い</th><th>選択肢・いまの差</th><th>一文で残す答え</th></tr></thead><tbody>
+      <tr><td>1. 何を実演する？</td><td>会議の1問体験／01仕様の3問。Pluginホストは現在ゲーム未接続</td><td>何問を、どのホスト画面から、何台のスマホで通すか</td></tr>
+      <tr><td>2. いつ次のお題？</td><td>ホスト操作／最初の正解で追加／既存デモの30秒自動開始</td><td>誰の操作・どの結果で次問を公開するか</td></tr>
+      <tr><td>3. 得点と順位は？</td><td>合格10点・同順位／受付時刻順／順位特典の案</td><td>合格・同時正解・再送時に何を確定表示するか</td></tr>
+      <tr><td>4. どの新機能を見せる？</td><td>現在の通常お題はResponses、判定はDecisions、参考写真付きAgentsは未成功。Pluginの実AIお題表示は1例確認</td><td>DevDay発表機能と実演操作の対応、実際に確認した証拠</td></tr>
+      <tr><td>5. どこまで実接続？</td><td>公開Sites、PluginのAI表示、独立APIはそれぞれある。Plugin↔Sitesのゲーム接続は未完成</td><td>実接続の経路と、デモとして明示する箇所</td></tr>
+      <tr><td>6. 誰が参加者？</td><td>仕様は1チーム1代表端末、既存デモは個人名で参加</td><td>画面に出す単位・名前・QRの送り先</td></tr>
+    </tbody></table></div>
+    <p>特に1・2・4・5を先に合わせると、フロント・バック・Plugin・発表が同じ一周を実装できる。詳細と根拠は<a href="../hackathon/domain/goal-and-decisions.md">ゴールと未決事項</a>に整理した。</p>
+  </section>
+
+  <section aria-labelledby="flow">
+    <h2 id="flow">作成順と依存</h2>
+    <figure>
+      <svg viewBox="0 0 1190 365" role="img" aria-labelledby="diagram-title diagram-desc" xmlns="http://www.w3.org/2000/svg">
+        <title id="diagram-title">ハッカソンのゴールから提出まで</title>
+        <desc id="diagram-desc">審査・提出条件を確認し、実演する1周、進行・得点・接続を決める。その後デザイン、Sitesゲーム、PluginとAIを並行して用意する。デザインを参加者画面に組み込み、2台で1問を通して、公開URLとGitHubを提出する。</desc>
+        <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#42656c"/></marker></defs>
+        <g fill="none" stroke="#42656c" stroke-width="2" marker-end="url(#arr)">
+          <path d="M195 64 H220"/><path d="M410 64 H435"/><path d="M625 64 H680 V140 H180 V160"/><path d="M625 64 H680 V160"/><path d="M625 64 H890 V160"/>
+          <path d="M180 225 V275"/><path d="M275 307 H955"/><path d="M775 193 H930 V293 H955"/><path d="M985 225 V270"/><path d="M1070 315 V340"/>
+        </g>
+        <g fill="#e8f4f0" stroke="#42656c" stroke-width="2">
+          <rect x="5" y="31" width="190" height="66" rx="9"/><rect x="220" y="31" width="190" height="66" rx="9"/><rect x="435" y="31" width="190" height="66" rx="9" fill="#fff2dc"/>
+          <rect x="85" y="160" width="190" height="65" rx="9"/><rect x="585" y="160" width="190" height="65" rx="9"/><rect x="890" y="160" width="190" height="65" rx="9"/>
+          <rect x="85" y="275" width="190" height="65" rx="9"/><rect x="955" y="270" width="205" height="65" rx="9" fill="#d9f0e9"/>
+          <rect x="955" y="340" width="205" height="25" rx="7" fill="#d9f0e9"/>
+        </g>
+        <g fill="#192936" font-family="system-ui,sans-serif" font-size="15" text-anchor="middle">
+          <text x="100" y="59"><tspan x="100">審査・提出条件</tspan><tspan x="100" dy="21">を確認</tspan></text>
+          <text x="315" y="59"><tspan x="315">実演する1周を</tspan><tspan x="315" dy="21">決める</tspan></text>
+          <text x="530" y="59"><tspan x="530">進行・得点・接続</tspan><tspan x="530" dy="21">を決める</tspan></text>
+          <text x="180" y="187">デザインを渡す</text>
+          <text x="680" y="187">Sitesのゲームを作る</text>
+          <text x="985" y="187"><tspan x="985">PluginとAIを</tspan><tspan x="985" dy="21">接続</tspan></text>
+          <text x="180" y="302"><tspan x="180">参加者画面を</tspan><tspan x="180" dy="21">作る</tspan></text>
+          <text x="1057" y="298"><tspan x="1057">2台で1問を</tspan><tspan x="1057" dy="21">通す</tspan></text>
+          <text x="1057" y="357" font-size="13">公開URL・GitHubを提出</text>
+        </g>
+      </svg>
+      <figcaption>draw.ioで同じ依存を確認。デザイン画像の受領後に参加者画面を作る。SitesのゲームとPlugin・AIは接続点を決めたうえで並行して進める。</figcaption>
+    </figure>
+    <p>実装の順序は「決定と小さな入出力例→並行作業→公開環境で1周確認→提出」。参加者の画面遷移と確認条件は<a href="../hackathon/application/demo-slice.md">実演する1周</a>に記録した。</p>
+  </section>
+
+  <section aria-labelledby="owners">
+    <h2 id="owners">各担当の成果物と受け渡し</h2>
+    <div class="scroll"><table><thead><tr><th>担当</th><th>今日の成果物</th><th>次へ渡すもの</th></tr></thead><tbody>
+      <tr><td>Akibakoさん</td><td>参加・撮影・結果のデザイン画像と状態別の文言。READMEの遊び方と発表素材</td><td>画像の状態対応、押せる場所、素材・色・文字をmaeへ。Plugin担当へ共通トーン</td></tr>
+      <tr><td>mae</td><td>画像受領後の参加者画面。受領前は通信・カメラ・復帰。2端末で撮影→合否を確認</td><td>必要なAPI入出力、画面状態の不足、実機の失敗箇所を関係担当へ</td></tr>
+      <tr><td>さがさん</td><td>部屋・参加・ラウンド・提出・締切・加点・順位の正本と公開Sites</td><td>進行/得点ルール、部屋→結果の入出力例、公開URLで動く範囲</td></tr>
+      <tr><td>Ahwenu</td><td>独立AI API、PluginのMCP、Sitesとの接続方法と公開認証</td><td>お題ID・判定結果・失敗コード、到達可能なAPI、実演できる新機能の証拠</td></tr>
+      <tr><td>Plugin画面担当（未定）</td><td>実部屋の作成・参加者・順位・進行を拡張内で操作</td><td>必要なSites/MCP操作と画面状態。担当者を先に確定</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section aria-labelledby="status">
+    <h2 id="status">今あるものと、まだつながっていないもの</h2>
+    <div class="grid">
+      <div class="card"><h3>公開Sites</h3><p>さがさんの公開URLで入口画面は確認。部屋作成から実判定までの通しは未確認。</p></div>
+      <div class="card"><h3>PluginとAI</h3><p>実拡張内のAI接続・お題表示は1例確認。ゲーム操作は標準で未接続、デモはサンプル。</p></div>
+      <div class="card"><h3>独立AI API</h3><p>ローカルでお題生成・写真判定の成功記録がある。公開Sitesからの接続は未確認。</p></div>
+    </div>
+    <p>AI APIの通常のお題生成はResponses API、判定はDecisions API。Agents APIの参考写真モードは明示的に有効にする別経路で、成功は未確認。AI APIは得点を返さず、ゲーム側が確定する。コードと検証の範囲は<a href="../hackathon/infrastructure/current-state.md">現状と未検証の境界</a>を参照。</p>
+  </section>
+
+  <section aria-labelledby="share">
+    <h2 id="share">他の人に先に共有する内容</h2>
+    <ol>
+      <li>今日の実演案と、上の6項目でまだ選ぶ必要がある点。決まった答えは一文ずつこの資料に反映する。</li>
+      <li>公開SitesのURLと「入口だけ確認済み」という範囲、独立AI API・Plugin・プロトタイプが別々の状態であること。</li>
+      <li>各担当への具体的な受け渡し物。デザイン画像、ゲームAPIの入出力例、AIのお題IDと合否、Plugin↔Sitesの担当を依頼する。</li>
+      <li>17:15提出に必要なGitHub、公開URL、README、実演できた範囲。秘密値や個人写真は共有文に含めない。</li>
+    </ol>
+    <blockquote>今日の完成線を先に揃えたいです。候補は「公開Sitesへスマホ2台で参加→1問を撮影→実AIの合否→ホストに結果反映」です。1問/3問、次問の条件、得点/順位、審査で見せる新機能、Plugin↔Sites↔AIの実結合範囲、参加単位を短く決めたいです。各担当の受け渡しと未確認事項をこの資料に整理しました。</blockquote>
+    <p>Akibakoさん・さがさん・Ahwenu宛ての短い個別文面は<a href="../hackathon/interfaces/handoffs.md">担当間の受け渡し</a>に用意した。ここに書いた文面は未送信。</p>
+  </section>
+
+  <footer>
+    <h2>参照と扱い</h2>
+    <p><a href="../hackathon/README.md">AI向けコンテキストの入口</a>、<a href="../01-product-scope.md">01 要件・MVP</a>、<a href="../07-delivery-plan.md">07 担当分担</a>、<a href="../11-api-integration.md">11 独立AI API</a>、<a href="../adr/README.md">ADR一覧</a>、<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">主催ページ</a>。10月17日議事録・10月18日のMVPメモ・チームX共有も参照した。過去案、現在の実装、実演で未確認の部分を区別している。</p>
+  </footer>
+</main>
+</body>
+</html>

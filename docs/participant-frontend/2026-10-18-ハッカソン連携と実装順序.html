@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Codex">
+  <title>カリモノ｜デザイン受領から提出までの作成順（提案）</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, sans-serif; color: #172434; background: #f7f8f6; }
+    * { box-sizing: border-box; }
+    body { margin: 0; line-height: 1.65; }
+    main { max-width: 1000px; margin: auto; padding: 24px 20px 64px; }
+    header { border-top: 6px solid #176c73; padding-top: 18px; }
+    h1 { font-size: clamp(1.55rem, 4vw, 2.2rem); line-height: 1.25; margin: 0 0 10px; }
+    h2 { font-size: 1.3rem; margin: 32px 0 10px; padding-bottom: 5px; border-bottom: 1px solid #cad4d2; }
+    h3 { font-size: 1.05rem; margin: 18px 0 6px; }
+    p { max-width: 83ch; }
+    .meta { font-size: .88rem; color: #52646b; margin: 0 0 16px; }
+    .lead { font-size: 1.1rem; margin: 8px 0 18px; }
+    .notice { border-left: 4px solid #176c73; background: #e9f4f1; padding: 10px 15px; }
+    .uncertain { border-left-color: #a8651e; background: #fff3e3; }
+    table { border-collapse: collapse; width: 100%; background: white; font-size: .94rem; }
+    th, td { border: 1px solid #ccd7d5; padding: 8px 10px; vertical-align: top; text-align: left; }
+    th { background: #e9f4f1; }
+    .scroll { overflow-x: auto; }
+    .scroll table { min-width: 680px; }
+    ul, ol { padding-left: 1.5em; }
+    li { margin: 5px 0; }
+    figure { margin: 18px 0; background: white; border: 1px solid #ccd7d5; padding: 12px; overflow-x: auto; }
+    figure svg { display: block; min-width: 850px; max-width: 100%; height: auto; }
+    figcaption, .small { font-size: .88rem; color: #52646b; }
+    blockquote { margin: 10px 0 20px; padding: 8px 14px; background: white; border-left: 3px solid #176c73; }
+    code { overflow-wrap: anywhere; }
+    a { color: #075e73; }
+    @media (max-width: 620px) { main { padding: 18px 13px 48px; } th,td { padding: 7px; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>カリモノ｜デザイン受領から提出までの作成順</h1>
+    <p class="meta">作成者：Codex ／ モデル：GPT-6 ／ 作成日・更新日：2026-10-18 ／ 対象コミット：b6fafa2（確認時点） ／ 状態：チーム確認前の提案</p>
+    <p class="lead">参加者画面の見た目は、デザイン画像を受け取って状態を確認してから実装する。受領までに通信・カメラ・復帰を整え、画像受領後に画面へ反映し、2台で1問を通して提出する順番。</p>
+    <p class="notice">デザイン画像の受領時刻と内容は未確認。時間は受領を起点に調整し、チームから共有された<strong>17:15の提出締切</strong>に向けて結合確認と提出の時間を残す。<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">イベントページ</a>の全体進行はハッカソン14:00〜17:30で、提出時刻そのものはこのページで確認できていない。</p>
+    <p class="small">全担当のゴールと新しいAPI・Pluginの接続状況は、後から作成した<a href="../ai-reports/2026-10-18-ハッカソン全体ゴールと受け渡し.html">全体レポート</a>と<a href="../hackathon/README.md">AI向けコンテキスト</a>を参照。</p>
+  </header>
+
+  <section aria-labelledby="start">
+    <h2 id="start">最初に4人で揃えること｜10〜15分</h2>
+    <p>以下は画面実装の着手前に確認する短い判断。仕様文書と取り込みコードは一致していないため、合意前の変更は「提案」のままにする。</p>
+    <div class="scroll"><table><thead><tr><th>決めること</th><th>今日の仮置き</th><th>決める人・出力</th></tr></thead><tbody>
+      <tr><td>実演する1周</td><td>QR参加→名前→お題→スマホ撮影→AI判定→合否・順位。まず1問を途切れずに通す</td><td>全員。実演端末と成功時の見え方を一言で共有</td></tr>
+      <tr><td>デザインの受け渡し</td><td>参加・撮影・判定結果の画像と、読込中・失敗時の扱いを受け取る。画像だけで判断できない操作や文言を確認してから画面へ反映する</td><td>Akibakoさんとmae。受領物と未決事項を短く記録</td></tr>
+      <tr><td>デモの基準と画面配置</td><td>取り込み済みの <code>apps/cloud/</code> と <code>apps/web/</code> を動く基準にする。現行デモのホストはSites内で、AcceptedのADR-0001はPlugin Extensions。今日どちらを実演するかを明示する</td><td>Ahwenu中心に全員。方針を変えるなら関連ADRを後続で合わせる</td></tr>
+      <tr><td>進行・得点</td><td>30秒自動開始と受付時刻順の現行デモ、またはホスト開始・点数案のどちらを今日の説明に使うか固定。初正解で次問を増やす案は追加範囲として扱う</td><td>さがさん中心に全員。画面に出す確定値とイベントを決める</td></tr>
+      <tr><td>API・AI・公開先</td><td>現行APIを使う範囲、実AIモードで実演する条件、公開URLと配備担当を固定。デモ判定を使う場合は実AI判定として説明しない</td><td>Ahwenu中心に全員。通信例1件と公開URLを渡す</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section aria-labelledby="handoff">
+    <h2 id="handoff">先に渡す情報と、受け取るもの</h2>
+    <p>連絡文は下に用意した。まだ送信していない。Akibakoさんからデザイン画像を受け取った後に参加者画面の見た目を実装する。待機中は既存フローの動作確認と、画面から独立した処理を進められる。</p>
+    <div class="scroll"><table><thead><tr><th>相手</th><th>先に渡すもの</th><th>返してもらうもの</th><th>編集境界の案</th></tr></thead><tbody>
+      <tr><td>Akibakoさん</td><td><a href="https://ai-karimono-race.ahwenu.chatgpt.site/">現行画面</a>と必要な状態（参加・撮影・判定結果、読込中・失敗）。現状は <code>apps/web/app.js</code> の素のJavaScriptとCSSで、03のReact部品案は未導入</td><td>まずデザイン画像と対象画面、画面ごとの文言・操作。色・文字・余白や素材の指定があれば続けて受領。共有場所の案は <code>docs/design/</code></td><td>画像受領→状態確認→maeが参加者画面へ実装。画面変更の境界は実装前に合わせる</td></tr>
+      <tr><td>さがさん</td><td>現行の30秒自動開始、合格通知、順位表示と、01/05の得点案との差。判定中・失敗・重複送信の参加者側の見え方</td><td>今日の進行・順位の確定ルール、合格イベントの例、1問を終えられる状態、失敗時の戻り方</td><td>ゲームと保存を担当。画面の仮得点計算は作らない</td></tr>
+      <tr><td>Ahwenu</td><td>参加者画面が使う状態取得・写真送信の現行形と04契約案の差。カメラ画像は撮影後すぐ送信</td><td>今日使うAPI応答例、実AIの小さな通し結果、公開URLと配備手順、Pluginの実演可否</td><td>API・AI・配備を担当。mae側は合意した応答を表示</td></tr>
+      <tr><td>mae</td><td>受領前に現行フローとカメラ・通信・復帰を確認し、画面に必要な状態を返す</td><td>画像受領後の参加者画面、スマホの参加→撮影→結果の1周、許可拒否/通信失敗の案内、実機確認結果</td><td><code>apps/web/app.js</code>・<code>live-camera.js</code> を中心に担当</td></tr>
+    </tbody></table></div>
+  </section>
+
+  <section aria-labelledby="messages">
+    <h2 id="messages">そのまま渡せる連携文案</h2>
+    <h3>Akibakoさんへ</h3>
+    <blockquote>参加・撮影・判定結果のデザイン画像を受け取ってから、私が参加者画面を実装します。対象画面、押せる場所、成功・失敗・読込中の文言が分かる形で共有してもらえると助かります。受領までは撮影・通信・復帰を確認します。画像を見て不明な状態があれば、組み込む前に短く合わせたいです。</blockquote>
+    <h3>さがさんへ</h3>
+    <blockquote>今日の1周の進行と順位の正本を15分で合わせたいです。現行デモの30秒自動開始・受付時刻順と、文書のホスト開始・得点案が違います。今日見せるルール、合格イベントの例、判定失敗時の扱いを決めてもらえれば、私は確定値を画面に出します。</blockquote>
+    <h3>Ahwenuへ</h3>
+    <blockquote>今のデモAPIを今日の結合基準にする範囲、実AIで写真1枚が判定できるか、公開URLと配備担当を先に確認したいです。参加者側は撮影後すぐ送信する実装です。04のAPI案との差があるので、今日使う応答例とPluginホストの実演可否を共有してください。</blockquote>
+  </section>
+
+  <section aria-labelledby="flow">
+    <h2 id="flow">依存の流れ</h2>
+    <figure>
+      <svg viewBox="0 0 1100 330" role="img" aria-labelledby="flow-title flow-desc" xmlns="http://www.w3.org/2000/svg">
+        <title id="flow-title">デザイン画像受領後に画面を作る順番</title>
+        <desc id="flow-desc">実演する一周を確認し、デザイン画像を受け取る間に通信・カメラ・復帰を確認する。画像と画面状態を照合して参加者画面を実装し、二台で結合確認してから資料と提出を整える。</desc>
+        <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#3d6267"/></marker></defs>
+        <g fill="none" stroke="#3d6267" stroke-width="2" marker-end="url(#arrow)">
+          <path d="M180 162 H225 V70 H245"/><path d="M180 162 H225 V255 H245"/>
+          <path d="M425 70 H475"/><path d="M425 255 H450 V95 H475"/>
+          <path d="M655 70 H705"/><path d="M795 105 V215"/><path d="M885 255 H930"/>
+        </g>
+        <g fill="#e9f4f1" stroke="#3d6267" stroke-width="2">
+          <rect x="15" y="127" width="165" height="70" rx="9"/>
+          <rect x="245" y="35" width="180" height="70" rx="9" fill="#fff3e3"/>
+          <rect x="245" y="220" width="180" height="70" rx="9"/>
+          <rect x="475" y="35" width="180" height="70" rx="9"/>
+          <rect x="705" y="35" width="180" height="70" rx="9" fill="#d9f1e9"/>
+          <rect x="705" y="220" width="180" height="70" rx="9"/>
+          <rect x="930" y="220" width="155" height="70" rx="9"/>
+        </g>
+        <g fill="#172434" font-family="system-ui,sans-serif" font-size="16" text-anchor="middle">
+          <text x="97" y="154"><tspan x="97">実演する1周と</tspan><tspan x="97" dy="22">担当を確認</tspan></text>
+          <text x="335" y="62"><tspan x="335">デザイン画像を</tspan><tspan x="335" dy="22">受け取る</tspan></text>
+          <text x="335" y="246"><tspan x="335">待機中に通信・</tspan><tspan x="335" dy="22">カメラ・復帰を確認</tspan></text>
+          <text x="565" y="62"><tspan x="565">画像と画面状態を</tspan><tspan x="565" dy="22">照合する</tspan></text>
+          <text x="795" y="62"><tspan x="795">参加者画面を</tspan><tspan x="795" dy="22">実装する</tspan></text>
+          <text x="795" y="246"><tspan x="795">2台で1問を</tspan><tspan x="795" dy="22">結合確認</tspan></text>
+          <text x="1007" y="246"><tspan x="1007">README・発表・</tspan><tspan x="1007" dy="22">提出を整える</tspan></text>
+        </g>
+      </svg>
+      <figcaption>draw.ioでフローチャートを確認。画面実装にはデザイン画像の受領と状態確認が先に必要で、通信・カメラ・復帰の確認は受領前から進められる。</figcaption>
+    </figure>
+  </section>
+
+  <section aria-labelledby="schedule">
+    <h2 id="schedule">作成順｜画像の受領時刻に合わせて調整</h2>
+    <div class="scroll"><table><thead><tr><th>順番</th><th>作業</th><th>次へ進める条件</th></tr></thead><tbody>
+      <tr><td>1. 受け渡し確認</td><td>4人で実演する1周、API、進行、公開担当を揃える。Akibakoさんへ必要な画面状態を渡し、画像の共有場所と見込み時刻を確認する</td><td>画像が何を表すか、誰がどこへ置くかが分かる</td></tr>
+      <tr><td>2. 画像を待つ間</td><td>maeは現行プロトタイプの参加・撮影・結果、通信失敗、カメラ拒否、再読込後の復帰を確認する。さがさんはルールとイベント、AhwenuはAPI・AI・公開を並行して進める</td><td>既存フローの問題と、画面に必要な状態が短く列挙できる</td></tr>
+      <tr><td>3. 画像の受領・照合</td><td>参加・撮影・判定結果の画像を受け取り、各状態の操作・文言・素材・不足している読込/失敗表示をAkibakoさんと照合する</td><td>どの画像をどの状態に当てるか、未決の点が分かる</td></tr>
+      <tr><td>4. 参加者画面の実装</td><td>maeが画像に沿って参加者画面を組み込み、既存のカメラ・送信・API接続へつなぐ。まず実演する1問を通す画面に絞る</td><td>参加→撮影→判定→結果を一台で操作できる</td></tr>
+      <tr><td>5. 結合と短いプレイテスト</td><td>2台のスマホでQR→参加→撮影→判定→結果を通す。初見の人にも遊んでもらい、迷う操作と通信失敗を確認する</td><td>公開先でも一周でき、成功/失敗の違いが分かる</td></tr>
+      <tr><td>6. 提出準備</td><td>READMEの遊び方・公開URL・使った機能、発表の一周、GitHubの対象コミットを揃える。別端末で公開URLを再確認する</td><td>提出用URLとGitHubが開き、デモ手順が共有されている</td></tr>
+      <tr><td>7. 17:15まで</td><td>URLとGitHubを提出する。提出前の予備時間はリンク・起動・デモ手順の問題への対応に残す</td><td>提出完了の表示または控えが残る</td></tr>
+    </tbody></table></div>
+    <p class="small">画像の到着が遅い場合は、受領後の対象画面を実演に必要な状態へ絞る案。提出の予備時間を先に残し、画像が未到着なら既存プロトタイプで一周できる状態と未実装の箇所をチームで確認する。</p>
+  </section>
+
+  <section aria-labelledby="scope">
+    <h2 id="scope">時間が足りない時の切り分け</h2>
+    <p><strong>残す:</strong> デザイン画像を受け取った範囲で参加・撮影・結果の主要状態を反映する。QRから入れる、スマホで撮れる、判定結果が分かる、公開URLが開く。新機能の活用を説明するなら、実AI判定の動作を確認した範囲だけ示す。</p>
+    <p><strong>後ろへ回す候補:</strong> 初正解でお題を無制限に増やすルール、複雑な加点、全面的なアーキテクチャ分割、複数画面の作り直し。Plugin Extensionsの実演が間に合わない場合は、既存のSitesホストで何を見せるかをチームで明示し、Accepted方針との差を隠さない。</p>
+    <p><strong>楽しさを試す:</strong> 全員が1回プレイし、「お題を見て探す」「シャッター」「合否が出る」の間に迷う点を直す。既存の紙吹雪と他者クリア通知を先に確認し、追加演出は1つに絞る。</p>
+  </section>
+
+  <section aria-labelledby="review">
+    <h2 id="review">提出時に確認すること</h2>
+    <ul>
+      <li>実演の1周が公開URLで通り、QR・参加・撮影・判定・結果がつながる。実AIとデモ判定の区別がつく。</li>
+      <li>初見の人がスマホで使える。カメラ拒否、送信中、判定失敗の表示がある。</li>
+      <li>READMEには何をするゲームか、遊び方、使ったDevDay機能、公開URL、現時点の制約を短く書く。</li>
+      <li>持ち込みプロトタイプの扱いは主催ルールに照らして確認する。新規プロトタイプの事前準備と公開状況を、必要なら主催へ事実として説明できるようにする。</li>
+      <li>審査の4観点「新機能の活用・使いやすさ・有用性・独創性」に対し、実際に動く場面を一つずつ示せる。<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">主催ページのルール</a>では成果物のWeb公開と、当日の開発にCodex CLI / App / ChatGPT Workを使う条件がある。</li>
+    </ul>
+    <p class="notice uncertain">未確認：デザイン画像の受領時刻と内容、17:15の提出フォームと実際の提出操作、会場での2機種の撮影、Plugin Extensionsの実演、今回のブランチからの配備。公開検証ページにある過去の試験結果を、今回の結合確認に読み替えない。</p>
+  </section>
+
+  <footer>
+    <h2>参照</h2>
+    <p><a href="../07-delivery-plan.md">担当分担</a>、<a href="../03-ui-frontend.md">画面仕様</a>、<a href="../design/README.md">デザイン資料の共有場所</a>、<a href="../04-api-contract.md">API案</a>、<a href="../10-demo-import.md">デモ取り込み</a>、<a href="mobile-frontend-context.md">参加者画面の現状</a>、2026-10-17議事録、さがさんのMVPメモ、チーム共有の審査画像、<a href="https://luma.com/OpenAIDevDay2026CommunityHackathonTokyo">主催ページ</a>（2026-10-18確認）。</p>
+  </footer>
+</main>
+</body>
+</html>

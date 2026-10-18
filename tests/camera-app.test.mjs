@@ -33,6 +33,18 @@ test('registered lobby with no round or optimistic receipt renders camera withou
   assert.equal(h.nodes.get('#connection').textContent, 'LIVE · 接続中');
 });
 
+test('a room connection warning disappears after the first successful refresh', async () => {
+  const h = await appHarness();
+  h.api.setState(null);
+  h.online = false;
+  assert.equal(await h.api.refresh(), false);
+  assert.equal(h.nodes.get('#room-error').hidden, false);
+  h.online = true;
+  assert.equal(await h.api.refresh(), true);
+  assert.equal(h.nodes.get('#room-error').hidden, true);
+  assert.equal(h.nodes.get('#connection').textContent, 'LIVE · 接続中');
+});
+
 test('lost upload acknowledgement locks without auto replay; explicit retry reuses bytes, key and chosen result', async () => {
   const h = await appHarness(); h.state = { ...h.state, round: active() };
   let calls = 0;
