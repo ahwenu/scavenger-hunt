@@ -27,7 +27,7 @@ async function refresh({force=false}={}){
   if(stateETag)headers['If-None-Match']=stateETag;
   const response=await fetch(`${roomApi}/state`,{headers,cache:'no-store'});
   if(response.status!==304){if(!response.ok)throw Error('部屋に接続できません');state=await response.json();stateETag=response.headers?.get('ETag')||'';offset=state.serverTime-Date.now();}
-  if(state){if(optimisticReceipt&&state.mine?.some(item=>item.id===optimisticReceipt.id))optimisticReceipt=null;if(unknownReceipt&&(state.round?.id!==unknownReceiptRound||state.mine?.some(item=>item.roundId===unknownReceiptRound&&!unknownReceiptBaseline.has(item.id))))unknownReceipt=false;render();connectEvents();}
+  if(state){$('#room-error').hidden=true;if(optimisticReceipt&&state.mine?.some(item=>item.id===optimisticReceipt.id))optimisticReceipt=null;if(unknownReceipt&&(state.round?.id!==unknownReceiptRound||state.mine?.some(item=>item.roundId===unknownReceiptRound&&!unknownReceiptBaseline.has(item.id))))unknownReceipt=false;render();connectEvents();}
   $('#connection').textContent='LIVE · 接続中';$('#connection').classList.add('online');return true;
  }catch(e){$('#connection').textContent='再接続中';$('#connection').classList.remove('online');if(!state)$('#room-error').hidden=false;return false;}
  finally{refreshPromise=null;}})();return refreshPromise;
