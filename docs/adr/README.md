@@ -14,6 +14,7 @@ ADR（Architecture Decision Record）には「何を選び、なぜ選び、ど�
 | [0005](0005-mvp-game-consistency.md) | MVPの範囲とサーバー主導の採点・締切の案 | Proposed | 2026-10-18 | 2026-10-18 |
 | [0006](0006-deployment-and-folder-boundaries.md) | デプロイ優先のフォルダ境界と独立ビルド案 | Proposed | 2026-10-18 | 2026-10-18 |
 | [0007](0007-product-identity.md) | ONE LEASE・カリモノ・キャッチコピー | Accepted | 2026-10-18 | 2026-10-18 |
+| [0009](0009-import-demo-sources.md) | デモをローカルクローンから新規ファイルとして取り込む | Accepted | 2026-10-18 | 2026-10-18 |
 
 ## 状態
 

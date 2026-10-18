@@ -1,0 +1,104 @@
+{
+  "pollIntervalMs": 1000,
+  "pollJitterFraction": 0.3,
+  "testedAt": "2026-10-17T16:24:41.509Z",
+  "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+  "participants": 70,
+  "connectionMode": "poll",
+  "mode": "demo",
+  "imageDescription": "Unique valid JPEGs with random pixel texture; simulated photo upload sizes, not real-world subjects.",
+  "errors": [],
+  "authentication": {
+    "platformAuthentication": "none",
+    "platformCookiesSent": false,
+    "sitesBypassUsed": false,
+    "cookieJar": "none (Node fetch)",
+    "anonymousRequests": [
+      "POST /api/rooms",
+      "POST /api/rooms/:id/join"
+    ],
+    "gameHostCookie": "Only the newly created room host cookie is used for host operations",
+    "gameParticipantBearer": "Only newly registered room participant tokens are used for own-photo submissions and own-state synchronization"
+  },
+  "roomId": "5c270a52a92e4ff19f80d98946d255e7",
+  "lobbyExtensions": 7,
+  "images": {
+    "count": 70,
+    "p50": 243482,
+    "p95": 243854,
+    "max": 243914,
+    "unit": "bytes",
+    "totalBytes": 17045572
+  },
+  "maxObservedPending": 61,
+  "maxObservedProcessing": 8,
+  "maxObservedQueued": 50,
+  "passEvents": {
+    "observedUniqueIds": 70,
+    "observedRoomHistoryIds": 70,
+    "ownEventSeenCount": 70,
+    "evidenceSources": {
+      "room-history": 70
+    },
+    "finalHistoryLength": 40,
+    "eventCursor": 70
+  },
+  "connectionsOpened": 70,
+  "hostStartAction": "start-now",
+  "roundSyncMs": {
+    "count": 70,
+    "p50": 1109.48,
+    "p95": 2369.52,
+    "max": 2379.48
+  },
+  "receiptHttpMs": {
+    "count": 70,
+    "p50": 2839.94,
+    "p95": 3741.78,
+    "max": 6728.47
+  },
+  "passEventObservedMs": {
+    "count": 70,
+    "p50": 6421.79,
+    "p95": 8212.39,
+    "max": 8631.93
+  },
+  "completionObservedMs": {
+    "count": 70,
+    "p50": 6421.79,
+    "p95": 8212.39,
+    "max": 8631.93
+  },
+  "afterAckObservedMs": {
+    "count": 70,
+    "p50": 3578.46,
+    "p95": 4791.16,
+    "max": 5149.71
+  },
+  "httpStatuses": {
+    "202": 70
+  },
+  "ackStatuses": {
+    "queued": 70
+  },
+  "results": {
+    "accepted": 70
+  },
+  "observedStatuses": [
+    "uploading",
+    "queued",
+    "processing",
+    "accepted"
+  ],
+  "serverReceiptSpreadMs": 4844,
+  "burstToAllObservedMs": 8676.21,
+  "throughputPerSecond": 8.07,
+  "fairReceiptOrder": true,
+  "final": {
+    "players": 70,
+    "accepted": 70,
+    "pending": 0,
+    "finishers": 70
+  },
+  "success": true
+}

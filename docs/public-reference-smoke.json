@@ -1,0 +1,160 @@
+{
+  "testedAt": "2026-10-17T16:55:25.872Z",
+  "target": "https://ai-karimono-race.ahwenu.chatgpt.site",
+  "mode": "ai",
+  "paidCallsExpected": {
+    "agents": 1,
+    "decisions": 2
+  },
+  "authentication": "Anonymous HTTP, room host cookie and participant token only",
+  "errors": [],
+  "roomId": "b00bf8ffb6004466a9a49a7658d2cfc0",
+  "autoStartObservedMs": 30858,
+  "challenge": {
+    "objectType": "黄色いバナナ",
+    "title": "黄色いバナナを見つけよう",
+    "description": "黄色く熟したバナナを1本見つけてください。",
+    "criteria": [
+      "バナナの形をしている",
+      "黄色く熟している"
+    ],
+    "durationSeconds": 120,
+    "provider": "Agents API",
+    "sessionId": "sess_0460aec7789ff22f006ad3a87f1b2c81949efd191b68099bbb",
+    "turnId": "turn_0460aec7789ff22f006ad3a882daf88194b2866787f1ae5af3",
+    "reference": {
+      "candidateId": "commons:22552194",
+      "title": "Cavendish banana from Maracaibo.jpg",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cavendish_banana_from_Maracaibo.jpg",
+      "license": "CC BY-SA 3.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+      "author": "Wilfredor",
+      "mime": "image/jpeg",
+      "width": 960,
+      "height": 670,
+      "byteLength": 129053,
+      "url": "/api/rooms/b00bf8ffb6004466a9a49a7658d2cfc0/reference/6e1fbebf-f175-4b61-af42-6fa6579ee8d1"
+    }
+  },
+  "preStartReferenceHidden": true,
+  "toolTrace": {
+    "referenceTrace": [
+      {
+        "tool": "search_reference_photos",
+        "phase": "started",
+        "query": "yellow banana bunch",
+        "searchQuery": "banana"
+      },
+      {
+        "tool": "search_reference_photos",
+        "phase": "completed",
+        "elapsedMs": 979,
+        "query": "yellow banana bunch",
+        "candidateIds": [
+          "commons:22552194",
+          "commons:158273990",
+          "commons:113972132",
+          "commons:114468680"
+        ],
+        "resultCount": 4
+      },
+      {
+        "tool": "get_reference_photo",
+        "phase": "started",
+        "candidateId": "commons:22552194"
+      },
+      {
+        "tool": "get_reference_photo",
+        "phase": "completed",
+        "elapsedMs": 1010,
+        "candidateId": "commons:22552194",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cavendish_banana_from_Maracaibo.jpg",
+        "license": "CC BY-SA 3.0",
+        "byteLength": 129053,
+        "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062",
+        "mime": "image/jpeg",
+        "width": 960,
+        "height": 670
+      }
+    ]
+  },
+  "referenceDownload": {
+    "status": 200,
+    "bytes": 129053,
+    "mime": "image/jpeg",
+    "cacheControl": "public,max-age=86400,immutable",
+    "sha256": "d17b3662c7b72aef6cbcfb83e091dd4580c9a57b2e3a836530c1c8dd63f5e062"
+  },
+  "reference70": {
+    "count": 70,
+    "allOK": true,
+    "elapsedMs": 1119
+  },
+  "exactCopy": 409,
+  "reencodedCopy": {
+    "receipt": {
+      "httpStatus": 202,
+      "elapsedMs": 678
+    },
+    "status": "rejected",
+    "verdict": {
+      "pass": false,
+      "probabilities": [
+        0.02,
+        1,
+        0.97,
+        0.86,
+        0
+      ],
+      "provider": "Decisions API",
+      "reason": "見本と同じ種類で、色や形が似た実物をはっきり撮影してください。"
+    },
+    "passEventId": null,
+    "events": [],
+    "observedAfterAckMs": 3402
+  },
+  "submittedPhoto": {
+    "source": "https://commons.wikimedia.org/wiki/File:Banana.png",
+    "author": "Mark Schellhase",
+    "license": "Public domain",
+    "bytes": 65126,
+    "changes": "max960 JPEG75 EXIF stripped",
+    "fixture": "A separate physical-object photograph; no claim of fresh user capture"
+  },
+  "realObject": {
+    "receipt": {
+      "httpStatus": 202,
+      "elapsedMs": 516
+    },
+    "status": "accepted",
+    "verdict": {
+      "pass": true,
+      "probabilities": [
+        0.93,
+        1,
+        0.98,
+        1,
+        0.99
+      ],
+      "provider": "Decisions API",
+      "reason": "見本と似た実物を確認できました！"
+    },
+    "passEventId": 74,
+    "events": [
+      {
+        "id": 74,
+        "type": "pass",
+        "playerId": "9e178c63-4589-439d-8c12-407613a7f105",
+        "name": "実写真検証",
+        "roundId": "6e1fbebf-f175-4b61-af42-6fa6579ee8d1",
+        "submissionId": "1b2198c1-ca2d-464d-921e-ddf7ca75c090",
+        "createdAt": 1792256164843,
+        "rank": 1,
+        "provisional": false,
+        "pendingAhead": 0
+      }
+    ],
+    "observedAfterAckMs": 1266
+  },
+  "success": true
+}

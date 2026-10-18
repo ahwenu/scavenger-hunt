@@ -1,0 +1,46 @@
+{
+  "testedAt": "2026-10-17T16:58:54.015Z",
+  "method": "Actual browser, local seeded fixture of 70 plus 1 notification runner; no real AI calls",
+  "results": [
+    {
+      "controlsBottom": 667,
+      "height": 720,
+      "rankCount": 6,
+      "referenceLoaded": true,
+      "roundTitle": "黄色くて細長く曲がったバナナを探そう",
+      "scrollHeight": 720,
+      "scrollWidth": 1280,
+      "width": 1280
+    },
+    {
+      "controlsBottom": 715,
+      "height": 768,
+      "rankCount": 6,
+      "referenceLoaded": true,
+      "roundTitle": "黄色くて細長く曲がったバナナを探そう",
+      "scrollHeight": 768,
+      "scrollWidth": 1366,
+      "width": 1366
+    },
+    {
+      "controlsBottom": 1013,
+      "height": 1080,
+      "rankCount": 6,
+      "referenceLoaded": true,
+      "roundTitle": "黄色くて細長く曲がったバナナを探そう",
+      "scrollHeight": 1080,
+      "scrollWidth": 1920,
+      "width": 1920
+    },
+    {
+      "controlsBottom": 715,
+      "height": 768,
+      "rankCount": 6,
+      "referenceLoaded": true,
+      "roundTitle": "黄色くて細長く曲がったバナナを探そう",
+      "scrollHeight": 768,
+      "scrollWidth": 1024,
+      "width": 1024
+    }
+  ]
+}

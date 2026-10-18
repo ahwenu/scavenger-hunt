@@ -1,0 +1,44 @@
+{
+  "testedAt": "2026-10-17T16:33:18.642Z",
+  "roomId": "e681cdfcfa7d42fe89d3f9dfece73926",
+  "status": 200,
+  "ok": true,
+  "trace": [
+    {
+      "tool": "search_reference_photos",
+      "phase": "started",
+      "query": "banana fruit"
+    },
+    {
+      "tool": "search_reference_photos",
+      "phase": "completed",
+      "elapsedMs": 1342,
+      "query": "banana fruit",
+      "candidateIds": [
+        "commons:12648869",
+        "commons:22552194",
+        "commons:24722150",
+        "commons:25211373"
+      ],
+      "resultCount": 4
+    },
+    {
+      "tool": "get_reference_photo",
+      "phase": "started",
+      "candidateId": "commons:12648869"
+    },
+    {
+      "tool": "get_reference_photo",
+      "phase": "completed",
+      "elapsedMs": 1421,
+      "candidateId": "commons:12648869",
+      "sourceUrl": "https://commons.wikimedia.org/wiki/File:Kadalikkula.JPG",
+      "license": "CC BY 2.5",
+      "byteLength": 245101,
+      "sha256": "0db89bfeaa44010239f121e4334d2caa988f978d7f9723e426ce66aa24f9dc10",
+      "mime": "image/jpeg",
+      "width": 960,
+      "height": 844
+    }
+  ]
+}

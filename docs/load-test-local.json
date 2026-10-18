@@ -1,0 +1,98 @@
+{
+  "pollIntervalMs": 1000,
+  "pollJitterFraction": 0.3,
+  "testedAt": "2026-10-17T16:23:18.093Z",
+  "target": "http://127.0.0.1:58133",
+  "participants": 70,
+  "connectionMode": "poll",
+  "mode": "demo",
+  "imageDescription": "Unique valid JPEGs with random pixel texture; simulated photo upload sizes, not real-world subjects.",
+  "errors": [],
+  "authentication": {
+    "platformAuthentication": "none",
+    "platformCookiesSent": false,
+    "sitesBypassUsed": false,
+    "cookieJar": "none (Node fetch)",
+    "anonymousRequests": [
+      "POST /api/rooms",
+      "POST /api/rooms/:id/join"
+    ],
+    "gameHostCookie": "Only the newly created room host cookie is used for host operations",
+    "gameParticipantBearer": "Only newly registered room participant tokens are used for own-photo submissions and own-state synchronization"
+  },
+  "roomId": "558b57dbb1e1a84219a8192c1ba725b8",
+  "lobbyExtensions": 7,
+  "images": {
+    "count": 70,
+    "p50": 243503,
+    "p95": 243826,
+    "max": 244051,
+    "unit": "bytes",
+    "totalBytes": 17046880
+  },
+  "maxObservedPending": 70,
+  "maxObservedProcessing": 8,
+  "maxObservedQueued": 62,
+  "passEvents": {
+    "observedUniqueIds": 70,
+    "observedRoomHistoryIds": 70,
+    "ownEventSeenCount": 70
+  },
+  "connectionsOpened": 70,
+  "hostStartAction": "start-now",
+  "roundSyncMs": {
+    "count": 70,
+    "p50": 981.87,
+    "p95": 1257.21,
+    "max": 1284.57
+  },
+  "receiptHttpMs": {
+    "count": 70,
+    "p50": 92.34,
+    "p95": 125.07,
+    "max": 130.23
+  },
+  "passEventObservedMs": {
+    "count": 70,
+    "p50": 3175.93,
+    "p95": 5140.29,
+    "max": 5802.86
+  },
+  "completionObservedMs": {
+    "count": 70,
+    "p50": 3175.93,
+    "p95": 5140.29,
+    "max": 5802.86
+  },
+  "afterAckObservedMs": {
+    "count": 70,
+    "p50": 3077.8,
+    "p95": 5016.37,
+    "max": 5677.8
+  },
+  "httpStatuses": {
+    "202": 70
+  },
+  "ackStatuses": {
+    "queued": 70
+  },
+  "results": {
+    "accepted": 70
+  },
+  "observedStatuses": [
+    "queued",
+    "processing",
+    "accepted"
+  ],
+  "serverReceiptSpreadMs": 92,
+  "burstToAllObservedMs": 5855.85,
+  "throughputPerSecond": 11.95,
+  "fairReceiptOrder": true,
+  "final": {
+    "players": 70,
+    "accepted": 70,
+    "pending": 0,
+    "finishers": 70
+  },
+  "success": true
+}

@@ -1,0 +1,15 @@
+{
+  "id": "appgdep_6ad3ab4e230c81918510b34282d563dc",
+  "project_id": "appgprj_6ad398538db881918a7c6800996e507f",
+  "title": "AI借り物競争",
+  "version_id": "appgprj_6ad398538db881918a7c6800996e507f~appgver_adce7b2cc1c08191acc612306db3416f",
+  "type": "publish",
+  "status": "succeeded",
+  "url": "https://ai-karimono-race.ahwenu.chatgpt.site",
+  "has_mcp": false,
+  "screenshot_asset_pointer": null,
+  "provider_deployment_id": "site---6ad398538db881918a7c6800996e507f",
+  "failure_message": null,
+  "env_set_revision": 1,
+  "updated_at": "2026-10-17T17:07:41.849004+00:00"
+}

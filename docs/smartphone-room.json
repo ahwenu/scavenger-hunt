@@ -1,0 +1,11 @@
+{
+  "roomId": "8dda1b1521a944f692da47c4de2f3343",
+  "name": "スマホ実機テスト",
+  "hostUrl": "https://ai-karimono-race.ahwenu.chatgpt.site/rooms/8dda1b1521a944f692da47c4de2f3343/host",
+  "joinUrl": "https://ai-karimono-race.ahwenu.chatgpt.site/rooms/8dda1b1521a944f692da47c4de2f3343/join",
+  "qrPath": "/Users/anubis/Downloads/ai-karimono-8dda1b1521a944f692da47c4de2f3343.png",
+  "browserTabId": "5",
+  "mode": "demo",
+  "initialParticipants": 0,
+  "hostSession": "Retained HttpOnly cookie in browser, never exported"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "smile",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/8/8d/President_Barack_Obama.jpg",
+    "file": "test-assets/boundary-smile.jpg",
+    "originalBytes": 1276121,
+    "originalSha256": "744dd848fbb0584229169e01c4944664957c62495fb9e8af514a088ebca43e19",
+    "bytes": 79434,
+    "sha256": "0d32a97c5b37cd24149c4519ffcaf752cdbed8c2d276b3543d2cb91d6148e3ea",
+    "width": 768,
+    "height": 960,
+    "changes": "Resize maximum960px, JPEG quality75; strip EXIF, no extra crop."
+  },
+  {
+    "id": "weak",
+    "url": "https://upload.wikimedia.org/wikipedia/commons/4/49/Official_portrait_of_Barack_Obama_by_Pete_Souza.jpg",
+    "file": "test-assets/boundary-weak.jpg",
+    "originalBytes": 1636773,
+    "originalSha256": "1cff29d148a630369b2eb51eccf2dcda8ff68124ffb7e38eaad9ad19bbb06c5b",
+    "bytes": 63547,
+    "sha256": "e09edaaa6fd0ac021d4ccc82ea9eb6a05009eaaca5f486c631e468364cd0701a",
+    "width": 706,
+    "height": 960,
+    "changes": "Resize to maximum960px, JPEG quality75, strip EXIF; original crop as supplied by Commons unchanged."
+  }
+]

@@ -1,0 +1,63 @@
+{
+  "elements": [
+    {
+      "bottom": 34,
+      "h": 34,
+      "id": "topbar",
+      "w": 844,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "bottom": 70,
+      "h": 32,
+      "id": "participant-camera-heading",
+      "w": 554,
+      "x": 145,
+      "y": 38
+    },
+    {
+      "bottom": 351,
+      "h": 250,
+      "id": "live-camera-stage",
+      "w": 552,
+      "x": 146,
+      "y": 101
+    },
+    {
+      "bottom": 142,
+      "h": 31,
+      "id": "live-camera-target",
+      "w": 528,
+      "x": 158,
+      "y": 111
+    },
+    {
+      "bottom": 227,
+      "h": 36,
+      "id": "enable",
+      "w": 136,
+      "x": 535,
+      "y": 191
+    },
+    {
+      "bottom": 252,
+      "h": 38,
+      "id": "live-camera-own",
+      "w": 256,
+      "x": 430,
+      "y": 214
+    },
+    {
+      "bottom": 340,
+      "h": 80,
+      "id": "shutter",
+      "w": 80,
+      "x": 382,
+      "y": 260
+    }
+  ],
+  "h": 390,
+  "scrollW": 844,
+  "w": 844
+}

@@ -35,6 +35,7 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [07 分担・開発手順](docs/07-delivery-plan.md) | 担当者別の責務、並行開発、検証、未決事項 | 全員 |
 | [08 Plugin Extensions](docs/08-plugin-extensions.md) | ホスト管理画面、MCP、Sites接続 | 未定（Ahwenu）・Ahwenu・さが さん |
 | [09 フォルダ構成・デプロイ](docs/09-repository-structure.md) | 担当別の編集先、独立ビルド、共有ファイルの更新ルール | 全員 |
+| [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
 | [参加者画面の作業コンテキスト](docs/mobile-frontend-context.md) | 現行仕様と追加メモ・公開画面の差、まえ担当の受け渡し | まえ さん・連携担当 |
 | [参加者画面の整合計画](docs/ai-reports/2026-10-18-参加者画面の整合計画.html) | 実装コード到着後の確認・整合手順 | 全員 |
