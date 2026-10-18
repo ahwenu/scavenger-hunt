@@ -5,10 +5,18 @@ import { test } from 'node:test';
 import ts from 'typescript';
 
 // NodeでWorkers用TSを読む際だけ、拡張子なしの内部importを絶対URLへ解決する。
+/** Workersの拡張子なしTS importをNode内だけdata URLへ解決する。 */
+const compile = source => ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText;
+const moduleUrl = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`;
+const gameContract = moduleUrl(compile(await readFile(new URL('../lib/game-contract.ts', import.meta.url), 'utf8')));
+const gameState = moduleUrl(compile(await readFile(new URL('../lib/game-state.ts', import.meta.url), 'utf8'))
+  .replaceAll("'./game-contract'", JSON.stringify(gameContract)));
 const source = await readFile(new URL('../lib/cloud-api.ts', import.meta.url), 'utf8');
 const compiled = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText
   .replaceAll("'qrcode'", JSON.stringify(import.meta.resolve('qrcode')))
   .replaceAll("'./cloud-ai'", JSON.stringify(new URL('../lib/cloud-ai.ts', import.meta.url).href))
+  .replaceAll("'./game-contract'", JSON.stringify(gameContract))
+  .replaceAll("'./game-state'", JSON.stringify(gameState))
   .replaceAll("'./pass-events'", JSON.stringify(new URL('../lib/pass-events.ts', import.meta.url).href))
   .replaceAll("'./reference-agent.mjs'", JSON.stringify(new URL('../lib/reference-agent.mjs', import.meta.url).href));
 const { handleApi } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
@@ -25,7 +33,7 @@ function fakeDatabase(room = null) {
           if (sql.startsWith('INSERT INTO rooms')) { insertions.push(statement.values); return { id: statement.values[0] }; }
           return sql.startsWith('SELECT * FROM rooms') ? room : null;
         },
-        async all() { return { results: [] }; },
+        async all() { return { results: [], meta: { changes: 0 } }; },
         async run() { return {}; },
       };
       return statement;
@@ -59,6 +67,8 @@ test('検索中表示はaiかつ参考写真trueに限定し、既存部屋のmo
     const state = await response.json();
     assert.equal(state.preparationStage, expected);
     assert.equal(state.mode, mode);
+    assert.deepEqual(state.game, { status: 'lobby', totalRounds: 10 });
+    assert.equal(state.stages.length, 10);
     assert.equal(db.insertions.length, 0);
   }
 });

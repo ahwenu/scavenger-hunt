@@ -10,6 +10,8 @@ Plugin Extensionsを自分の環境へ取り込む方は、[取り込み手順](
 
 会場内でお題に合うものを探して撮影し、AIの判定による得点で競うスマホ向けブラウザゲーム。
 
+Issue #1のバックエンド対応として、Sitesの既存 `/api/rooms/:id` を100人・最大10競技・各競技の初合格500点へ拡張しました。全10ステージ、確定得点・連番順位、競技ごとの共有ヒントを返します。ローカルworkerd/D1/R2で100人のデモ参加・写真提出・結果更新を確認済みですが、公開環境の負荷・実AI・Plugin結合は未検証で、再配備していません。[受け渡し契約](docs/12-issue1-backend-handoff.md)と[ADR-0013](docs/adr/0013-issue1-player-game-contract.md)を参照してください。
+
 Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能な `plugin/` にまとめています。[起動・移動手順](plugin/README.md)を参照してください。ローカル登録・有効化に加え、ユーザー操作と提供画像により実拡張内の表示・API接続確認・お題生成を確認済みです。また既存のデモ実装を元の配置で取り込んでおり、Sitesは `apps/cloud/`、ローカルデモは `apps/server/`・`apps/web/` にあります（[取り込み記録](docs/10-demo-import.md)）。取り込んだAPI・AI・配備設定の本環境での動作、現在の仕様への適合、拡張とのゲーム結合は未検証です。2026-10-18作成の以下の文書を、担当者間の実装契約に使います。
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
@@ -50,6 +52,7 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
 | [11 API連携](docs/11-api-integration.md) | Ahwenuの独立AI API、拡張との接続、秘密設定、Sitesとの受け渡し | Ahwenu・さが さん・拡張画面担当 |
 | [12 新Sitesの配置と接続](docs/12-sites-deployment.md) | 全ソースの保持、Cloud実行、publicアクセス・部屋認可、拡張の実ゲーム接続 | 全員 |
+| [12 Issue #1バックエンド受け渡し](docs/12-issue1-backend-handoff.md) | 100人・10競技・500点・状態/ヒントAPI、応答例、ローカル検証と未配備の境界 | さが さん・Ahwenu・mae さん |
 | [当日の全体コンテキスト](docs/hackathon/README.md) | ゴールを決める項目、実演の1周、担当間の受け渡し、確認済みの範囲 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
 | [参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |
