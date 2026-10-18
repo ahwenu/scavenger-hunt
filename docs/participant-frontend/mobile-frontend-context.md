@@ -19,8 +19,9 @@
 | 確定 | 参加者はスマホのブラウザを使い、Sitesに参加者画面とAPIを置く。ホスト画面はPlugin Extensionsに置く | [ADR-0001](../adr/0001-product-surfaces.md) |
 | 確定 | mae担当は参加者画面の処理、カメラ、写真送信、API接続、復帰。デザインはAkibakoさん、ゲーム・保存はさがさん、HTTP契約・AI接続はAhwenu | [ADR-0002](../adr/0002-team-boundaries.md)、[07](../07-delivery-plan.md) |
 | 確定 | 制作チーム名はONE LEASE、アプリ名はカリモノ、キャッチコピーは「借り物王に俺はなる！」 | [ADR-0007](../adr/0007-product-identity.md) |
+| 確定 | 本番ゲーム記録はSupabaseへ保存する。約100人全員がプレイヤーで、人数と順位をライブ更新する | [ADR-0016](../adr/0016-supabase-game-persistence.md)、[13](../16-supabase-integration.md)。実接続は未確認 |
 | 提案 | 3問・各120秒・合格10点・2秒ポーリングなどのMVP数値 | [ADR-0005](../adr/0005-mvp-game-consistency.md) |
-| 提案 | Sitesスターター、D1/R2、独立した `plugin/`、AIアダプター | [ADR-0003](../adr/0003-sites-runtime-storage.md)、[0004](../adr/0004-ai-adapters.md)、[0006](../adr/0006-deployment-and-folder-boundaries.md) |
+| 提案・履歴 | 当初のD1/R2構成案はSupabase方針に置き換え。AIアダプター・フォルダ案には未検証部分がある | [ADR-0003](../adr/0003-sites-runtime-storage.md)はSuperseded。[0004](../adr/0004-ai-adapters.md)、[0006](../adr/0006-deployment-and-folder-boundaries.md)を参照 |
 
 10月17日の議事録には「参加者側もPlugin Extensions」という古い配置案がある。10月18日のProject.mdとAcceptedのADR-0001を、現時点の画面配置の基準とする。配置を変えるなら関係担当の合意と後継ADRが必要。
 
@@ -106,7 +107,7 @@
 
 ## 2026-10-18 参加者画面の追加作業
 
-提供デザイン画像から、現行Sitesの `apps/cloud/app/rooms/[id]/join/` にTypeScript/Reactの参加者画面を追加した。8画面の見本は `apps/cloud/app/design-preview/` で切り替えられる。元画像と現在使う素材の関係は [デザイン共有フォルダ](../design/README.md)、配信境界は [ADR-0012](../adr/0012-participant-typescript-ui.md) を参照する。
+提供デザイン画像から、現行Sitesの `apps/cloud/app/rooms/[id]/join/` にTypeScript/Reactの参加者画面を追加した。8画面の見本は `apps/cloud/app/design-preview/` で切り替えられる。元画像と現在使う素材の関係は [デザイン共有フォルダ](../design/README.md)、配信境界は [ADR-0015](../adr/0015-participant-typescript-ui.md) を参照する。
 
 画面は現行の部屋参加・状態取得・写真提出APIへ接続し、写真を長辺960px・1MiB以下のJPEGに変換して送る。送信前プレビュー、撮り直し、判定中・合否、順位表示、画面復帰時の再取得を実装した。得点・10競技の開放状態・ヒント文は現行APIにないため、実画面では確定値を捏造しない。追加する入出力と、QRからの約100人全員プレイヤーの実演条件は [Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1) に記載した。
 

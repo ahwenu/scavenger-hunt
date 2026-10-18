@@ -76,3 +76,132 @@
 @media(max-width:350px){.karimono-page{padding:0}.game-shell{border-width:0;border-radius:0;min-height:100dvh}.screen{padding-inline:12px}.home-screen{padding-top:20px}.wood-sign{min-height:123px}.wood-sign span{font-size:47px}.home-characters{height:205px}.round-meta{font-size:11px}.stage-grid button{height:75px}}
 @media(max-height:700px){.home-screen{padding-top:10px}.wood-sign{min-height:112px}.home-characters{height:185px}.round-meta{margin-top:15px}.camera-frame{aspect-ratio:1.25}.result-character{max-height:29vh}.failure-characters{height:25vh;min-height:160px}.stage-grid button{height:70px}.rule-grid>div{min-height:100px}}
 @media(prefers-reduced-motion:reduce){.judging-robot,.progress-track span{animation:none}.game-button{transition:none}}
+
+.design-comparison{min-height:100dvh;padding:20px;background:linear-gradient(125deg,#e8f6ff,#ffeaf3);color:#17305e;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif}
+.comparison-header{text-align:center}.comparison-header h1{font-size:23px;margin:0 0 5px}.comparison-header p{font-size:13px;margin:0 0 14px}.comparison-header .preview-switch{margin-inline:auto}
+.comparison-grid{display:grid;grid-template-columns:minmax(210px,1fr) minmax(320px,430px);gap:26px;max-width:800px;margin:auto;align-items:start}
+.comparison-reference,.comparison-implementation{min-width:0}.comparison-reference h2,.comparison-implementation h2{font-size:15px;margin:0 0 9px}.comparison-reference h2 small,.comparison-implementation h2 small{font-size:11px;font-weight:500}
+.comparison-reference{display:flex;flex-direction:column;align-items:center;padding:14px;border:1px solid #b4d2e8;border-radius:18px;background:#ffffffa8;min-height:390px}
+.comparison-reference img{display:block;width:auto;height:313px;max-width:100%;object-fit:contain;image-rendering:auto;box-shadow:0 5px 15px #234c8350}
+.comparison-implementation>.karimono-page{padding:0;background:none;min-height:0}
+@media(max-width:650px){.comparison-grid{grid-template-columns:1fr;gap:16px}.comparison-reference{min-height:0}.comparison-implementation{justify-self:center;width:min(100%,430px)}}
+.sound-toggle{position:absolute;right:8px;bottom:30px;z-index:10;display:grid;place-items:center;width:32px;height:32px;border:2px solid #fff;border-radius:50%;background:#1b67b9da;color:#fff;box-shadow:0 2px 5px #1c4a8499;cursor:pointer}
+.sound-toggle:focus-visible{outline:3px solid #092b7a;outline-offset:2px}
+.game-shell--live{background:#b1e7ff url('/design/sports-day/backgrounds/sky-bunting.png') center top/100% 52% no-repeat}
+.game-shell--live::before{background:linear-gradient(180deg,#ffffff00 35%,#fff8d0b0 63%,#9ad9a0 100%)}
+.game-shell--live::after{content:"";position:absolute;z-index:-1;left:0;right:0;bottom:0;height:58%;background:url('/design/sports-day/backgrounds/schoolyard.png') center bottom/100% 100% no-repeat;mask-image:linear-gradient(transparent,#000 26%);pointer-events:none}
+.game-shell--live .game-topline{height:27px;background:none;text-shadow:0 1px 2px #fff}
+.game-shell--live .game-nav{top:30px}
+.game-shell--live .screen{animation:screen-arrive .28s ease-out both}
+.game-shell--live .home-screen{padding-top:42px}
+.game-shell--live .home-characters{position:absolute;top:38%;height:34%;margin:0;width:100%}
+.game-shell--live .home-characters img{filter:drop-shadow(0 6px 4px #31577858)}
+.game-shell--live .home-actions{margin-top:auto;margin-bottom:6%}
+.game-shell--live .round-meta{margin:22px 0 12px}
+.game-shell--live .challenge-ticket{min-height:105px;padding-top:22px}
+.game-shell--live .timer-pill{margin:10px 0 9px}
+.game-shell--live .camera-frame{aspect-ratio:1.22;background:#6db9e9 url('/design/sports-day/backgrounds/schoolyard.png') center/cover}
+.game-shell--live .camera-actions{margin-top:-32px;z-index:3}
+.game-shell--live .camera-actions .camera-main-button{width:82px;height:82px}
+.game-shell--live .camera-main-button{animation:shutter-ready 2s ease-in-out 1}
+.game-shell--live .judging-screen{background:linear-gradient(#204f7488,#142e57b5)}
+.game-shell--live .judging-robot{width:53%;max-height:29vh;margin:12px 0 19px}
+.game-shell--live .success-screen .clear-burst{margin-top:1px;font-size:22px}
+.game-shell--live .success-screen h1{font-size:clamp(58px,16vw,79px);margin:0}
+.game-shell--live .result-character{width:65%;height:auto;max-height:29vh;object-fit:contain;margin-top:0}
+.game-shell--live .result-reward{margin-top:-4px}
+.game-shell--live .result-stats{margin-top:10px}
+.game-shell--live .failure-characters{height:28vh;min-height:180px;margin-top:8px;filter:none}
+.game-shell--live .failure-characters img{object-fit:contain}
+.game-shell--live .failure-characters img:last-child{width:45%}
+.game-shell--live .failure-reason{margin-top:4px}
+.game-shell--live .banner-heading{align-self:center;width:78%;margin:28px 0 18px;font-size:19px}
+.game-shell--live .stage-grid{grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;margin-top:0}
+.game-shell--live .stage-grid button{grid-column:span 4;height:108px}
+.game-shell--live .stage-grid button:nth-child(n+7){grid-column:span 3;height:78px}
+.game-shell--live .ranking-list{padding:12px 7px;background:#fffdf0e8;border:3px solid #fff;border-radius:14px;box-shadow:0 5px 0 #6ab5d4}
+.game-shell--live .ranking-list li{background:#fffdfa;border-color:#f4f6ec}
+.game-shell--live .ranking-list li.my-rank{background:#ffe0e9}
+.game-shell--live .rule-grid>div{min-height:160px}
+.game-shell--live .rule-grid img{width:110px;height:100px}
+.game-shell--live .rules-screen::after{content:"";position:absolute;right:3px;bottom:69px;width:86px;height:86px;background:url('/design/sports-day/characters/robot-judging.png') center/contain no-repeat;pointer-events:none}
+.gallery-button{flex:none;width:44px;height:42px;border:3px solid #fff;border-radius:10px;background:#fff9e5;color:#2f679e;box-shadow:0 3px 0 #3e87bf;font-size:25px;font-weight:900;cursor:pointer}
+.gallery-button:focus-visible{outline:3px solid #092b7a;outline-offset:2px}
+.gallery-button:disabled{opacity:.5;cursor:not-allowed}
+.game-shell--live .success-screen h1,.game-shell--live .result-reward,.game-shell--live .result-stats{animation:reward-pop .48s cubic-bezier(.2,1.6,.4,1) both}
+.game-shell--live .success-screen h1{animation-delay:.08s}
+.game-shell--live .result-reward{animation-delay:.18s}
+.game-shell--live .result-stats{animation-delay:.3s}
+.game-shell--live .failure-bubble{animation:failure-drop .5s ease-out both}
+.game-shell--live .stage-grid button{animation:tile-arrive .38s ease-out both}
+.game-shell--live .stage-grid button:nth-child(3n+2){animation-delay:.05s}
+.game-shell--live .stage-grid button:nth-child(3n+3){animation-delay:.1s}
+.game-shell--live .ranking-list li{animation:row-arrive .35s ease-out both}
+.game-shell--live .ranking-list li:nth-child(2){animation-delay:.06s}
+.game-shell--live .ranking-list li:nth-child(3){animation-delay:.12s}
+.game-shell--live .ranking-list li:nth-child(n+4){animation-delay:.18s}
+.game-shell--live .hint-card{animation:reward-pop .3s ease-out both}
+@keyframes screen-arrive{from{opacity:.65;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+@keyframes shutter-ready{50%{box-shadow:0 4px 0 #bd2a62,0 0 0 8px #fff9,inset 0 3px 0 #ffffffa8}}
+@keyframes reward-pop{from{opacity:0;transform:translateY(14px) scale(.82)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes failure-drop{from{opacity:0;transform:translateY(-18px) rotate(-9deg)}to{opacity:1;transform:translateY(0) rotate(-6deg)}}
+@keyframes tile-arrive{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+@keyframes row-arrive{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.game-shell--live .screen,.game-shell--live .camera-main-button,.game-shell--live .success-screen h1,.game-shell--live .result-reward,.game-shell--live .result-stats,.game-shell--live .failure-bubble,.game-shell--live .stage-grid button,.game-shell--live .ranking-list li,.game-shell--live .hint-card{animation:none}}
+
+/* 人数・順位は同じ部屋の状態から更新する */
+.live-count{display:inline-flex;align-items:center;gap:3px;flex:none;padding:2px 5px;border-radius:20px;background:#fffffff0;color:#164779;font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.live-count i,.live-indicator i{width:6px;height:6px;background:#20a775;border-radius:50%;box-shadow:0 0 0 2px #20a77520}
+.live-count small{font-size:9px;margin-left:1px}.live-count>span{animation:count-arrive .35s ease-out}.live-count--offline i,.live-indicator.offline i{background:#bf851b}
+.ranking-live-summary{display:flex;justify-content:space-between;align-items:center;width:100%;margin:0 0 9px;padding:5px 8px;border-radius:8px;background:#fffef3eb;font-size:11px;font-weight:850}
+.ranking-live-summary>span{display:inline-flex;gap:4px;align-items:center}.live-indicator{color:#187a59}.live-indicator.offline{color:#87591c}
+.my-rank-summary{display:flex;align-items:center;gap:9px;width:100%;padding:8px 12px;margin-bottom:10px;border:2px solid white;border-radius:13px;background:linear-gradient(100deg,#fff0b3,#fffbea);box-shadow:0 3px 0 #d8b357;color:#77531c}
+.my-rank-summary>span{flex:1;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:11px;font-weight:900}.my-rank-summary strong{font-size:24px;color:#294d79;line-height:1.2}.my-rank-summary>small{font-size:11px;white-space:nowrap;font-weight:900}
+.game-shell--live .ranking-list{position:relative;max-height:370px;max-height:min(47dvh,420px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#70bcd7 #fff9e8}
+.game-shell--live .ranking-list li{flex-shrink:0;animation:none;min-height:50px}.game-shell--live .rank-number{position:relative;width:28px;flex:none;font-size:18px;color:#376388;line-height:1.2;font-variant-numeric:tabular-nums}.rank-number small{display:block;font-size:9px;line-height:.8;color:#6e4b11}.game-shell--live .rank-number--1{color:#d6a01d}.game-shell--live .rank-number--2{color:#829aa9}.game-shell--live .rank-number--3{color:#ba7546}
+.ranking-footnote{margin:9px 0 14px;background:#fff9e5e8;border-radius:8px;padding:4px 8px;text-align:center;font-size:11px;font-weight:800}
+.game-shell--live .ranking-screen>.game-button{margin-top:auto}
+@keyframes count-arrive{from{transform:translateY(-3px);opacity:.4}to{transform:translateY(0);opacity:1}}
+@media(prefers-reduced-motion:reduce){.live-count>span{animation:none}}
+
+/* Mobbinの撮影UIを参照: 主操作は画面中央、補助操作は独立した左右列 */
+body{margin:0}
+.game-shell{min-height:800px}
+.game-shell--live .screen{padding:50px 22px 24px}
+.game-shell--live .home-screen{padding-top:42px}
+.game-shell--live .game-nav{top:34px;right:15px;gap:8px}
+.game-nav button{width:36px;height:36px;border-radius:12px;background:#fffef3ed;box-shadow:0 2px 0 #2f7ac65c}
+.game-shell--live .round-meta{margin:0 0 18px}
+.game-shell--live .challenge-ticket{min-height:104px;padding:22px 16px 14px}
+.game-shell--live .camera-frame{aspect-ratio:1.12;border-width:4px;border-radius:22px}
+.game-shell--live .camera-actions{display:grid;grid-template-columns:1fr 82px 1fr;gap:12px;align-items:center;margin-top:-32px;padding:0 14px}
+.game-shell--live .camera-actions .camera-main-button{grid-column:2;display:grid;place-items:center;width:82px;height:82px;padding:0;border:4px solid #fff;box-shadow:0 4px 0 #c52e66,0 8px 15px #17477f33,inset 0 2px 0 #ffffff88}
+.camera-main-button svg{display:block;width:32px;height:32px;fill:none}
+.gallery-button{justify-self:start;display:grid;place-items:center;width:44px;height:44px;padding:0;border-width:2px;box-shadow:0 3px 0 #3e87bf}
+.camera-action-spacer{width:44px;height:44px;justify-self:end}
+.game-shell--live .camera-actions--review{grid-template-columns:1fr 1fr;margin-top:14px;padding:0;gap:12px}
+.camera-caption{margin:12px 0 0;padding:4px 10px;border-radius:12px;background:#fffef2e8;color:#2d547c;font-size:11px;line-height:1.5;font-weight:800;text-align:center}
+.hint-link{margin-top:12px;min-height:40px;padding:8px 15px}
+.game-shell--live .banner-heading{margin:0 0 22px}
+.game-shell--live .judging-robot{width:65%;max-height:270px;margin:24px 0}
+.game-shell--live .judging-bubble{font-size:23px;padding:13px 24px}
+.game-shell--live .result-character{width:77%;max-height:270px;margin:12px 0 0}
+.game-shell--live .result-stats{margin:16px 0 22px}
+.game-shell--live .result-screen>.game-button{margin-top:auto;margin-bottom:12px}
+.game-shell--live .failure-bubble{margin-top:8px;font-size:25px}
+.game-shell--live .failure-characters{height:280px;min-height:200px;margin:22px 0 12px}
+.game-shell--live .failure-characters img:first-child{margin-right:-15%;width:65%;transform:rotate(-3deg)}
+.game-shell--live .failure-characters img:last-child{width:43%;transform:rotate(4deg)}
+.game-shell--live .failure-reason{margin:0 0 20px}
+.game-shell--live .failure-screen>.game-button{margin-top:0}
+.game-shell--live .failure-screen>.game-button:first-of-type{margin-top:auto}
+.game-shell--live .stage-grid button{height:102px}.game-shell--live .rule-grid>div{min-height:150px}
+.game-shell--live .rules-screen::after{background-image:url('/design/sports-day/enhanced/robot-judging.png');bottom:97px}
+@media(max-width:480px){.karimono-page{padding:0}.game-shell{border:0;border-radius:0;min-height:100dvh;box-shadow:none}.game-shell--live .screen{padding-inline:20px}.game-topline{padding-top:max(6px,env(safe-area-inset-top))}.game-footer{min-height:25px;padding-bottom:env(safe-area-inset-bottom)}}
+@media(max-height:740px){.game-shell--live .screen{padding-top:48px}.game-shell--live .home-screen{padding-top:30px}.game-shell--live .camera-frame{aspect-ratio:1.3}.game-shell--live .result-character{max-height:225px}.game-shell--live .failure-characters{height:225px;min-height:180px}.game-shell--live .stage-grid button{height:83px}.game-shell--live .rule-grid>div{min-height:128px}}
+.game-shell--live .rules-screen::after{display:none}
+.rules-invitation{display:grid;grid-template-columns:minmax(0,1fr) 66px;align-items:center;gap:10px;width:100%;margin:auto 0 20px;padding:12px 14px;border:2px solid #fff;border-radius:16px;background:#fffef1f5;box-shadow:0 3px 0 #9bd0da}
+.rules-invitation p{margin:0;min-width:0;color:#315782;font-size:13px;line-height:1.75;font-weight:850;overflow-wrap:anywhere}
+.rules-invitation img{width:66px;height:80px;object-fit:contain}
+.game-shell--live .rule-grid img{width:90px;height:90px;padding:6px}
+.rule-grid{margin-bottom:24px}

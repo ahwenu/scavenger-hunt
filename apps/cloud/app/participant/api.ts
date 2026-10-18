@@ -2,26 +2,36 @@ export type Player = { id: string; name: string; joinedAt: number; wins?: number
 export type Challenge = { title: string; description?: string; criteria?: string[]; reference?: { url?: string } };
 export type Round = { id: string; number: number; status: 'active' | 'closed'; mode: 'demo' | 'ai'; challenge: Challenge; startedAt: number; endsAt: number };
 export type Submission = { id: string; roundId: string; status: string; awardedPoints?: number; verdict?: { pass?: boolean; reason?: string; provider?: string } | null; receivedAt?: number };
+export type SubmissionReceipt = Pick<Submission, 'id' | 'status' | 'receivedAt'>;
 export type GameState = {
   room: { id: string; name: string };
   game?: { status: 'lobby' | 'playing' | 'finished'; totalRounds: number };
   stages?: { number: number; status: 'completed' | 'active' | 'locked' }[];
   mode: 'demo' | 'ai';
   serverTime: number;
+  revision?: number;
+  live?: { pollIntervalMs: number; activeWindowMs: number; updatedAt: number };
   lobby: { status: string; deadline?: number | null };
   players: Player[];
   ranks: Player[];
   round: Round | null;
   mine: Submission[];
-  stats: { players: number; answered: number; accepted: number; pending: number };
+  stats: { players: number; activePlayers?: number | null; answered: number; accepted: number; pending: number };
 };
+
+export class ApiError extends Error {
+  constructor(message: string, public readonly status: number) { super(message); this.name = 'ApiError'; }
+}
 
 async function responseJson<T>(response: Response): Promise<T> {
   let value: unknown;
-  try { value = await response.json(); } catch { throw new Error('サーバーの応答を読み取れません。'); }
+  try { value = await response.json(); } catch {
+    if (!response.ok) throw new ApiError('通信に失敗しました。', response.status);
+    throw new Error('サーバーの応答を読み取れません。');
+  }
   if (!response.ok) {
     const message = value && typeof value === 'object' && 'error' in value ? String(value.error) : '通信に失敗しました。';
-    throw new Error(message);
+    throw new ApiError(message, response.status);
   }
   return value as T;
 }
@@ -40,7 +50,7 @@ export async function joinRoom(roomId: string, name: string): Promise<{ id: stri
   return responseJson(response);
 }
 
-export async function submitPhoto(roomId: string, token: string, roundId: string, file: File, requestId: string): Promise<Submission> {
+export async function submitPhoto(roomId: string, token: string, roundId: string, file: File, requestId: string): Promise<SubmissionReceipt> {
   const form = new FormData();
   form.set('photo', file, 'photo.jpg');
   form.set('roundId', roundId);

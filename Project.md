@@ -14,7 +14,9 @@ Plugin Extensionsのホスト画面とMCPサーバーの骨格を、移動可能
 
 参加者画面の仕様と取り込み済みプロトタイプの差は[参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md)に記録しています。
 
-参加者向け画面は提供デザインをもとにTypeScriptで実装する方針です。このブランチの参加URLと画面見本の扱いは[ADR-0012](docs/adr/0012-participant-typescript-ui.md)を参照してください。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。進行・得点・ヒントの追加APIは[バックエンド実装依頼 Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)で依頼中で、Issue記載の数値・契約は実装/仕様反映前の依頼内容です。
+参加者向け画面は提供デザインをもとにTypeScriptで実装する方針です。このブランチの参加URLと画面見本の扱いは[ADR-0015](docs/adr/0015-participant-typescript-ui.md)を参照してください。ハッカソン実演では同じQRから入る約100人は全員プレイヤーとします。進行・得点・ヒントの追加APIは[バックエンド実装依頼 Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)で依頼中で、Issue記載の数値・契約は実装/仕様反映前の依頼内容です。
+
+本番ゲーム記録の保存先は、ユーザー指示により**Supabase**とします（[ADR-0016](docs/adr/0016-supabase-game-persistence.md)）。参加人数と順位の変化を画面へ自動反映することも実演の要件です。現行コードと下記の既存Sites v2はD1/R2であり、Supabaseの接続・スキーマ・100人の同時利用は未確認です。参加者の同一オリジン `/api/rooms/:id` 境界を保つ引き渡しと設定項目は[16 Supabase統合](docs/16-supabase-integration.md)を参照してください。
 
 独立API実装時の作業範囲はAhwenuのAPI処理に限定し、`api/` でお題生成・写真判定を提供して拡張からMCP経由で接続しました。この段階ではSites側を変更せず、実AIの確認画面とゲームデモを分離しています。[11 API連携](docs/11-api-integration.md)に当時の契約・検証を記録しています。現在の新Sites配備・Cloud/Web反映は、下記の追加指示に基づく別フェーズです。
 
@@ -52,6 +54,7 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
 | [11 API連携](docs/11-api-integration.md) | Ahwenuの独立AI API、拡張との接続、秘密設定、Sitesとの受け渡し | Ahwenu・さが さん・拡張画面担当 |
 | [12 新Sitesの配置と接続](docs/12-sites-deployment.md) | 全ソースの保持、Cloud実行、publicアクセス・部屋認可、拡張の実ゲーム接続 | 全員 |
+| [16 Supabase統合](docs/16-supabase-integration.md) | 本番保存先、既存API互換、人数/順位の更新、環境設定、バックエンドへの受け渡し | mae さん・さが さん・Ahwenu |
 | [当日の全体コンテキスト](docs/hackathon/README.md) | ゴールを決める項目、実演の1周、担当間の受け渡し、確認済みの範囲 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
 | [参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |

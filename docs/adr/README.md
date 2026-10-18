@@ -9,7 +9,7 @@ ADR（Architecture Decision Record）には「何を選び、なぜ選び、ど�
 | [0000](0000-adopt-adr.md) | ADRを開発方針の記録として継続更新する | Accepted | 2026-10-18 | 2026-10-18 |
 | [0001](0001-product-surfaces.md) | 参加者はブラウザ/Sites、ホストはPlugin Extensions | Accepted | 2026-10-18 | 2026-10-18 |
 | [0002](0002-team-boundaries.md) | 担当者とバックエンド/API処理の責務を分ける | Accepted | 2026-10-18 | 2026-10-18 |
-| [0003](0003-sites-runtime-storage.md) | Sitesスターター・Workers・D1・R2を採用する案 | Proposed | 2026-10-18 | 2026-10-18 |
+| [0003](0003-sites-runtime-storage.md) | Sitesスターター・Workers・D1・R2を採用する案 | Superseded → 0013 | 2026-10-18 | 2026-10-18 |
 | [0004](0004-ai-adapters.md) | お題生成と写真判定をアダプターで分離する案 | Proposed | 2026-10-18 | 2026-10-18 |
 | [0005](0005-mvp-game-consistency.md) | MVPの範囲とサーバー主導の採点・締切の案 | Proposed | 2026-10-18 | 2026-10-18 |
 | [0006](0006-deployment-and-folder-boundaries.md) | デプロイ優先のフォルダ境界と独立ビルド案 | Proposed | 2026-10-18 | 2026-10-18 |
@@ -18,7 +18,8 @@ ADR（Architecture Decision Record）には「何を選び、なぜ選び、ど�
 | [0009](0009-import-demo-sources.md) | デモをローカルクローンから新規ファイルとして取り込む | Accepted | 2026-10-18 | 2026-10-18 |
 | [0010](0010-independent-ai-api.md) | AhwenuのAI APIをSitesから分離し、拡張からサーバー経由で利用する | Accepted | 2026-10-18 | 2026-10-18 |
 | [0011](0011-new-sites-deployment.md) | 新Sitesへ全ソースを保持し、Cloud実行と拡張接続を分ける | Accepted | 2026-10-18 | 2026-10-18 |
-| [0012](0012-participant-typescript-ui.md) | 参加者の画像準拠UIを現行SitesのTypeScript画面に置く | Accepted | 2026-10-18 | 2026-10-18 |
+| [0015](0015-participant-typescript-ui.md) | 参加者の画像準拠UIを現行SitesのTypeScript画面に置く | Accepted | 2026-10-18 | 2026-10-18 |
+| [0016](0016-supabase-game-persistence.md) | ゲーム記録の本番保存先をSupabaseにする | Accepted | 2026-10-18 | 2026-10-18 |
 
 ## 状態
 

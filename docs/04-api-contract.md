@@ -1,5 +1,13 @@
 # API契約：Sites・モバイル・Plugin Extensions
 
+## 現行実装とSupabase統合の参照先（2026-10-18追記）
+
+本書の `/api/v1`・Cookie参加・10チーム等は当初のAPI案で、現在のCloud実装とは異なる。実装は `/api/rooms/:id`、参加者Bearer、ホストCookie、epochミリ秒の時刻、裸のJSON応答を使う。現行の参加登録は200、参加上限は200人。フロントが呼ぶルートと追加依頼は[16 Supabase統合](16-supabase-integration.md)および[Issue #1](https://github.com/ahwenu/scavenger-hunt/issues/1)を参照する。
+
+本番のゲーム記録はSupabaseへ接続する方針（[ADR-0016](adr/0016-supabase-game-persistence.md)）。この保存先変更に `/api/v1` やSupabase Authへの移行を含めない。約100人全員プレイヤー、人数/順位のライブ更新、入出力、認可、競合時の受入条件をIssueで受け渡し、実装後に確定契約を更新する。以下の旧API案を現行の実装済み仕様として扱わない。
+
+## 当初のAPI案
+
 API契約・HTTPルート・外部API接続・MCPサーバーはAhwenuが担当する。ルートから呼ぶゲーム処理・DB/R2・認証/認可サービスはさが さん、モバイルからのAPI利用はmae さん、拡張画面からのMCP利用は未定（Ahwenu）が担当する。責務の詳細は[07 分担](07-delivery-plan.md)を参照。
 
 ## 共通規約

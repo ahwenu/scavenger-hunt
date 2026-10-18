@@ -2,6 +2,8 @@
 
 ## 対象と現在の状態
 
+本書はD1/R2で配備したSites v1/v2の記録。後続のユーザー指示により、本番ゲーム記録の保存先をSupabaseとする方針を[ADR-0016](adr/0016-supabase-game-persistence.md)に記録した。下記の配備・実AI結合結果はSupabase接続の検証ではない。移行の受け渡しは[16](16-supabase-integration.md)を参照。
+
 最新mainの取得元は `a67a393695e291c1695598ca49a8f135d567a94e`。この版の全追跡ソースを新Sitesの作業フォルダへ配置し、実行対象のCloudアプリと保存用ソースを分ける。
 
 | 項目 | 値・状態 |
