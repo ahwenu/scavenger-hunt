@@ -6,7 +6,9 @@
 
 当初の基準コミット: 仕様文書 `64d509a`、取り込み `2921fb5`。最新ゲーム契約の照合対象: main `29e6728`。
 
-状態: 下記の旧プロトタイプ調査は履歴。現在の契約は[12](../12-issue1-backend-handoff.md)・[14](../14-issue1-ahwenu-handoff.md)・ADR-0013を参照。TypeScript参加者UIは本ブランチで追加、Supabaseと実機動作は未確認。
+状態: 下記の旧プロトタイプ調査は履歴。現在の契約は[12](../12-issue1-backend-handoff.md)・[14](../14-issue1-ahwenu-handoff.md)・ADR-0013を参照。TypeScript参加者UIは公開Sites v6へ配備済み。Supabaseと実機動作は未確認。
+
+公開反映：2026-10-18 17:07 JST、TypeScript参加者UIと画像・音源をSitesの実行ルートへ同期してv6を配備した。従来の `/rooms/:id/join` とQRのURLは維持し、旧HTMLから新しいReact画面へ切り替えている。公開版の新画面・匿名参加・画像・新BGMの配信を確認済み。配備ID・ソースSHA・ローカル/公開検証と限界は[12 Sites配備記録](../12-sites-deployment.md)を参照。
 
 ## この文書の役割
 

@@ -1,5 +1,28 @@
 # 新Sitesへの配置とPlugin Extensionsのゲーム接続
 
+## v6：QR先の新しい参加者画面を公開（2026-10-18 17:07 JST）
+
+ユーザーの「QR読取後のスマホ画面に大きなデザイン変更が反映されない」という指摘を受け、公開v5とGitHub mainを照合した。GitHubにはTypeScript参加者画面があった一方、Sitesの実行ルートには画面・画像・音源が未同期で、Workerが `/rooms/:id/join` に旧 `/app.js` 用HTMLを返していた。
+
+ADR-0015に沿って参加者のルート、`app/participant/`、デザイン画像・音源、参加者だけをReactへ通すWorker分岐を同期した。QRのURL、ブラウザ用ホストの既存ルート、API、DBスキーマ、D1/R2、認可、public設定、実行環境revision 1は維持している。Supabase保存先の移行はこの配備では実施していない。
+
+| 項目 | 確認結果 |
+| --- | --- |
+| URL | `https://karimono-one-lease.ahwenu.chatgpt.site`（既存URLのまま） |
+| Sites project | `appgprj_6ad4611142408191ae99be09e3b27efb` |
+| v6 version | `appgprj_6ad4611142408191ae99be09e3b27efb~appgver_894fb23d835481918e163287ba34100a` |
+| deployment | `appgdep_6ad47e1e0aec8191971f88bdbacd0a60`、succeeded |
+| SitesソースSHA | `73014534a52864f97e8bcdd17a9ff55e450377dc` |
+| 取り込み元main | `ed0aefb97ed12489dcf6add0b0524e79123c35e6` |
+| 配布物 | 123ファイル、18,360,320 bytes。対応するpush済みソースから公式Sitesヘルパーで作成 |
+| 保存用全ソース | `repository/` に秘密・依存・生成物・旧Site IDを除外した735ファイル。Workersの型検査/実行からは除外 |
+
+既存v5のソースを公式ヘルパーで開き、Sites固有のmanifest、prebuild、`repository/` の型検査除外を保持して同期した。型チェック、Cloud APIの9件、Sitesビルドが成功。ローカルの新しい検証DBだけへ既存4マイグレーションを適用し、スマホ3サイズ（390×844、390×600、320×568）、実際のローカル参加登録、見本8状態、音源8ファイルの計20項目を確認。画像欠落、横はみ出し、ブラウザ例外、失敗したリクエストは0件。
+
+公開後も、独立した確認用部屋を先に明示demoへ設定して匿名参加を実行し、新UIのHTML・画像、参加者1人の反映、BGMのHTTP 200と元ファイルのSHA-256一致を確認した。公開APIで生成したQR画像もmacOS Visionで読取し、新画面で実際に参加したURLと完全一致した。公開確認4項目・ブラウザ例外0・失敗したリクエスト0。実AI課金・実機カメラ・100実端末・Supabase接続は今回の確認に含めない。公開画面とレポートはGit対象外 `plugin/artifacts/participant-sites-release/` に保存。既存のQRを読み直すか、参加ページを再読み込みすると新画面へ入る。
+
+以下のv3/v1/v2は、過去の配備・検証履歴として保持する。
+
 後続のIssue #1対応でv3を配備済み（2026-10-18 16:08 JST）。100人・10競技・初合格500点・全ステージ・保存済みヒントと0003マイグレーションを適用し、Plugin 0.3.1をインストールした。versionは `appgprj_6ad4611142408191ae99be09e3b27efb~appgver_bc7c0dbeeef88191857c824951236574`、deploymentは `appgdep_6ad4705c8e088191a7709d630c552030`、SitesソースSHAは `df6813631353211b2ff52d1a89df22dd36b951f1`。public・実行環境revision 1を維持し、621ファイルの秘密除外済みスナップショットを保持。元mainは `669731c6715a59a6236eae29e323d2977816a7d0` をcommit/push済み。公開100HTTPデモの500点/finished/ヒント、実AIの条件不一致による不合格0点とMCP順位/再送/ヒント保存/削除を確認。実AI合格500点・実端末100台・ネイティブパネル直接操作は未検証。[14](14-issue1-ahwenu-handoff.md)に全結果を記録し、最終保存ソース/配備IDはSitesのバージョン履歴を参照する。以下のv1/v2のwins順位・全体終了未対応は過去版の記録。
 
 ## 以下はv1/v2の配置・仕様・検証履歴
