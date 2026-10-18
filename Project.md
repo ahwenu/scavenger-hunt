@@ -47,6 +47,7 @@ Plugin Extensionsの画面担当は未確定であり、Ahwenuを暫定候補と
 | [09 フォルダ構成・デプロイ](docs/09-repository-structure.md) | 担当別の編集先、独立ビルド、共有ファイルの更新ルール | 全員 |
 | [10 デモアプリ取り込み](docs/10-demo-import.md) | 取り込み元の配置、既存方針との差分、配備時の注意 | 全員 |
 | [11 API連携](docs/11-api-integration.md) | Ahwenuの独立AI API、拡張との接続、秘密設定、Sitesとの受け渡し | Ahwenu・さが さん・拡張画面担当 |
+| [当日の全体コンテキスト](docs/hackathon/README.md) | ゴールを決める項目、実演の1周、担当間の受け渡し、確認済みの範囲 | 全員 |
 | [ADR：開発方針の決定記録](docs/adr/README.md) | 判断理由、採否、変更履歴、更新手順 | 全員 |
 | [参加者画面の作業コンテキスト](docs/participant-frontend/mobile-frontend-context.md) | 現行仕様と追加メモ・取り込みコードの差、mae担当の受け渡し | mae さん・連携担当 |
 | [参加者画面の整合計画](docs/participant-frontend/2026-10-18-参加者画面の整合計画.html) | 実コードの確認結果と整合手順 | 全員 |
