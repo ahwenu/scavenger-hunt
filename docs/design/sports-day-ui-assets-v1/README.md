@@ -9,7 +9,7 @@ ZIPを展開して `index.html` をブラウザーで開いてください。外
 - `contact-sheet.png`：136点の全素材一覧。
 - `asset-list.csv`：素材名、画像寸法、透過の有無、ファイルパス、注意事項。
 - `manifest.json`：実装向け一覧。元画像上の出典矩形・トリミング座標も収録。
-- `99-reference/original-sheet.png`：元の画像。変更していません。
+- `99-reference/original-sheet.png`：元の画像。ランキング見本の名前だけ差し替えています（2026-10-20）。
 
 ## 収録内容
 
